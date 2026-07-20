@@ -20,14 +20,6 @@ class Consumable extends Model
         'unit',
         'expiry_date',
         'notes',
-        'supplier_id',
-    ];
-
-    protected $casts = [
-        'stock_quantity' => 'integer',
-        'minimum_stock' => 'integer',
-        'unit_price' => 'decimal:2',
-        'expiry_date' => 'date',
     ];
 
     // ================ Relationships ================
@@ -37,9 +29,18 @@ class Consumable extends Model
         return $this->belongsTo(Brand::class);
     }
 
-    public function supplier()
+    // Supplier (تامین‌کننده اصلی - 1 به چند)
+    public function primarySupplier()
     {
         return $this->belongsTo(User::class, 'supplier_id');
+    }
+
+    // Suppliers (تامین‌کنندگان - چندبه‌چند)
+    public function suppliers()
+    {
+        return $this->belongsToMany(User::class, 'supplier_consumable', 'consumable_id', 'supplier_id')
+            ->withPivot('price', 'is_primary')
+            ->withTimestamps();
     }
 
     // ================ Scopes ================

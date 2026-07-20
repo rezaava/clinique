@@ -9,32 +9,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Device extends Model
 {
     use HasFactory, SoftDeletes;
-
-    protected $fillable = [
-        'name',
-        'model',
-        'serial_number',
-        'brand_id',
-        'purchase_date',
-        'purchase_price',
-        'warranty_months',
-        'total_shots_limit',
-        'used_shots',
-        'last_maintenance_date',
-        'notes',
-        'status',
-        'supplier_id',
-    ];
-
-    protected $casts = [
-        'purchase_date' => 'date',
-        'purchase_price' => 'decimal:2',
-        'warranty_months' => 'integer',
-        'total_shots_limit' => 'integer',
-        'used_shots' => 'integer',
-        'last_maintenance_date' => 'date',
-    ];
-
     // ================ Relationships ================
 
     public function brand()
@@ -42,9 +16,18 @@ class Device extends Model
         return $this->belongsTo(Brand::class);
     }
 
-    public function supplier()
+    // Supplier (تامین‌کننده اصلی - 1 به چند)
+    public function primarySupplier()
     {
         return $this->belongsTo(User::class, 'supplier_id');
+    }
+
+    // Suppliers (تامین‌کنندگان - چندبه‌چند)
+    public function suppliers()
+    {
+        return $this->belongsToMany(User::class, 'supplier_device', 'device_id', 'supplier_id')
+            ->withPivot('price', 'warranty_months', 'is_primary')
+            ->withTimestamps();
     }
 
     public function deviceParts()

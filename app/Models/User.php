@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable implements LaratrustUser
 {
     use HasRolesAndPermissions;
+    
     protected $fillable = [
         'first_name',
         'last_name',
@@ -132,22 +133,30 @@ class User extends Authenticatable implements LaratrustUser
         return $this->belongsToMany(Service::class, 'user_service');
     }
 
-    // Devices (دستگاه‌ها - به عنوان تأمین‌کننده)
+    // ================ Supplier Relationships (Many-to-Many) ================
+    
+    // Devices (دستگاه‌ها - به عنوان تأمین‌کننده چندبه‌چند)
     public function suppliedDevices()
     {
-        return $this->hasMany(Device::class, 'supplier_id');
+        return $this->belongsToMany(Device::class, 'supplier_device', 'supplier_id', 'device_id')
+            ->withPivot('price', 'warranty_months', 'is_primary')
+            ->withTimestamps();
     }
 
-    // Device Parts (قطعات - به عنوان تأمین‌کننده)
+    // Device Parts (قطعات - به عنوان تأمین‌کننده چندبه‌چند)
     public function suppliedDeviceParts()
     {
-        return $this->hasMany(DevicePart::class, 'supplier_id');
+        return $this->belongsToMany(DevicePart::class, 'supplier_device_part', 'supplier_id', 'device_part_id')
+            ->withPivot('price', 'is_primary')
+            ->withTimestamps();
     }
 
-    // Consumables (مواد مصرفی - به عنوان تأمین‌کننده)
+    // Consumables (مواد مصرفی - به عنوان تأمین‌کننده چندبه‌چند)
     public function suppliedConsumables()
     {
-        return $this->hasMany(Consumable::class, 'supplier_id');
+        return $this->belongsToMany(Consumable::class, 'supplier_consumable', 'supplier_id', 'consumable_id')
+            ->withPivot('price', 'is_primary')
+            ->withTimestamps();
     }
 
     // Shift Reports (گزارش شیفت)

@@ -17,12 +17,15 @@ return new class extends Migration
             $table->date('purchase_date')->nullable();
             $table->decimal('purchase_price', 15, 2)->nullable();
             $table->integer('warranty_months')->nullable();
-            $table->integer('total_shots_limit')->nullable(); // تعداد شات کل
-            $table->integer('used_shots')->default(0); // شات مصرف شده
+            $table->integer('total_shots_limit')->nullable();
+            $table->integer('used_shots')->default(0);
             $table->date('last_maintenance_date')->nullable();
             $table->text('notes')->nullable();
             $table->enum('status', ['active', 'maintenance', 'broken', 'retired'])->default('active');
-            $table->foreignId('supplier_id')->nullable()->constrained('users')->nullOnDelete(); // تأمین‌کننده (همان کاربر)
+            
+            // تامین‌کننده اصلی (1 به چند)
+            $table->foreignId('supplier_id')->nullable()->constrained('users')->nullOnDelete();
+            
             $table->timestamps();
             $table->softDeletes();
 
