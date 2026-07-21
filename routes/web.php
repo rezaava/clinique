@@ -3,6 +3,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -17,4 +18,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::prefix('/employee')->middleware(['role:employee'])->group(function () {
     Route::get('/', [EmployeeController::class, 'index'])->name('employee.index');
+    Route::post('/create', [SupplierController::class, 'createSupplier'])->name('create-supplier');
+    Route::delete('/delete-supplier/{id}', [SupplierController::class, 'deleteSupplier'])->name('delete-supplier');
+    
 });
