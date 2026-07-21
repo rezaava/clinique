@@ -19,7 +19,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::prefix('/employee')->middleware(['role:employee'])->group(function () {
     Route::get('/', [EmployeeController::class, 'index'])->name('employee.index');
     Route::post('/create-supplier', [SupplierController::class, 'createSupplier'])->name('create-supplier');
-    Route::delete('/delete-supplier/{id}', [SupplierController::class, 'deleteSupplier'])->name('delete-supplier');
-    Route::patch('/edit-supplier/{id}', [SupplierController::class, 'editSupplier'])->name('edit-supplier');
+    Route::get('/delete-supplier/{id}', [SupplierController::class, 'deleteSupplier'])->name('delete-supplier');
+    Route::post('/edit-supplier/{id}', [SupplierController::class, 'editSupplier'])->name('edit-supplier');
     
 });

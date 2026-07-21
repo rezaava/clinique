@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 
 
-class UserContoller extends Controller
+class SupplierController extends Controller
 {
     public function createSupplier(Request $request) {
     $validated_data = Validator::make($request->all(), [
@@ -36,12 +36,11 @@ class UserContoller extends Controller
         'user_id' => $user->id,
       ]);
       return response()->json(
-        ['mode'=>'create'   ,'success'=>true, 'msg'=>'']
-      );
+        ['mode'=>'create'   ,'success'=>true, 'msg'=>''], 200);
     }
     catch(\Exception $e){
       return response()->json(
-        ['mode'=>'create'   ,'success'=>false, 'msg'=>'Error is'. $e]);
+        ['mode'=>'create'   ,'success'=>false, 'msg'=>'Error is'. $e], 500);
     }
   }
 
@@ -50,17 +49,16 @@ class UserContoller extends Controller
     $supp = User::findOrFail($id);
     if(!$supp){
       return response()->json(
-        ['mode'=>'delete',  'success'=>false, 'msg'=>'user not found']
-      );
+        ['mode'=>'delete',  'success'=>false, 'msg'=>'user not found'], 404);
     }
     else{
       try{
         $supp->deleted_at = Carbon::now();
         $supp->save();
-        return response()->json(['mode'=>'delete',  'success'=>true,  'msg' => 'User deleted successfulyy']);}
+        return response()->json(['mode'=>'delete',  'success'=>true,  'msg' => 'User deleted successfulyy'], 200);}
       catch(\Exception $e)
       {
-        return response()->json(['mode'=>'delete',  'success'=>false,  'msg' => 'Error is'. $e]);
+        return response()->json(['mode'=>'delete',  'success'=>false,  'msg' => 'Error is'. $e], 500);
       }
     
       }
@@ -70,7 +68,7 @@ class UserContoller extends Controller
   public function editSupplier(Request $request , $id) {
     $supp = User::findOrFail($id);
     if(!$supp){
-      return response()->json(['mode'=>'edit', 'success'=>false, 'msg'=>'Supplier not found']);
+      return response()->json(['mode'=>'edit', 'success'=>false, 'msg'=>'Supplier not found'], 404);
     }
     else{
       try{
@@ -79,10 +77,10 @@ class UserContoller extends Controller
           $supp->$col_name -> $value;
         }
         $supp->save();
-        return response()->json(['mode'=>'edit', 'success'=>true, 'msg'=>'Supplier edited successfully']);
+        return response()->json(['mode'=>'edit', 'success'=>true, 'msg'=>'Supplier edited successfully'], 200);
         }
         catch(\Exception $e){
-          return response()->json(['mode'=>'edit', 'success'=>false, 'msg'=>'Failed to complete eidt. Error is'. $e]);
+          return response()->json(['mode'=>'edit', 'success'=>false, 'msg'=>'Failed to complete eidt. Error is'. $e], 500);
         }
     }
   }
