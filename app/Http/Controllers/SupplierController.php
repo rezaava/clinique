@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 
 
-class UserContoller extends Controller
+class SupplierController extends Controller
 {
     public function createSupplier(Request $request) {
     $validated_data = Validator::make($request->all(), [
