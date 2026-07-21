@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AppointmentsController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\BrandController;
+use App\Models\Brand;
 use Illuminate\Support\Facades\Route;
 
 // ================ Auth Routes ================
@@ -49,8 +51,22 @@ Route::prefix('/staff/appointments')->middleware(['auth', 'role:employee|admin']
 // ================ Employee Routes ================
 Route::prefix('/employee')->middleware(['auth', 'role:employee'])->group(function () {
     Route::get('/', [EmployeeController::class, 'index'])->name('employee.index');
-    Route::post('/create-supplier', [SupplierController::class, 'createSupplier'])->name('create-supplier');
-    Route::get('/delete-supplier/{id}', [SupplierController::class, 'deleteSupplier'])->name('delete-supplier');
-    Route::post('/edit-supplier/{id}', [SupplierController::class, 'editSupplier'])->name('edit-supplier');
+
+    Route::prefix('/supplier')->group(function(){
+
+    Route::post('/create', [SupplierController::class, 'createSupplier'])->name('create-supplier');
+    Route::get('/delete/{id}', [SupplierController::class, 'deleteSupplier'])->name('delete-supplier');
+    Route::post('/edit/{id}', [SupplierController::class, 'editSupplier'])->name('edit-supplier');
+    });
     
+    Route::prefix('/brand')->group(function(){
+        Route::post('create', [BrandController::class, 'createBrand'])->name('create-brand');
+        Route::get('/delete/{id}', [BrandController::class, 'deleteBrand'])->name('delete-brand');
+        Route::post('/edit/{id}', [BrandController::class, 'editBrand'])->name('edit-brand');
+    });
+
+
+        
 });
+
+
