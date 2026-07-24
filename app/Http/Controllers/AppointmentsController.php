@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use App\Models\Service;
+use App\Models\UserPoint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -188,14 +189,14 @@ class AppointmentsController extends Controller
             $user->save();
 
             // ثبت تاریخچه امتیاز
-            \App\Models\UserPoint::create([
-                'user_id' => $user->id,
-                'points' => 10,
-                'type' => 'earned',
-                'source' => 'appointment_completed',
-                'source_id' => $appointment->id,
-                'description' => 'امتیاز تکمیل نوبت: ' . $appointment->service->name,
-            ]);
+            $userPoint = new UserPoint();
+            $userPoint->user_id = $user->id;
+            $userPoint->points = 10;
+            $userPoint->type = 'earned';
+            $userPoint->source = 'appointment_completed';
+            $userPoint->source_id = $appointment->id;
+            $userPoint->description = 'امتیاز تکمیل نوبت: ' . $appointment->service->name;
+            $userPoint->save();
 
             return redirect()->route('appointments.manage')
                 ->with('success', 'نوبت با موفقیت تکمیل شد.');

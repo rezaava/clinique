@@ -30,11 +30,11 @@ class SupplierController extends Controller
     }
     
     try{
-      $user = User::create($validated_data);
-      Role::create([
-        'role_id' => 5,
-        'user_id' => $user->id,
-      ]);
+      // $user = User::create($validated_data);
+      // Role::create([
+      //   'role_id' => 5,
+      //   'user_id' => $user->id,
+      // ]);
       return response()->json(
         ['mode'=>'create'   ,'success'=>true, 'msg'=>''], 200);
     }
