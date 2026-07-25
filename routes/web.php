@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AppointmentsController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\ShiftReportController;
@@ -91,6 +92,60 @@ Route::middleware('auth')->group(function () {
             Route::post('/create', [BrandController::class, 'createBrand'])->name('create-brand');
             Route::get('/delete/{id}', [BrandController::class, 'deleteBrand'])->name('delete-brand');
             Route::post('/edit/{id}', [BrandController::class, 'editBrand'])->name('edit-brand');
+        });
+    });
+
+    // ================ Inventory Routes ================
+    Route::prefix('inventory')->group(function () {
+        
+        // ====== Consumables ======
+        Route::prefix('consumables')->group(function () {
+            Route::get('/', [InventoryController::class, 'consumablesIndex'])->name('inventory.consumables.index');
+            Route::get('/create', [InventoryController::class, 'consumablesCreate'])->name('inventory.consumables.create');
+            Route::post('/store', [InventoryController::class, 'consumablesStore'])->name('inventory.consumables.store');
+            Route::get('/edit/{id}', [InventoryController::class, 'consumablesEdit'])->name('inventory.consumables.edit');
+            Route::post('/update/{id}', [InventoryController::class, 'consumablesUpdate'])->name('inventory.consumables.update');
+            Route::get('/delete/{id}', [InventoryController::class, 'consumablesDelete'])->name('inventory.consumables.delete');
+        });
+        
+        // ====== Devices ======
+        Route::prefix('devices')->group(function () {
+            Route::get('/', [InventoryController::class, 'devicesIndex'])->name('inventory.devices.index');
+            Route::get('/create', [InventoryController::class, 'devicesCreate'])->name('inventory.devices.create');
+            Route::post('/store', [InventoryController::class, 'devicesStore'])->name('inventory.devices.store');
+            Route::get('/edit/{id}', [InventoryController::class, 'devicesEdit'])->name('inventory.devices.edit');
+            Route::post('/update/{id}', [InventoryController::class, 'devicesUpdate'])->name('inventory.devices.update');
+            Route::get('/delete/{id}', [InventoryController::class, 'devicesDelete'])->name('inventory.devices.delete');
+        });
+        
+        // ====== Parts ======
+        Route::prefix('parts')->group(function () {
+            Route::get('/', [InventoryController::class, 'partsIndex'])->name('inventory.parts.index');
+            Route::get('/create', [InventoryController::class, 'partsCreate'])->name('inventory.parts.create');
+            Route::post('/store', [InventoryController::class, 'partsStore'])->name('inventory.parts.store');
+            Route::get('/edit/{id}', [InventoryController::class, 'partsEdit'])->name('inventory.parts.edit');
+            Route::post('/update/{id}', [InventoryController::class, 'partsUpdate'])->name('inventory.parts.update');
+            Route::get('/delete/{id}', [InventoryController::class, 'partsDelete'])->name('inventory.parts.delete');
+        });
+        
+        // ====== Purchase Requests ======
+        Route::prefix('purchases')->group(function () {
+            Route::get('/', [InventoryController::class, 'purchaseRequestsIndex'])->name('inventory.purchases.index');
+            Route::get('/create', [InventoryController::class, 'purchaseRequestsCreate'])->name('inventory.purchases.create');
+            Route::post('/store', [InventoryController::class, 'purchaseRequestsStore'])->name('inventory.purchases.store');
+            Route::post('/approve/{id}', [InventoryController::class, 'purchaseRequestsApprove'])->name('inventory.purchases.approve');
+            Route::post('/reject/{id}', [InventoryController::class, 'purchaseRequestsReject'])->name('inventory.purchases.reject');
+            Route::post('/receive/{id}', [InventoryController::class, 'purchaseRequestsReceive'])->name('inventory.purchases.receive');
+        });
+        
+        // ====== Transactions ======
+        Route::get('/transactions', [InventoryController::class, 'transactionsIndex'])->name('inventory.transactions.index');
+        
+        // ====== Maintenance ======
+        Route::prefix('maintenance')->group(function () {
+            Route::get('/', [InventoryController::class, 'maintenanceIndex'])->name('inventory.maintenance.index');
+            Route::post('/store', [InventoryController::class, 'maintenanceStore'])->name('inventory.maintenance.store');
+            Route::get('/show/{id}', [InventoryController::class, 'maintenanceShow'])->name('inventory.maintenance.show');
         });
     });
 });

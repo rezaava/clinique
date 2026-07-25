@@ -31,6 +31,19 @@ class DevicePart extends Model
 
     // ================ Relationships ================
 
+
+    public function suppliers()
+    {
+        return $this->belongsToMany(User::class, 'supplier_device_part', 'device_part_id', 'supplier_id')
+            ->withPivot('price')
+            ->withTimestamps();
+    }
+
+    // Primary Supplier
+    public function primarySupplier()
+    {
+        return $this->belongsTo(User::class, 'supplier_id');
+    }
     public function device()
     {
         return $this->belongsTo(Device::class);
@@ -39,19 +52,5 @@ class DevicePart extends Model
     public function brand()
     {
         return $this->belongsTo(Brand::class);
-    }
-
-    // Supplier (تامین‌کننده اصلی - 1 به چند)
-    public function primarySupplier()
-    {
-        return $this->belongsTo(User::class, 'supplier_id');
-    }
-
-    // Suppliers (تامین‌کنندگان - چندبه‌چند)
-    public function suppliers()
-    {
-        return $this->belongsToMany(User::class, 'supplier_device_part', 'device_part_id', 'supplier_id')
-            ->withPivot('price', 'is_primary')
-            ->withTimestamps();
     }
 }

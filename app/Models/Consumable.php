@@ -24,23 +24,35 @@ class Consumable extends Model
 
     // ================ Relationships ================
 
-    public function brand()
-    {
-        return $this->belongsTo(Brand::class);
-    }
 
-    // Supplier (تامین‌کننده اصلی - 1 به چند)
-    public function primarySupplier()
-    {
-        return $this->belongsTo(User::class, 'supplier_id');
-    }
-
-    // Suppliers (تامین‌کنندگان - چندبه‌چند)
+    // Suppliers (چندبه‌چند)
     public function suppliers()
     {
         return $this->belongsToMany(User::class, 'supplier_consumable', 'consumable_id', 'supplier_id')
             ->withPivot('price', 'is_primary')
             ->withTimestamps();
+    }
+
+    // Primary Supplier
+    public function primarySupplier()
+    {
+        return $this->belongsTo(User::class, 'supplier_id');
+    }
+
+    // Inventory Transactions
+    public function inventoryTransactions()
+    {
+        return $this->morphMany(InventoryTransaction::class, 'inventoriable');
+    }
+
+    // Purchase Request Items
+    public function purchaseRequestItems()
+    {
+        return $this->morphMany(PurchaseRequestItem::class, 'purchasable');
+    }
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class);
     }
 
     // ================ Scopes ================

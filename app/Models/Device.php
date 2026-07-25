@@ -22,11 +22,16 @@ class Device extends Model
         return $this->belongsTo(User::class, 'supplier_id');
     }
 
+    public function maintenanceLogs()
+    {
+        return $this->hasMany(MaintenanceLog::class);
+    }
+
     // Suppliers (تامین‌کنندگان - چندبه‌چند)
     public function suppliers()
     {
         return $this->belongsToMany(User::class, 'supplier_device', 'device_id', 'supplier_id')
-            ->withPivot('price', 'warranty_months', 'is_primary')
+            ->withPivot('price')
             ->withTimestamps();
     }
 
