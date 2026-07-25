@@ -92,5 +92,10 @@ Route::middleware('auth')->group(function () {
             Route::get('/delete/{id}', [BrandController::class, 'deleteBrand'])->name('delete-brand');
             Route::post('/edit/{id}', [BrandController::class, 'editBrand'])->name('edit-brand');
         });
+
+        //روت تست برای فایل booking.blade.php که حال حاضر نه تابعی به آن وصل شده نه کنترلری
+        Route::prefix('booking')->group(function(){
+            Route::get('booking', [])->name('');
+        });
     });
 });
