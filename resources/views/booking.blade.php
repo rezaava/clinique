@@ -6,7 +6,7 @@
 <title>اوراکلینیک — رزرو هوشمند نوبت</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 
-<link rel="stylesheet" href="{{asset(css/booking.css)}}"></link>
+<link rel="stylesheet" href="{{asset('css/booking.css')}}"></link>
 
 </head>
 <body>
@@ -23,6 +23,11 @@
     <nav class="nav" id="nav">
 <!--  پیاده سازی balde بخش داده ها-->
       <div class="nav-label">منوی اصلی</div>
+
+<!--مقدار دهی تستی و رندوم به داده های nav برای  تست در 3 خط پایین-->
+      @php
+      $navItems = [(object)['active'=>true, 'label' => 'dsfsd', 'badge'=>'mnbcv' , 'id'=>2]]
+      @endphp
       @foreach ($navItems as $item)
         <a href="#" 
            @class(['nav-item', 'active' => $item->active])
@@ -30,7 +35,7 @@
             aria-current="page" 
             @endif>
 
-            {!! svg($item->id) !!}
+            {{--{!! svg($item->id) !!} --}}
             
             <span>{{ $item->label }}</span>
 
@@ -44,6 +49,7 @@
             @endif
         </a>
     @endforeach
+    
       
     </nav>
     <div class="sidebar-foot">
@@ -271,7 +277,7 @@
   </div>
 </div>
 
-<script src="{{asset(js/booking.js)}}"> </>
+<script src="{{asset('js/booking.js')}}">
        
 </body>
 </html>

@@ -94,8 +94,11 @@ Route::middleware('auth')->group(function () {
         });
 
         //روت تست برای فایل booking.blade.php که حال حاضر نه تابعی به آن وصل شده نه کنترلری
-        Route::prefix('booking')->group(function(){
-            Route::get('booking', [])->name('');
-        });
+        
     });
 });
+
+//روت تست برای فایل bookink
+Route::prefix('booking')->group(function(){
+            Route::get('/', function(){return view('booking');})->name('booking');
+        });
