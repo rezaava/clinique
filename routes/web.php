@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AppointmentsController;
+use App\Http\Controllers\BookController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\SupplierController;
@@ -94,10 +95,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/edit/{id}', [BrandController::class, 'editBrand'])->name('edit-brand');
         });
 
-        //روت تست برای فایل booking.blade.php که حال حاضر نه تابعی به آن وصل شده نه کنترلری
-        Route::prefix('booking')->group(function(){
-            Route::get('booking', [])->name('');
-        });
+
     });
 
     // ================ Inventory Routes ================

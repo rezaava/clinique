@@ -17,6 +17,14 @@ class AuthController extends Controller
      */
     public function showLoginForm()
     {
+        if (Auth::user()) {
+            if (Auth::user()->hasRole('employee')) {
+                return redirect()->route('employee.index');
+            }
+            if (Auth::user()->hasRole('patient')) {
+                return redirect()->route('appointments.create');
+            }
+        }
         return view('auth.login');
     }
 
@@ -111,7 +119,9 @@ class AuthController extends Controller
             $user->last_login_at = now();
             $user->save();
 
-            return redirect()->route('dashboard')->with('success', 'ورود با موفقیت انجام شد');
+            if (Auth::user()->hasRole('employee')) {
+                return redirect()->route('employee.index')->with('success', 'ورود با موفقیت انجام شد');
+            }
         }
 
         return back()->with('error', 'شماره تلفن یا رمز عبور اشتباه است')->withInput();

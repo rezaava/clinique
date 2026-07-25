@@ -17,7 +17,7 @@ class AppointmentsController extends Controller
     public function create()
     {
         $services = Service::where('is_active', true)->get();
-        return view('appointments.create', compact('services'));
+        return view('patient.appointments.booking', compact('services'));
     }
 
     /**

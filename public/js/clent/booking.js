@@ -1,12 +1,6 @@
 const faDigits=['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
 const toFa=s=>String(s).replace(/\d/g,d=>faDigits[d]);
 
-//این قسمت در nav، روی $item->badge تابع toFa را اعمال میکند
-document.querySelectorAll('.dynamic-badge').forEach(el => {
-    const rawValue = el.getAttribute('data-value');
-    el.textContent = toFa(rawValue);
-});
-
 const icons={
   dashboard:'<path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>',
   patients:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
@@ -76,7 +70,6 @@ const devices=[
   {icon:'chip',name:'ترماژ FLX',sub:'دستگاه RF',sel:'sel-purple'},
   {icon:'chip',name:'هایدرافیشیال MD',sub:'فیشیال',sel:'sel-purple',busy:true},
 ];
-const treatChips=['بوتاکس — پیشانی ۲۰ واحد','فیلر لب ۰.۵ میلی‌لیتر','فیلر زیر چشم','لیزر کل صورت','هایدرافیشیال کلاسیک','پیلینگ شیمیایی'];
 const treatActive=0;
 const slots=[
   {t:'۰۹:۰۰',s:'booked'},{t:'۰۹:۳۰',s:'booked'},{t:'۱۰:۰۰',s:'selected'},
@@ -179,7 +172,6 @@ renderSelect('doctorList',doctors);
 renderSelect('roomList',rooms);
 renderSelect('deviceList',devices);
 
-document.getElementById('treatChips').innerHTML=treatChips.map((t,i)=>`<button class="tchip ${i===treatActive?'active':''}">${t}</button>`).join('');
 
 document.getElementById('calHead').innerHTML=weekHead.map(d=>`<span>${d}</span>`).join('');
 let calHtml='';
@@ -254,7 +246,6 @@ makeSelectable('typeGrid','.type-card');
 makeSelectable('doctorList','.sc-item');
 makeSelectable('roomList','.sc-item');
 makeSelectable('deviceList','.sc-item');
-makeSelectable('treatChips','.tchip');
 
 // تقویم
 document.getElementById('calGrid').addEventListener('click',e=>{
@@ -285,3 +276,21 @@ const menuToggle=document.getElementById('menuToggle'), overlay=document.getElem
 menuToggle.addEventListener('click',()=>html.classList.toggle('nav-open'));
 overlay.addEventListener('click',()=>html.classList.remove('nav-open'));
 document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>html.classList.remove('nav-open')));
+
+document.addEventListener('DOMContentLoaded', function() {
+    const serviceLabels = document.querySelectorAll('#servicesContainer .tchip');
+    
+    serviceLabels.forEach(label => {
+        label.addEventListener('click', function() {
+            // حذف کلاس active از همه
+            serviceLabels.forEach(l => l.classList.remove('active'));
+            
+            // اضافه کردن کلاس active به آیتم انتخاب شده
+            this.classList.add('active');
+            
+            // فعال کردن radio input داخل آن
+            const radio = this.querySelector('input[type="radio"]');
+            if (radio) radio.checked = true;
+        });
+    });
+});

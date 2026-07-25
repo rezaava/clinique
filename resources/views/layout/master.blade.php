@@ -3,14 +3,6 @@
 @include('layout.head')
 
 <body>
-    
-
-
-
-
-
-
-
     <div class="app">
         <div class="overlay" id="overlay"></div>
 
@@ -85,26 +77,9 @@
                     <div class="avatar">ل‌م</div>
                 </div>
             </header>
-
             @yield('content')
         </div>
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    @yield('js')
 </body>
+@yield('js')
 </html>

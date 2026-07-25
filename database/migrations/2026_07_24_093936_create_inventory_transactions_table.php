@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('inventory_transactions', function (Blueprint $table) {
             $table->id();
-            $table->morphs('inventoriable');
+            $table->morphs('inventoriable'); // این خودش ایندکس ایجاد میکنه
             
             $table->enum('type', ['purchase', 'sale', 'usage', 'return', 'adjustment', 'waste'])->default('purchase');
             $table->enum('direction', ['in', 'out'])->default('in');
@@ -33,7 +33,7 @@ return new class extends Migration
             
             $table->timestamps();
 
-            $table->index(['inventoriable_type', 'inventoriable_id']);
+            
             $table->index('type');
             $table->index('direction');
             $table->index('transaction_date');

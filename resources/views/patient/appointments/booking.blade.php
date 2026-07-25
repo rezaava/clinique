@@ -1,76 +1,14 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>اوراکلینیک — رزرو هوشمند نوبت</title>
-<link rel="preconnect" href="https://cdn.jsdelivr.net">
+@extends('layout.master')
 
-<link rel="stylesheet" href="{{asset(css/booking.css)}}"></link>
+@section('title')
+اوراکلینیک — رزرو هوشمند نوبت
+@endsection
 
-</head>
-<body>
-<div class="app">
-  <div class="overlay" id="overlay"></div>
+@section('head')
+<link rel="stylesheet" href="{{ asset('css/patient/booking.css') }}">
+@endsection
 
-  <!-- ═══════════ سایدبار ═══════════ -->
-  <aside class="sidebar" id="sidebar">
-    <div class="brand">
-      <div class="brand-logo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/></svg></div>
-      <span class="brand-name">اوراکلینیک</span>
-    </div>
-    <div class="brand-sub">پلتفرم کلینیک</div>
-    <nav class="nav" id="nav">
-<!--  پیاده سازی balde بخش داده ها-->
-      <div class="nav-label">منوی اصلی</div>
-      @foreach ($navItems as $item)
-        <a href="#" 
-           @class(['nav-item', 'active' => $item->active])
-           @if($item->active)
-            aria-current="page" 
-            @endif>
-
-            {!! svg($item->id) !!}
-            
-            <span>{{ $item->label }}</span>
-
-            @if(!empty($item->badge))
-                <span class="nav-badge">
-<!--استفاده از تابع toFa در این قسمت که مقادیر را از کد جاوا اسکریپت میگیرد -->
-                    <span class="nav-badge dynamic-badge" 
-                      data-value="{{ $item->badge }}">
-                  </span>
-                </span>
-            @endif
-        </a>
-    @endforeach
-      
-    </nav>
-    <div class="sidebar-foot">
-      <div class="avatar">ل‌م</div>
-      <div class="info"><div class="nm">لیلا منصور</div><div class="rl">منشی ارشد</div></div>
-    </div>
-  </aside>
-
-  <!-- ═══════════ محتوا ═══════════ -->
-  <div class="main">
-    <header class="header">
-      <button class="icon-btn menu-toggle" id="menuToggle" aria-label="منو"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
-      <div class="search">
-        <span class="s-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
-        <input type="search" placeholder="جستجوی بیمار، نوبت، درمان..." aria-label="جستجو">
-      </div>
-      <div class="header-ctx">
-        <div class="header-patient"><div class="hp-name">سوفیا اندرسن</div><div class="hp-status">بیمار انتخاب‌شده</div></div>
-        <button class="icon-btn" id="themeBtn" aria-label="تغییر تم">
-          <svg class="ic-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/></svg>
-          <svg class="ic-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-        </button>
-        <button class="icon-btn" aria-label="اعلان‌ها"><span class="dot"></span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button>
-        <div class="avatar">ل‌م</div>
-      </div>
-    </header>
-
+@section('content')
     <div class="book-wrap">
       <!-- ═══════ ستون اصلی ═══════ -->
       <div class="book-main">
@@ -151,8 +89,14 @@
             </div>
 
             <div class="section-label">درمان</div>
-            <div class="chip-row" id="treatChips"></div>
-
+            <div class="chip-row" id="servicesContainer">
+                @foreach ($services as $service)
+                    <label class="tchip {{ $loop->first ? 'active' : '' }}">
+                        <input type="radio" name="service_id" value="{{ $service->id }}" {{ $loop->first ? 'checked' : '' }} hidden>
+                        {{ $service->name }}
+                    </label>
+                @endforeach
+            </div>
             <div class="dt-grid" style="margin-top:22px">
               <div class="cal">
                 <div class="section-label" style="margin-top:0">تاریخ — تیر ۱۴۰۴</div>
@@ -268,10 +212,8 @@
         </div>
       </div>
     </div>
-  </div>
-</div>
 
-<script src="{{asset(js/booking.js)}}"> </>
-       
-</body>
-</html>
+@endsection
+@section('js')
+<script src="{{ asset('js/clent/booking.js') }}"></script>
+@endsection
