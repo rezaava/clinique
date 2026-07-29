@@ -86,8 +86,8 @@ class AppointmentsController extends Controller
             ->orderBy('appointment_date', 'asc')
             ->orderBy('appointment_time', 'asc')
             ->get();
-
-        return view('appointments.index', compact('appointments', 'confirmedAppointments'));
+        $services = Service::get();
+        return view('Employee.appointments.booking', compact('appointments', 'confirmedAppointments' , 'services'));
     }
 
     /**
