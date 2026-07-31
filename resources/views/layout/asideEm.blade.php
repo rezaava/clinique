@@ -9,12 +9,12 @@
         </div>
 
         <nav class="nav" id="nav"><div class="nav-label">منوی اصلی</div>
-    <a href="#" class="nav-item active" aria-current="page">
+    <a href="/employee" class="nav-item " aria-current="page">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"></path></svg>
       <span>داشبورد</span>
       
     </a>
-    <a href="#" class="nav-item ">
+    <a href="/test" class="nav-item ">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
       <span>بیماران</span>
       

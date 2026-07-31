@@ -324,19 +324,7 @@ const upcoming = [
 ];
 
 /* ═══════════════ رندر ═══════════════ */
-// سایدبار
-document.getElementById("nav").innerHTML =
-    '<div class="nav-label">منوی اصلی</div>' +
-    navItems
-        .map(
-            (i) => `
-    <a href="#" class="nav-item ${i.active ? "active" : ""}" ${i.active ? 'aria-current="page"' : ""}>
-      ${svg(i.id)}
-      <span>${i.label}</span>
-      ${i.badge ? `<span class="nav-badge">${toFa(i.badge)}</span>` : ""}
-    </a>`,
-        )
-        .join("");
+
 
 // کارت آمار
 document.getElementById("statGrid").innerHTML = stats
