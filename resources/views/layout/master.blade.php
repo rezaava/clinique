@@ -124,11 +124,13 @@
         userplus:
           '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/>',
         calendar:
-          '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+          '<rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01"></path>',
         xcircle:
           '<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/>',
         users:
           '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>',
+        tasks:
+          '<path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>'
       };
       const svg = (name, w = 20) =>
         `<svg class="ic" width="${w}" height="${w}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${icons[name]}</svg>`;
@@ -138,6 +140,8 @@
         { id: "dashboard", label: "داشبورد", active: {{ request()->routeIs('employee.index') ? 'true' : 'false' }} , link:"/employee" },
         { id: "patients", label: "بیماران" , active: {{ request()->routeIs('patients.index') ? 'true' : 'false' }} , link:"/patients"},
         { id: "appointments", label: "نوبت‌ها", badge: 3 , active: {{ request()->routeIs('turns.index') ? 'true' : 'false' }} , link:"/turns" },
+        { id: "calendar", label: "تقویم",  active: {{ request()->routeIs('calendars.index') ? 'true' : 'false' }} , link:"/calendars" },
+        { id: "tasks", label: "مرکز وظایف", badge: 8 , active: {{ request()->routeIs('tasks.index') ? 'true' : 'false' }} , link:"/tasks" },
         { id: "treatments", label: "درمان‌ها" , active: {{ request()->routeIs('treatments.index') ? 'true' : 'false' }} , link:"/treatments" },
         { id: "followups", label: "پیگیری‌ها", badge: 7 , active: {{ request()->routeIs('followups.index') ? 'true' : 'false' }} , link:"/followups" },
         { id: "campaigns", label: "کمپین‌ها" , active: {{ request()->routeIs('campaigns.index') ? 'true' : 'false' }} , link:"/campaigns" },
