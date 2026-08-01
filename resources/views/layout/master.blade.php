@@ -18,8 +18,8 @@
         <span class="brand-name">اوراکلینیک</span>
       </div>
 
-      <nav class="nav" id="nav">
-        <!-- آیتم‌ها با جاوااسکریپت ساخته می‌شوند -->
+      <nav class="nav" >
+        @include("layout.asideEm")
       </nav>
 
       <div class="sidebar-foot">
@@ -135,36 +135,6 @@
       const svg = (name, w = 20) =>
         `<svg class="ic" width="${w}" height="${w}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${icons[name]}</svg>`;
 
-      /* ═══════════════ داده‌های نمونه ═══════════════ */
-      const navItems = [
-        { id: "dashboard", label: "داشبورد", active: {{ request()->routeIs('employee.index') ? 'true' : 'false' }} , link:"/employee" },
-        { id: "patients", label: "بیماران" , active: {{ request()->routeIs('patients.index') ? 'true' : 'false' }} , link:"/patients"},
-        { id: "appointments", label: "نوبت‌ها", badge: 3 , active: {{ request()->routeIs('turns.index') ? 'true' : 'false' }} , link:"/turns" },
-        { id: "calendar", label: "تقویم",  active: {{ request()->routeIs('calendars.index') ? 'true' : 'false' }} , link:"/calendars" },
-        { id: "tasks", label: "مرکز وظایف", badge: 8 , active: {{ request()->routeIs('tasks.index') ? 'true' : 'false' }} , link:"/tasks" },
-        { id: "treatments", label: "درمان‌ها" , active: {{ request()->routeIs('treatments.index') ? 'true' : 'false' }} , link:"/treatments" },
-        { id: "followups", label: "پیگیری‌ها", badge: 7 , active: {{ request()->routeIs('followups.index') ? 'true' : 'false' }} , link:"/followups" },
-        { id: "campaigns", label: "کمپین‌ها" , active: {{ request()->routeIs('campaigns.index') ? 'true' : 'false' }} , link:"/campaigns" },
-        { id: "inventory", label: "انبار", badge: 2 , active: {{ request()->routeIs('warehouse.index') ? 'true' : 'false' }} , link:"/warehouse" },
-        { id: "devices", label: "دستگاه‌ها" , active: {{ request()->routeIs('devices.index') ? 'true' : 'false' }} , link:"/devices" },
-        { id: "finance", label: "مالی" , active: {{ request()->routeIs('financial.index') ? 'true' : 'false' }} , link:"/financial" },
-        { id: "reports", label: "گزارش‌ها" , active: {{ request()->routeIs('reports.index') ? 'true' : 'false' }} , link:"/reports" },
-        { id: "settings", label: "تنظیمات" , active: {{ request()->routeIs('settings.index') ? 'true' : 'false' }} , link:"/settings" },
-      ];
-
-      // سایدبار
-document.getElementById("nav").innerHTML =
-    '<div class="nav-label">منوی اصلی</div>' +
-    navItems
-        .map(
-            (i) => `
-    <a href="${i.link }" class="nav-item ${i.active ? "active" : ""}" ${i.active ? 'aria-current="page"' : ""}>
-      ${svg(i.id)}
-      <span>${i.label}</span>
-      ${i.badge ? `<span class="nav-badge">${toFa(i.badge)}</span>` : ""}
-    </a>`,
-        )
-        .join("");
   </script>
   @yield('js')
 </body>
