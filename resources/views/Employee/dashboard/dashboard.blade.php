@@ -15,6 +15,10 @@
 </div>
 @endsection
 
+@section('text-search')
+جستجوی بیمار، نوبت...
+@endsection
+
 @section('subtitle')
  صبح بخیر <span>علی</span> این موارد رو بررسی کن حتما
 @endsection

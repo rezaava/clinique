@@ -14,7 +14,7 @@
         <path d="m21 21-4.3-4.3"></path>
       </svg>
     </span>
-    <input type="search" placeholder="جستجوی بیمار، نوبت..." aria-label="جستجو">
+    <input type="search" placeholder="@yield('text-search')" aria-label="جستجو">
     <span class="kbd">⌘ك</span>
   </div>
   <div class="header-actions">
