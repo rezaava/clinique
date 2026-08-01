@@ -10,9 +10,11 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\Employee\CalendarController;
 use App\Http\Controllers\Employee\CampaignController;
 use App\Http\Controllers\Employee\DashboardController;
+use App\Http\Controllers\Employee\DevicesController;
 use App\Http\Controllers\Employee\FinancialController;
 use App\Http\Controllers\Employee\FollowupController;
 use App\Http\Controllers\Employee\PatientController;
+use App\Http\Controllers\Employee\ReportController;
 use App\Http\Controllers\Employee\SettingController;
 use App\Http\Controllers\Employee\TasksController;
 use App\Http\Controllers\Employee\TreatmentController;
@@ -75,18 +77,18 @@ Route::middleware('auth')->group(function () {
         });
 
         //روت های  بخش دستگاه ها
-        Route::prefix('patients')->group(function () {
-            Route::get('/', [PatientController::class, 'patientIndex'])->name('patient.index');
+        Route::prefix('device')->group(function () {
+            Route::get('/', [DevicesController::class, 'deviceIndex'])->name('device.index');
         });
 
         //روت های  بخش مالی
-        Route::prefix('patients')->group(function () {
-            Route::get('/', [PatientController::class, 'patientIndex'])->name('patient.index');
+        Route::prefix('financial')->group(function () {
+            Route::get('/', [FinancialController::class, 'financialIndex'])->name('financial.index');
         });
 
         //روت های  بخش گزارش ها
-        Route::prefix('financial')->group(function () {
-            Route::get('/', [FinancialController::class, 'financialIndex'])->name('financial.index');
+        Route::prefix('report')->group(function () {
+            Route::get('/', [ReportController::class, 'reportIndex'])->name('report.index');
         });
 
         //روت های  بخش تنظیمات

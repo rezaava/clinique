@@ -18,7 +18,7 @@
         <span class="brand-name">اوراکلینیک</span>
       </div>
 
-      <nav class="nav" >
+      <nav class="nav">
         @include("layout.asideEm")
       </nav>
 
@@ -34,49 +34,18 @@
     <!-- ═══════════ محتوای اصلی ═══════════ -->
     <div class="main">
       @include('layout.header')
-      <!-- هدر -->
-      {{-- <header class="header">
-        <button class="icon-btn menu-toggle" id="menuToggle" aria-label="منو">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round">
-            <path d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-        <div class="date">دوشنبه، <span>۱۷ تیر ۱۴۰۵</span></div>
-        <div class="search">
-          <span class="s-ic">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round">
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.3-4.3" />
-            </svg>
-          </span>
-          <input type="search" placeholder="جستجوی بیمار، نوبت..." aria-label="جستجو" />
-          <span class="kbd">⌘ك</span>
+      <div class="page-head">
+        <div>
+          <h1 class="greeting">@yield('name-page')</h1>
+          <p class="subtitle">
+          @yield('subtitle')
+          </p>
         </div>
-        <div class="header-actions">
-          <button class="icon-btn" id="themeBtn" aria-label="تغییر تم">
-            <svg class="ic-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="4" />
-              <path
-                d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4" />
-            </svg>
-            <svg class="ic-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none">
-              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-            </svg>
-          </button>
-          <button class="icon-btn" aria-label="اعلان‌ها">
-            <span class="dot"></span>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-            </svg>
-          </button>
-          <div class="avatar">ل‌م</div>
+        <div>
+          @yield('btn')
         </div>
-      </header> --}}
+      </div>
+
       @yield('content')
     </div>
   </div>
@@ -135,6 +104,41 @@
       const svg = (name, w = 20) =>
         `<svg class="ic" width="${w}" height="${w}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${icons[name]}</svg>`;
 
+  </script>
+
+  <script>
+    // دارک‌مود
+const html = document.documentElement;
+const themeBtn = document.getElementById("themeBtn");
+const sun = themeBtn.querySelector(".ic-sun");
+const moon = themeBtn.querySelector(".ic-moon");
+let theme = "light";
+function applyTheme(t) {
+    theme = t;
+    html.setAttribute("data-theme", t);
+    sun.style.display = t === "dark" ? "none" : "block";
+    moon.style.display = t === "dark" ? "block" : "none";
+}
+// تشخیص ترجیح سیستم در بار اول
+applyTheme(
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light",
+);
+themeBtn.addEventListener("click", () =>
+    applyTheme(theme === "light" ? "dark" : "light"),
+);
+
+// منوی موبایل
+const menuToggle = document.getElementById("menuToggle");
+const overlay = document.getElementById("overlay");
+menuToggle.addEventListener("click", () => html.classList.toggle("nav-open"));
+overlay.addEventListener("click", () => html.classList.remove("nav-open"));
+document
+    .querySelectorAll(".nav-item")
+    .forEach((n) =>
+        n.addEventListener("click", () => html.classList.remove("nav-open")),
+    );
   </script>
   @yield('js')
 </body>

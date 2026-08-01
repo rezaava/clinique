@@ -503,35 +503,4 @@ document.getElementById("taskList").addEventListener("click", (e) => {
     if (check) check.closest(".task").classList.toggle("done");
 });
 
-// دارک‌مود
-const html = document.documentElement;
-const themeBtn = document.getElementById("themeBtn");
-const sun = themeBtn.querySelector(".ic-sun");
-const moon = themeBtn.querySelector(".ic-moon");
-let theme = "light";
-function applyTheme(t) {
-    theme = t;
-    html.setAttribute("data-theme", t);
-    sun.style.display = t === "dark" ? "none" : "block";
-    moon.style.display = t === "dark" ? "block" : "none";
-}
-// تشخیص ترجیح سیستم در بار اول
-applyTheme(
-    window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light",
-);
-themeBtn.addEventListener("click", () =>
-    applyTheme(theme === "light" ? "dark" : "light"),
-);
 
-// منوی موبایل
-const menuToggle = document.getElementById("menuToggle");
-const overlay = document.getElementById("overlay");
-menuToggle.addEventListener("click", () => html.classList.toggle("nav-open"));
-overlay.addEventListener("click", () => html.classList.remove("nav-open"));
-document
-    .querySelectorAll(".nav-item")
-    .forEach((n) =>
-        n.addEventListener("click", () => html.classList.remove("nav-open")),
-    );

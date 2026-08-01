@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class CampaignController extends Controller
 {
     //
-    public function calendarcampaignIndex(){
+    public function campaignIndex(){
         return view('Employee.campaigns.campaign');
     }
 }

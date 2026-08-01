@@ -3,6 +3,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>@yield('title')</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap  rel="
         stylesheet">
@@ -457,6 +458,14 @@
             cursor: pointer;
         }
 
+        .menu-toggle {
+            display: none;
+        }
+
+        .overlay {
+            display: none;
+        }
+
         @media (max-width: 860px) {
             :root {
                 --sidebar-w: 240px;
@@ -475,9 +484,7 @@
                 margin-inline-start: 0;
             }
 
-            .menu-toggle {
-                display: grid;
-            }
+
 
             html.nav-open .overlay {
                 display: block;
@@ -499,6 +506,68 @@
             .page {
                 padding: 18px;
             }
+
+            .menu-toggle {
+                display: grid;
+            }
+        }
+
+        .page-head {
+            margin-bottom: 24px;
+            margin-top: 24px;
+            padding: 0 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .greeting {
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .greeting .wave {
+            display: inline-block;
+        }
+
+        .subtitle {
+            color: var(--text-2);
+            margin-top: 4px;
+            font-size: 0.96rem;
+        }
+
+        .clinic-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 9px 16px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            position: relative;
+        }
+
+        .live-dot::after {
+            content: "";
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            background: var(--green);
+            opacity: 0.35;
+            animation: pulse 2s ease-out infinite;
         }
     </style>
 
