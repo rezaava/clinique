@@ -95,7 +95,5 @@ Route::middleware('auth')->group(function () {
         Route::prefix('setting')->group(function () {
             Route::get('/', [SettingController::class, 'settingIndex'])->name('setting.index');
         });
-
     });
-
 });

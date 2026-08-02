@@ -1,263 +1,187 @@
 @extends('layout.master')
 
 @section('title')
-اوراکلینیک — تقویم منشی
+    اوراکلینیک — تقویم منشی
 @endsection
 
 @section('name-page')
-تقویم
+    تقویم
 @endsection
+
 @section('head')
-
-<style>
-    .date-nav {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .nav-arrow {
-        width: 34px;
-        height: 34px;
-        border-radius: 9px;
-        display: grid;
-        place-items: center;
-        color: var(--text-2);
-        transition: all .18s ease;
-    }
-
-    .nav-arrow:hover {
-        background: var(--surface-2);
-        color: var(--text);
-    }
-
-    .cur-date {
-        font-weight: 700;
-        font-size: 1rem;
-        white-space: nowrap;
-    }
-
-    .btn-today {
-        padding: 8px 18px;
-        border-radius: 30px;
-        background: var(--brand-soft);
-        color: var(--brand);
-        font-weight: 600;
-        font-size: .88rem;
-    }
-
-    .view-switch {
-        display: flex;
-        background: var(--surface-2);
-        border: 1px solid var(--border);
-        border-radius: 30px;
-        padding: 3px;
-    }
-
-    .vs-btn {
-        padding: 6px 18px;
-        border-radius: 30px;
-        font-weight: 600;
-        font-size: .86rem;
-        color: var(--text-2);
-        transition: all .18s ease;
-    }
-
-    .vs-btn.active {
-        background: var(--surface);
-        color: var(--text);
-        box-shadow: var(--shadow-sm);
-    }
-
-    .filters {
-        display: flex;
-        gap: 8px;
-        margin-inline-start: auto;
-        flex-wrap: wrap;
-    }
-
-    .filter-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        padding: 8px 14px;
-        border-radius: 30px;
-        border: 1px solid var(--border);
-        background: var(--surface);
-        font-size: .86rem;
-        font-weight: 500;
-        color: var(--text-2);
-        transition: all .18s ease;
-        white-space: nowrap;
-    }
-
-    .filter-btn:hover {
-        border-color: var(--border-strong);
-        color: var(--text);
-    }
-
-    .icon-btn {
-        width: 38px;
-        height: 38px;
-        border-radius: 10px;
-        background: var(--surface-2);
-        border: 1px solid var(--border);
-        display: grid;
-        place-items: center;
-        color: var(--text-2);
-        transition: all .18s ease;
-    }
-
-    .icon-btn:hover {
-        background: var(--surface);
-        color: var(--text);
-    }
-
-    /* Responsive Calendar Header */
-
-    .calendar-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap
-    }
-
-    @media(max-width:992px) {
-        .date-nav {
-            width: 100%;
-            justify-content: center;
-            order: 1
-        }
-
-        .btn-today {
-            order: 2
-        }
-
-        .view-switch {
-            order: 3
-        }
-
-        .filters {
-            order: 4;
-            width: 100%;
-            justify-content: center
-        }
-
-        .filter-btn {
-            flex: 1;
-            justify-content: center
-        }
-    }
-
-    @media(max-width:576px) {
-        .date-nav {
-            gap: 5px
-        }
-
-        .cur-date {
-            font-size: .85rem;
-            text-align: center
-        }
-
-        .nav-arrow {
-            width: 32px;
-            height: 32px
-        }
-
-        .btn-today {
-            width: 100%;
-            padding: 9px
-        }
-
-        .view-switch {
-            width: 100%;
-            justify-content: space-between
-        }
-
-        .vs-btn {
-            flex: 1;
-            padding: 8px 10px;
-            font-size: .8rem
-        }
-
-        .filters {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            width: 100%
-        }
-
-        .filter-btn {
-            width: 100%;
-            padding: 9px 10px;
-            justify-content: center;
-            font-size: .8rem
-        }
-
-        .filter-btn svg {
-            width: 12px;
-            height: 12px
-        }
-    }
-
-    @media(max-width:360px) {
-        .filters {
-            grid-template-columns: 1fr
-        }
-
-        .cur-date {
-            font-size: .78rem
-        }
-    }
-</style>
-
+    <link rel="stylesheet" href="{{ asset('css/employee/calendar.css') }}">
 @endsection
 
 @section('text-search')
-جستجو بیمار
+    جستجو بیمار
 @endsection
 
 @section('btn')
-<div class="calendar-header">
-    <div class="date-nav">
-        <button class="nav-arrow" aria-label="روز قبل"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m9 18 6-6-6-6" />
-            </svg></button>
-        <span class="cur-date">سه‌شنبه، ۲۵ دی ۱۴۰۳</span>
-        <button class="nav-arrow" aria-label="روز بعد"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m15 18-6-6 6-6" />
-            </svg></button>
+    <div class="calendar-header">
+        <div class="date-nav">
+            <button class="nav-arrow" aria-label="روز قبل"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6" />
+                </svg></button>
+            <span class="cur-date">سه‌شنبه، ۲۵ دی ۱۴۰۳</span>
+            <button class="nav-arrow" aria-label="روز بعد"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m15 18-6-6 6-6" />
+                </svg></button>
+        </div>
+        <button class="btn-today">امروز</button>
+        <div class="view-switch" id="viewSwitch">
+            <button class="vs-btn">روز</button>
+            <button class="vs-btn active">هفته</button>
+            <button class="vs-btn">ماه</button>
+        </div>
+        <div class="filters">
+            <button class="filter-btn">پزشک<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round">
+                    <path d="m6 9 6 6 6-6" />
+                </svg></button>
+            <button class="filter-btn">درمان<svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="m6 9 6 6 6-6" />
+                </svg></button>
+            <button class="filter-btn">اتاق<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round">
+                    <path d="m6 9 6 6 6-6" />
+                </svg></button>
+            <button class="filter-btn">دستگاه<svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="m6 9 6 6 6-6" />
+                </svg></button>
+        </div>
     </div>
-    <button class="btn-today">امروز</button>
-    <div class="view-switch" id="viewSwitch">
-        <button class="vs-btn">روز</button>
-        <button class="vs-btn active">هفته</button>
-        <button class="vs-btn">ماه</button>
-    </div>
-    <div class="filters">
-        <button class="filter-btn">پزشک<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round">
-                <path d="m6 9 6 6 6-6" />
-            </svg></button>
-        <button class="filter-btn">درمان<svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <path d="m6 9 6 6 6-6" />
-            </svg></button>
-        <button class="filter-btn">اتاق<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round">
-                <path d="m6 9 6 6 6-6" />
-            </svg></button>
-        <button class="filter-btn">دستگاه<svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <path d="m6 9 6 6 6-6" />
-            </svg></button>
-    </div>
-</div>
 @endsection
 
-@section('subtitle')
+@section('content')
+    <div class="cal-body">
+        <!-- ═══════ ستون تقویم ═══════ -->
+        <div class="cal-left">
+            <div class="stat-grid" id="statGrid"></div>
 
+            <div class="cal-card">
+                <div class="cal-scroll">
+                    <div class="cal-inner">
+                        <div class="doc-header" id="docHeader"></div>
+                        <div class="grid-wrap" id="gridWrap"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════ ستون کناری ═══════ -->
+        <div class="rail">
+            <!-- جزئیات نوبت انتخاب‌شده -->
+            <div class="rail-card">
+                <div class="rail-head">
+                    <span class="rail-eyebrow">نوبت انتخاب‌شده</span>
+                    <button class="rail-close" aria-label="بستن"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <path d="M18 6 6 18M6 6l12 12" />
+                        </svg></button>
+                </div>
+                <div class="sel-pt">
+                    <div class="sel-avatar">ا‌د</div>
+                    <div class="sel-info">
+                        <div class="sel-name-row"><span class="sel-name">اِما دیویس</span><span class="vip-chip">★
+                                VIP</span></div>
+                        <div class="sel-meta">۴۸ سال · آخرین: ۸ آبان ۱۴۰۳</div>
+                        <div class="sel-meta">۰۹۱۲ ۷۷۴ ۲۲۰۱</div>
+                    </div>
+                </div>
+                <div class="det-row"><span class="dl">پزشک</span><span class="dv">دکتر سارا چن</span></div>
+                <div class="det-row"><span class="dl">درمان</span><span class="dv">لیزر روسرفیسینگ فرکسل</span></div>
+                <div class="det-row"><span class="dl">اتاق</span><span class="dv">سوئیت لیزر</span></div>
+                <div class="det-row"><span class="dl">دستگاه</span><span class="dv">فرکسل ۱۵۵۰</span></div>
+                <div class="det-row"><span class="dl">زمان</span><span class="dv">۱۰:۳۰ — ۱۲:۰۰</span></div>
+                <div class="det-row"><span class="dl">مدت</span><span class="dv">۹۰ دقیقه</span></div>
+                <div class="det-row"><span class="dl">مبلغ</span><span class="dv">۱۲۰٬۰۰۰٬۰۰۰ ت</span></div>
+                <div class="det-row"><span class="dl">وضعیت</span><span class="dv"><span class="vip-chip">VIP</span></span>
+                </div>
+                <div class="staff-note">
+                    <div class="sn-label">یادداشت پرسنل</div>
+                    <div class="sn-text">VIP طلایی — پاس کامل لیزر، کرم بی‌حسی ۴۵ دقیقه قبل از شروع جلسه اعمال شود</div>
+                </div>
+                <div class="act-row">
+                    <button class="act-btn act-green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 6 9 17l-5-5" />
+                        </svg>پذیرش</button>
+                    <button class="act-btn act-blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <path
+                                d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.4a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z" />
+                        </svg>تماس</button>
+                    <button class="act-btn act-dark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                        </svg>پیام</button>
+                </div>
+                <div class="act-row2">
+                    <button class="act-sm"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8M21 3v5h-5" />
+                        </svg>زمان‌بندی</button>
+                    <button class="act-sm"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="m15 9-6 6M9 9l6 6" />
+                        </svg>لغو</button>
+                    <button class="act-sm"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 6 9 17l-5-5" />
+                        </svg>تکمیل</button>
+                    <button class="act-sm"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z" />
+                        </svg>چاپ</button>
+                </div>
+            </div>
+
+            <!-- بازه‌های آزاد -->
+            <div class="rail-card">
+                <div class="rail-head"><span class="rail-title">بازه‌های آزاد</span><span class="rail-tag">پیشنهاد هوش
+                        مصنوعی</span></div>
+                <div id="freeSlots"></div>
+            </div>
+
+            <!-- افزودن سریع -->
+            <div class="rail-card">
+                <button class="quick-add"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.2" stroke-linecap="round">
+                        <path d="M12 5v14M5 12h14" />
+                    </svg>افزودن سریع نوبت</button>
+            </div>
+
+            <!-- وضعیت منابع -->
+            <div class="rail-card">
+                <div class="rail-head"><span class="rail-title">وضعیت منابع</span></div>
+                <div id="resources"></div>
+                <div class="sub-label">دستگاه‌ها</div>
+                <div id="devices"></div>
+            </div>
+
+            <!-- لیست انتظار -->
+            <div class="rail-card">
+                <div class="rail-head"><span class="rail-title">لیست انتظار</span><span class="rail-tag">۳ بیمار</span>
+                </div>
+                <div id="waitList"></div>
+            </div>
+        </div>
+    </div>
+
+    <button class="fab" aria-label="نوبت جدید">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round">
+            <path d="M12 5v14M5 12h14" />
+        </svg>
+    </button>
+@endsection
+
+@section('js')
+    <script src="{{ asset('js/employee/calendar.js') }}"></script>
 @endsection
