@@ -214,6 +214,7 @@
     </div>
 
 @endsection
+
 @section('js')
 <script src="{{ asset('js/clent/booking.js') }}"></script>
 @endsection
