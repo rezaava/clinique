@@ -84,6 +84,7 @@
             --sidebar-w: 248px;
             --header-h: 72px;
             --gap: 20px;
+            --rail-w:300px;
 
             --font: "Vazirmatn", system-ui, -apple-system, sans-serif;
         }

@@ -11,6 +11,87 @@
 @section('head')
 
 <style>
+    .topbar {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 13px 20px;
+        flex-wrap: wrap;
+    }
+
+    .page-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .hub-badge {
+        background: var(--brand-soft);
+        color: var(--brand);
+        font-size: .78rem;
+        font-weight: 600;
+        padding: 5px 12px;
+        border-radius: 20px;
+        white-space: nowrap;
+    }
+
+    .top-date {
+        color: var(--text-3);
+        font-size: .86rem;
+        white-space: nowrap;
+        border-inline-start: 1px solid var(--border);
+        padding-inline-start: 14px;
+    }
+
+    .search {
+        flex: 1;
+        max-width: 340px;
+        position: relative;
+    }
+
+    .search input {
+        width: 100%;
+        height: 38px;
+        border-radius: var(--r-md);
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        padding: 0 38px 0 14px;
+        font-family: inherit;
+        font-size: .88rem;
+        color: var(--text);
+    }
+
+    .search input:focus {
+        border-color: var(--brand);
+        background: var(--surface);
+        outline: none;
+    }
+
+    .search input::placeholder {
+        color: var(--text-3);
+    }
+
+    .search .s-ic {
+        position: absolute;
+        inset-inline-start: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-3);
+        pointer-events: none;
+    }
+
+    .top-actions {
+        display: flex;
+        gap: 8px;
+        margin-inline-start: auto;
+        flex-wrap: wrap;
+    }
+
     .filter-btn {
         display: inline-flex;
         align-items: center;
@@ -47,6 +128,23 @@
 
     .btn-add:hover {
         filter: brightness(1.08);
+    }
+
+    .icon-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: var(--r-md);
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        display: grid;
+        place-items: center;
+        color: var(--text-2);
+        transition: all .18s ease;
+    }
+
+    .icon-btn:hover {
+        background: var(--surface);
+        color: var(--text);
     }
 
     .body-grid {
@@ -1290,14 +1388,21 @@
 @endsection
 @section('content')
 
+
+
 <div class="body-grid">
     <div class="tc-main">
-
+        <!-- عملکرد امروز -->
         <section>
-          <div class="sec-head"><div><div class="sec-title">عملکرد امروز</div><div class="sec-sub">نمای زنده عملیات</div></div></div>
-          <div class="stat-grid" id="statGrid"></div>
+            <div class="sec-head">
+                <div>
+                    <div class="sec-title">عملکرد امروز</div>
+                    <div class="sec-sub">نمای زنده عملیات</div>
+                </div>
+            </div>
+            <div class="stat-grid" id="statGrid"></div>
         </section>
-        
+
         <!-- اولویت‌های امروز -->
         <section>
             <div class="sec-head">
@@ -1374,7 +1479,8 @@
             </div>
             <div class="analytics-grid">
                 <div class="an-card">
-                    <div class="an-top"><span class="an-title">نرخ تکمیل</span><span class="an-delta">۵٪+</span></div>
+                    <div class="an-top"><span class="an-title">نرخ تکمیل</span><span class="an-delta">۵٪+</span>
+                    </div>
                     <div class="an-val">۷۷٪</div>
                     <div class="an-line" id="compLine"></div>
                 </div>
@@ -1438,17 +1544,13 @@
             <div class="glance-grid" id="glance"></div>
         </div>
     </div>
-</div>
-</div>
-</div>
 
-@endsection
+    @endsection
 
-@section('js')
+    @section('js')
 
-<script>
-
-/* ═══ داده‌ها ═══ */
+    <script>
+        /* ═══ داده‌ها ═══ */
 
 const stats=[
   {icon:'checkcircle',color:'green',delta:'۳+',val:'۲۴',sub:'از ۳۱ مورد امروز',label:'وظایف تکمیل‌شده'},
@@ -1679,6 +1781,6 @@ document.getElementById('kanban').addEventListener('click',e=>{
   setTimeout(()=>{ card.style.opacity=''; },700);
 });
 
-</script>
+    </script>
 
-@endsection
+    @endsection
