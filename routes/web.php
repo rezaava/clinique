@@ -54,6 +54,7 @@ Route::middleware('auth')->group(function () {
         //روت های  بخش مرکز وظایف
         Route::prefix('task')->group(function () {
             Route::get('/', [TasksController::class, 'taskIndex'])->name('task.index');
+            Route::post('/add', [TasksController::class, 'taskAdd']);
         });
 
         //روت های  بخش درمان ها

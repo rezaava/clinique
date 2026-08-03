@@ -9,8 +9,162 @@
 @endsection
 
 @section('head')
+<link rel="stylesheet" href="{{ asset('jpd-datepiker/jpd.css') }}">
 
 <style>
+    :root {
+        --jdp-primary: #6d4aff;
+        --jdp-primary-soft: #f1edff;
+        --jdp-radius: 14px;
+        --jdp-day-radius: 9px;
+        --jdp-text: #2b2b38;
+        --jdp-muted: #9a9aa8;
+        --jdp-width: 250px;
+    }
+
+    .icon-date {
+        position: absolute;
+        top: 225px;
+        left: 30px;
+        transform: translateY(-50%);
+        color: var(--jdp-primary);
+        cursor: pointer;
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    /* =========================================================
+     استایل و اندازه‌ی جعبه‌ی تقویم (jdp-container)
+     ========================================================= */
+    jdp-container {
+        background: var(--bg);
+        font-family: iransans !important;
+        border-radius: var(--jdp-radius) !important;
+        box-shadow: 0 18px 40px rgba(30, 20, 80, .25) !important;
+        padding: .6rem .5rem !important;
+        z-index: 1090 !important;
+        position: fixed !important;
+        top: 498px !important;
+        left: 700px !important;
+        transform: translate(-50%, -50%) !important;
+        max-width: var(--jdp-width) !important;
+        min-width: var(--jdp-width) !important;
+        font-size: 88% !important;
+    }
+
+    jdp-container .jdp-months,
+    jdp-container .jdp-years {
+        color: var(--jdp-text) !important;
+        font-weight: 700;
+        font-size: 100% !important;
+    }
+
+    jdp-container .jdp-icon-plus,
+    jdp-container .jdp-icon-minus {
+        border: none !important;
+        background: var(--surface);
+        border-radius: 8px !important;
+    }
+
+    jdp-container .jdp-icon-plus svg,
+    jdp-container .jdp-icon-minus svg {
+        fill: var(--jdp-primary);
+        height: 1.15rem !important;
+        width: 1.15rem !important;
+        padding: .2rem !important;
+    }
+
+    /* نام روزهای هفته */
+    jdp-container .jdp-day-name {
+        background: transparent !important;
+        color: var(--jdp-muted) !important;
+        font-weight: 700 !important;
+        font-size: 80% !important;
+        height: 24px !important;
+        line-height: 24px !important;
+    }
+
+    jdp-container .jdp-day-name.holly-day {
+        color: #ff5a7a !important;
+    }
+
+    /* هر خانه‌ی روز - کوچیک‌تر از حالت پیش‌فرض */
+    jdp-container .jdp-day {
+        border-radius: var(--jdp-day-radius) !important;
+        font-weight: 500;
+        height: 27px !important;
+        line-height: 27px !important;
+        margin: 1px 0 !important;
+        color: var(--text)!important;
+    }
+
+    jdp-container .jdp-day.holly-day {
+        color: #ff5a7a !important;
+    }
+
+    jdp-container .jdp-day.today {
+        background-color: var(--jdp-primary) !important;
+        color: var(--jdp-primary-soft) !important;
+        border: none !important;
+        font-weight: 700;
+    }
+
+    jdp-container .jdp-day.today:hover {
+        background-color: #4a1ff5 !important;
+        color: var(--jdp-primary-soft) !important;
+    }
+
+    jdp-container .jdp-day:not(.disabled-day):hover {
+        transform: scale(1.01) !important;
+        background: var(--surface) !important;
+        color: var( --jdp-primary) !important;
+    }
+
+    jdp-container .jdp-day.selected {
+        background-color: var(--jdp -primary) !important;
+    }
+
+    jdp-container .jdp-day.not-in-month {
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+
+    jdp-container .jdp-footer {
+        padding: .4rem .4rem 0 !important;
+    }
+
+    jdp-container .jdp-btn-today,
+    jdp-container .jdp-btn-empty {
+        background: var(--jdp-primary) !important;
+        border-radius: 8px !important;
+        font-weight: 600;
+        font-size: 90% !important;
+    }
+
+    jdp-container .jdp-btn-empty {
+        background: var(--surface) !important;
+        color: var(--jdp-primary) !important;
+    }
+
+    jdp-container .jdp-year select,
+    jdp-container .jdp-month select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: none;
+    }
+
+    jdp-container .jdp-month,
+    jdp-container .jdp-month input,
+    jdp-container .jdp-month select,
+    jdp-container .jdp-year,
+    jdp-container .jdp-year input,
+    jdp-container .jdp-year select {
+        border-radius: 8px !important;
+        background: var(--surface);
+        color: var(--text);
+    }
+
     .topbar {
         background: var(--surface);
         border-bottom: 1px solid var(--border);
@@ -1272,6 +1426,10 @@
     }
 
     @media (max-width:860px) {
+        jdp-container {
+            top: 455px !important;
+            left: 318px !important;
+        }   
         .sidebar {
             transform: translateX(100%);
             box-shadow: var(--shadow-lg);
@@ -1334,6 +1492,10 @@
     }
 
     @media (max-width:560px) {
+        jdp-container {
+            top: 455px !important;
+            left: 165px !important;
+        }  
         .stat-grid {
             grid-template-columns: 1fr;
         }
@@ -1355,6 +1517,150 @@
             animation: none !important;
             transition: none !important;
         }
+    }
+
+    /* ===================== مودال ===================== */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, .5);
+        backdrop-filter: blur(2px);
+        z-index: 100;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        opacity: 0;
+        transition: opacity .2s ease;
+    }
+
+    .modal-overlay.open {
+        display: flex;
+        opacity: 1;
+    }
+
+    .modal-box {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--r-lg);
+        box-shadow: var(--shadow-lg);
+        width: 100%;
+        max-width: 420px;
+        transform: translateY(14px) scale(.97);
+        opacity: 0;
+        transition: transform .22s cubic-bezier(.16, 1, .3, 1), opacity .22s ease;
+    }
+
+    .modal-overlay.open .modal-box {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+
+    .modal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .modal-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+    }
+
+    .modal-close {
+        width: 32px;
+        height: 32px;
+        border-radius: var(--r-sm, 8px);
+        display: grid;
+        place-items: center;
+        color: var(--text-2);
+        transition: all .18s ease;
+    }
+
+    .modal-close:hover {
+        background: var(--surface-2);
+        color: var(--text);
+    }
+
+    .modal-body {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .form-group label {
+        font-size: .84rem;
+        font-weight: 600;
+        color: var(--text-2);
+    }
+
+    .form-group input,
+    .form-group select {
+        height: 42px;
+        border-radius: var(--r-md);
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        padding: 0 14px;
+        font-family: inherit;
+        font-size: .9rem;
+        color: var(--text);
+        transition: all .18s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: var(--brand);
+        background: var(--surface);
+    }
+
+    .modal-foot {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 16px 20px;
+        border-top: 1px solid var(--border);
+    }
+
+    .modal-btn {
+        padding: 10px 18px;
+        border-radius: var(--r-md);
+        font-weight: 600;
+        font-size: .88rem;
+        transition: all .18s ease;
+    }
+
+    .modal-btn-ghost {
+        background: var(--surface-2);
+        color: var(--text-2);
+        border: 1px solid var(--border);
+    }
+
+    .modal-btn-ghost:hover {
+        background: var(--border);
+        color: var(--text);
+    }
+
+    .modal-btn-primary {
+        background: var(--brand);
+        color: #fff;
+    }
+
+    .modal-btn-primary:hover {
+        filter: brightness(1.08);
+    }
+
+    body.modal-open {
+        overflow: hidden;
     }
 </style>
 
@@ -1388,6 +1694,57 @@
 @endsection
 @section('content')
 
+<!-- مودال افزودن سریع -->
+<div class="modal-overlay" id="quickAddOverlay">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="quickAddTitle">
+        <div class="modal-head">
+            <h3 class="modal-title" id="quickAddTitle">افزودن سریع</h3>
+            <button class="modal-close" id="quickAddClose" aria-label="بستن">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <form action="/employee/task/add" method="POST">
+            @csrf
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="qaTitle">عنوان وظیفه</label>
+                    <input type="text" name="title" id="qaTitle" placeholder="مثلاً: تماس پیگیری بیمار">
+                </div>
+                <div class="form-group">
+                    <label for="jalaliDateInput" class="form-label fw-semibold">تاریخ مورد نظر را انتخاب کنید</label>
+                    <input type="text" id="jalaliDateInput" data-jdp-only-date placeholder="مثلاً 1403/05/12" autocomplete="off">
+                        <input type="hidden" id="miladi" name="date_task">
+                    <label for="jalaliDateInput" class="icon-date" id="iconDate"><i
+                            class="fa-solid fa-calendar"></i></label>
+                </div>
+
+                <div class="form-group">
+                    <label for="jalaliDateInput" class="form-label fw-semibold">تایم مورد نظر را انتخاب کنید</label>
+                    <input type="text" name="time_task" id="" placeholder="14:30">
+                    
+                </div>
+
+                <div class="form-group">
+                    <label for="qaPriority">اولویت</label>
+                    <select id="qaPriority" name="priority">
+                        <option value="critical">بحرانی</option>
+                        <option value="high">زیاد</option>
+                        <option value="normal" selected>عادی</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="modal-foot">
+                <button class="modal-btn modal-btn-ghost" id="quickAddCancel">انصراف</button>
+                <button type="submit" class="modal-btn modal-btn-primary" id="quickAddSave">ذخیره وظیفه</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 
 <div class="body-grid">
@@ -1548,6 +1905,62 @@
     @endsection
 
     @section('js')
+
+    <script>
+        (function () {
+  const btnAdd    = document.querySelector('.btn-add');
+  const overlay   = document.getElementById('quickAddOverlay');
+  const btnClose  = document.getElementById('quickAddClose');
+  const btnCancel = document.getElementById('quickAddCancel');
+  const btnSave   = document.getElementById('quickAddSave');
+
+  function openModal() {
+    overlay.classList.add('open');
+    document.body.classList.add('modal-open');
+    document.getElementById('qaTitle').focus();
+  }
+
+  function closeModal() {
+    overlay.classList.remove('open');
+    document.body.classList.remove('modal-open');
+  }
+
+  btnAdd?.addEventListener('click', openModal);
+  btnClose?.addEventListener('click', closeModal);
+  btnCancel?.addEventListener('click', closeModal);
+
+  // کلیک روی پس‌زمینه = بستن
+  overlay?.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModal();
+  });
+
+  // بستن با کلید Esc
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+  });
+
+  // ذخیره (نمونه — اینجا می‌تونی fetch/ajax بزنی)
+  btnSave?.addEventListener('click', () => {
+    const title    = document.getElementById('qaTitle').value.trim();
+    const priority = document.getElementById('qaPriority').value;
+    const assign   = document.getElementById('qaAssign').value.trim();
+
+    if (!title) {
+      document.getElementById('qaTitle').focus();
+      return;
+    }
+
+    console.log({ title, priority, assign });
+    // TODO: اینجا با fetch به سرور بفرست
+
+    closeModal();
+    document.getElementById('qaTitle').value = '';
+    document.getElementById('qaAssign').value = '';
+  });
+})();
+    </script>
+
+<script src="{{ asset("jpd-datepiker/jdp.js") }}"></script>
 
     <script>
         /* ═══ داده‌ها ═══ */
@@ -1781,6 +2194,35 @@ document.getElementById('kanban').addEventListener('click',e=>{
   setTimeout(()=>{ card.style.opacity=''; },700);
 });
 
+    </script>
+
+    <script>
+        function toPersianDigits(str) {
+            const faDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+            return String(str).replace(/\d/g, d => faDigits[d]);
+        }
+
+        const input = document.getElementById('jalaliDateInput');
+        const iconDate = document.getElementById('iconDate');
+
+        jalaliDatepicker.startWatch({
+          autoShow: true,
+          autoHide: true,
+          hideAfterChange: true,
+          showTodayBtn: true,
+          showEmptyBtn: true,
+          useDropDownYears: true,
+          persianDigits: true,
+          container: document.body,
+          zIndex: 1090,
+          targetValueInput: "#miladi",
+            targetValueType: "gregorian",
+            time: true,
+            hasSecond: false
+        });
+        console.log(jalaliDatepicker);
+        iconDate.addEventListener('click', () => jalaliDatepicker.show(input));
+    
     </script>
 
     @endsection

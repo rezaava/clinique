@@ -1,0 +1,136 @@
+    :root{
+    /* ---- این چند متغیر، ظاهر کل تقویم رو کنترل می‌کنن ---- */
+    --jdp-primary: #6d4aff;      /* رنگ اصلی (روز انتخاب‌شده، دکمه‌ها) */
+    --jdp-primary-soft: #f1edff; /* رنگ هاور روزها */
+    --jdp-radius: 14px;          /* گردی گوشه‌ی جعبه‌ی تقویم */
+    --jdp-day-radius: 9px;       /* گردی گوشه‌ی هر روز */
+    --jdp-text: #2b2b38;
+    --jdp-muted: #9a9aa8;
+    --jdp-width: 250px;          /* عرض کل جعبه‌ی تقویم - کوچیک‌تر کردنش رو با همین کنترل کن */
+  }
+
+  .icon-date{
+    position: absolute;
+    top: 225px;
+    left: 30px;
+    transform: translateY(-50%);
+    color: var(--jdp-primary);
+    cursor: pointer;
+    font-size: 1.1rem;
+    margin: 0;
+  }
+
+  /* =========================================================
+     استایل و اندازه‌ی جعبه‌ی تقویم (jdp-container)
+     ========================================================= */
+  jdp-container{
+    font-family: iransans!important;
+    border-radius: var(--jdp-radius) !important;
+    border: 1px solid #eeecfb;
+    box-shadow: 0 18px 40px rgba(30,20,80,.25) !important;
+    padding: .6rem .5rem !important;
+    z-index: 1090 !important; /* بالاتر از مودال (1055) و بک‌دراپ (1050) بوت‌استرپ */
+    position: fixed !important;
+    top: 498px!important;
+    left: 458px !important;
+    transform: translate(-50%, -50%) !important;
+    max-width: var(--jdp-width) !important;
+    min-width: var(--jdp-width) !important;
+    font-size: 88% !important;
+  }
+
+  jdp-container .jdp-months,
+  jdp-container .jdp-years{
+    color: var(--jdp-text) !important;
+    font-weight: 700;
+    font-size: 100% !important;
+  }
+  jdp-container .jdp-icon-plus,
+  jdp-container .jdp-icon-minus{
+    border: none !important;
+    background: var(--jdp-primary-soft);
+    border-radius: 8px !important;
+  }
+  jdp-container .jdp-icon-plus svg,
+  jdp-container .jdp-icon-minus svg{
+    fill: var(--jdp-primary);
+    height: 1.15rem !important;
+    width: 1.15rem !important;
+    padding: .2rem !important;
+  }
+
+  /* نام روزهای هفته */
+  jdp-container .jdp-day-name{
+    background: transparent !important;
+    color: var(--jdp-muted) !important;
+    font-weight: 700 !important;
+    font-size: 80% !important;
+    height: 24px !important;
+    line-height: 24px !important;
+  }
+  jdp-container .jdp-day-name.holly-day{
+    color: #ff5a7a !important;
+  }
+
+  /* هر خانه‌ی روز - کوچیک‌تر از حالت پیش‌فرض */
+  jdp-container .jdp-day{
+    border-radius: var(--jdp-day-radius) !important;
+    font-weight: 500;
+    height: 27px !important;
+    line-height: 27px !important;
+    margin: 1px 0 !important;
+  }
+  jdp-container .jdp-day.holly-day{
+    color: #ff5a7a !important;
+  }
+  jdp-container .jdp-day.today{
+    background-color: var(--jdp-primary) !important;
+    color: var(--jdp-primary-soft)!important;
+    border: none!important;
+    font-weight: 700;
+  }
+
+    jdp-container .jdp-day.today:hover{
+        background-color: #4a1ff5 !important;
+        color: var(--jdp-primary-soft)!important;
+    }
+
+    jdp-container .jdp-day:not(.disabled-day):hover{
+      transform: scale(1.01) !important;
+    }
+  jdp-container .jdp-day.selected{
+    background-color: var(--jdp -primary) !important;
+  }
+
+  jdp-container .jdp-day.not-in-month{
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  /* دکمه‌های امروز / پاک کردن */
+  jdp-container .jdp-footer{
+    padding: .4rem .4rem 0 !important;
+  }
+  jdp-container .jdp-btn-today,
+  jdp-container .jdp-btn-empty{
+    background: var(--jdp-primary) !important;
+    border-radius: 8px !important;
+    font-weight: 600;
+    font-size: 90% !important;
+  }
+  jdp-container .jdp-btn-empty{
+    background: #f1eefb !important;
+    color: var(--jdp-primary) !important;
+  }
+
+  jdp-container .jdp-year select,
+  jdp-container .jdp-month select{
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: none;
+  }
+
+   jdp-container .jdp-month, jdp-container .jdp-month input, jdp-container .jdp-month select, jdp-container .jdp-year, jdp-container .jdp-year input, jdp-container .jdp-year select{
+    border-radius: 8px!important;
+   }
