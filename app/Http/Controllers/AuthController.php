@@ -19,7 +19,7 @@ class AuthController extends Controller
     {
         if (Auth::user()) {
             if (Auth::user()->hasRole('employee')) {
-                return redirect()->route('employee.index');
+                return redirect()->route('dashboard.index');
             }
             if (Auth::user()->hasRole('patient')) {
                 return redirect()->route('appointments.create');
@@ -120,7 +120,7 @@ class AuthController extends Controller
             $user->save();
 
             if (Auth::user()->hasRole('employee')) {
-                return redirect()->route('employee.index')->with('success', 'ورود با موفقیت انجام شد');
+                return redirect()->route('dashboard.index')->with('success', 'ورود با موفقیت انجام شد');
             }
         }
 
