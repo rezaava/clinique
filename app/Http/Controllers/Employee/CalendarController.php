@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 class CalendarController extends Controller
 {
     //
-
     public function calendarIndex(){
         return view('Employee.calendar.calendar');
     }
