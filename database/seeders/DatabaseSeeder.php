@@ -6,8 +6,10 @@ use Illuminate\Database\Seeder;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Service;
+use App\Models\Appointment;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
@@ -75,6 +77,39 @@ class DatabaseSeeder extends Seeder
         $doctor->services()->attach($serviceIds);
     }
 
+    /**
+     * Helper function for creating appointments
+     */
+    protected function createAppointment(array $data)
+    {
+        $appointment = new Appointment();
+        $appointment->user_id = $data['user_id'];
+        $appointment->service_id = $data['service_id'];
+        $appointment->assigned_staff_id = $data['assigned_staff_id'] ?? null;
+        $appointment->appointment_date = $data['appointment_date'];
+        $appointment->appointment_time = $data['appointment_time'];
+        $appointment->duration_minutes = $data['duration_minutes'] ?? 30;
+        $appointment->status = $data['status'] ?? 'pending';
+        $appointment->client_notes = $data['client_notes'] ?? null;
+        $appointment->staff_notes = $data['staff_notes'] ?? null;
+        $appointment->amount = $data['amount'] ?? 0;
+        $appointment->payment_status = $data['payment_status'] ?? 'unpaid';
+        $appointment->deposit_amount = $data['deposit_amount'] ?? 0;
+        $appointment->paid_at = $data['paid_at'] ?? null;
+        $appointment->confirmed_at = $data['confirmed_at'] ?? null;
+        $appointment->completed_at = $data['completed_at'] ?? null;
+        $appointment->cancelled_at = $data['cancelled_at'] ?? null;
+        $appointment->cancel_reason = $data['cancel_reason'] ?? null;
+        $appointment->rating = $data['rating'] ?? null;
+        $appointment->staff_rating = $data['staff_rating'] ?? null;
+        $appointment->review = $data['review'] ?? null;
+        $appointment->reviewed_at = $data['reviewed_at'] ?? null;
+        
+        $appointment->save();
+
+        return $appointment;
+    }
+
     public function run()
     {
         // ================ 1) ایجاد نقش‌های سیستم ================
@@ -87,7 +122,7 @@ class DatabaseSeeder extends Seeder
         // ================ 2) ایجاد کاربران نمونه ================
 
         // ادمین
-        $this->createUser([
+        $admin = $this->createUser([
             'first_name' => 'مدیر',
             'last_name' => 'سیستم',
             'phone' => '09120000000',
@@ -98,8 +133,8 @@ class DatabaseSeeder extends Seeder
             'points' => 0,
         ], 'admin');
 
-        // پرسنل
-        $this->createUser([
+        // پرسنل (منشی)
+        $employee = $this->createUser([
             'first_name' => 'پرسنل',
             'last_name' => 'نمونه',
             'phone' => '09120000001',
@@ -110,8 +145,8 @@ class DatabaseSeeder extends Seeder
             'points' => 0,
         ], 'employee');
 
-        // مشتری
-        $this->createUser([
+        // مشتری اول
+        $patient1 = $this->createUser([
             'first_name' => 'مشتری',
             'last_name' => 'نمونه',
             'phone' => '09120000002',
@@ -122,8 +157,44 @@ class DatabaseSeeder extends Seeder
             'points' => 0,
         ], 'patient');
 
+        // مشتری دوم (برای نوبت‌ها)
+        $patient2 = $this->createUser([
+            'first_name' => 'سارا',
+            'last_name' => 'احمدی',
+            'phone' => '09120000007',
+            'email' => 'sara@clinic.com',
+            'password' => 'patient123',
+            'referral_code' => 'PAT002',
+            'status' => 'active',
+            'points' => 10,
+        ], 'patient');
+
+        // مشتری سوم (برای نوبت‌ها)
+        $patient3 = $this->createUser([
+            'first_name' => 'مریم',
+            'last_name' => 'کریمی',
+            'phone' => '09120000008',
+            'email' => 'maryam@clinic.com',
+            'password' => 'patient123',
+            'referral_code' => 'PAT003',
+            'status' => 'active',
+            'points' => 25,
+        ], 'patient');
+
+        // مشتری چهارم (برای نوبت‌ها)
+        $patient4 = $this->createUser([
+            'first_name' => 'علی',
+            'last_name' => 'رضایی',
+            'phone' => '09120000009',
+            'email' => 'ali@clinic.com',
+            'password' => 'patient123',
+            'referral_code' => 'PAT004',
+            'status' => 'active',
+            'points' => 5,
+        ], 'patient');
+
         // تامین‌کننده
-        $this->createUser([
+        $supplier = $this->createUser([
             'first_name' => 'تامین',
             'last_name' => 'کننده',
             'phone' => '09120000003',
@@ -171,7 +242,7 @@ class DatabaseSeeder extends Seeder
 
         // ================ 4) ایجاد ۳ پزشک ================
 
-        // پزشک اول (نمونه)
+        // پزشک اول
         $doctor1 = $this->createUser([
             'first_name' => 'پزشک',
             'last_name' => 'نمونه',
@@ -228,7 +299,194 @@ class DatabaseSeeder extends Seeder
             $service3->id,
         ]);
 
-        // ================ 6) پیام موفقیت ================
+        // ================ 6) ایجاد نوبت‌ها ================
+
+        $today = Carbon::today();
+        $tomorrow = Carbon::tomorrow();
+        $nextWeek = Carbon::today()->addDays(7);
+        $lastWeek = Carbon::today()->subDays(7);
+
+        // نوبت 1: درخواست جدید (pending)
+        $this->createAppointment([
+            'user_id' => $patient2->id,
+            'service_id' => $service1->id,
+            'assigned_staff_id' => null,
+            'appointment_date' => $tomorrow->toDateString(),
+            'appointment_time' => '10:00:00',
+            'duration_minutes' => 30,
+            'status' => 'pending',
+            'client_notes' => 'می‌خواهم درباره جوش‌های صورتم مشورت کنم',
+            'amount' => 250000,
+            'payment_status' => 'unpaid',
+            'deposit_amount' => 0,
+        ]);
+
+        // نوبت 2: درخواست جدید (pending) - سرویس لیزر
+        $this->createAppointment([
+            'user_id' => $patient3->id,
+            'service_id' => $service2->id,
+            'assigned_staff_id' => null,
+            'appointment_date' => $nextWeek->toDateString(),
+            'appointment_time' => '14:30:00',
+            'duration_minutes' => 45,
+            'status' => 'pending',
+            'client_notes' => 'برای لیزر موهای زائد پاها مراجعه می‌کنم',
+            'amount' => 450000,
+            'payment_status' => 'unpaid',
+            'deposit_amount' => 0,
+        ]);
+
+        // نوبت 3: تأیید شده (confirmed) - توسط دکتر1
+        $this->createAppointment([
+            'user_id' => $patient1->id,
+            'service_id' => $service3->id,
+            'assigned_staff_id' => $doctor1->id,
+            'appointment_date' => $today->toDateString(),
+            'appointment_time' => '11:00:00',
+            'duration_minutes' => 60,
+            'status' => 'confirmed',
+            'client_notes' => 'برای تزریق فیلر گونه مراجعه می‌کنم',
+            'staff_notes' => 'تأیید شده توسط دکتر نمونه',
+            'amount' => 650000,
+            'payment_status' => 'partial',
+            'deposit_amount' => 200000,
+            'paid_at' => now()->subHours(2),
+            'confirmed_at' => now()->subHours(3),
+        ]);
+
+        // نوبت 4: در حال انجام (in_progress) - توسط دکتر2
+        $this->createAppointment([
+            'user_id' => $patient2->id,
+            'service_id' => $service2->id,
+            'assigned_staff_id' => $doctor2->id,
+            'appointment_date' => $today->toDateString(),
+            'appointment_time' => '09:30:00',
+            'duration_minutes' => 45,
+            'status' => 'in_progress',
+            'client_notes' => 'جلسه دوم لیزر موهای زائد',
+            'staff_notes' => 'در حال انجام توسط دکتر رضایی',
+            'amount' => 450000,
+            'payment_status' => 'paid',
+            'deposit_amount' => 450000,
+            'paid_at' => now()->subHours(2),
+            'confirmed_at' => now()->subDays(5),
+        ]);
+
+        // نوبت 5: تکمیل شده (completed) - با امتیاز
+        $this->createAppointment([
+            'user_id' => $patient3->id,
+            'service_id' => $service1->id,
+            'assigned_staff_id' => $doctor1->id,
+            'appointment_date' => $lastWeek->toDateString(),
+            'appointment_time' => '13:00:00',
+            'duration_minutes' => 30,
+            'status' => 'completed',
+            'client_notes' => 'مشاوره پوست - درمان آکنه',
+            'staff_notes' => 'خدمت انجام شد. وضعیت پوست خوب است.',
+            'amount' => 250000,
+            'payment_status' => 'paid',
+            'deposit_amount' => 250000,
+            'paid_at' => $lastWeek->addHours(2),
+            'confirmed_at' => $lastWeek->subDays(1),
+            'completed_at' => $lastWeek->addHours(1),
+            'rating' => 5,
+            'staff_rating' => 5,
+            'review' => 'بسیار عالی! دکتر خیلی دقیق و حرفه‌ای بودند.',
+            'reviewed_at' => $lastWeek->addHours(2),
+        ]);
+
+        // نوبت 6: تکمیل شده (completed) - با امتیاز متوسط
+        $this->createAppointment([
+            'user_id' => $patient4->id,
+            'service_id' => $service2->id,
+            'assigned_staff_id' => $doctor3->id,
+            'appointment_date' => $lastWeek->subDays(2)->toDateString(),
+            'appointment_time' => '16:00:00',
+            'duration_minutes' => 45,
+            'status' => 'completed',
+            'client_notes' => 'لیزر موهای زائد زیر بغل',
+            'staff_notes' => 'انجام شد',
+            'amount' => 450000,
+            'payment_status' => 'paid',
+            'deposit_amount' => 450000,
+            'paid_at' => $lastWeek->subDays(2)->addHours(2),
+            'confirmed_at' => $lastWeek->subDays(3),
+            'completed_at' => $lastWeek->subDays(2)->addHours(1),
+            'rating' => 3,
+            'staff_rating' => 4,
+            'review' => 'خوب بود اما نتونستن کامل موها رو بزنن',
+            'reviewed_at' => $lastWeek->subDays(2)->addHours(2),
+        ]);
+
+        // نوبت 7: لغو شده (cancelled)
+        $this->createAppointment([
+            'user_id' => $patient4->id,
+            'service_id' => $service3->id,
+            'assigned_staff_id' => $doctor1->id,
+            'appointment_date' => $today->toDateString(),
+            'appointment_time' => '15:30:00',
+            'duration_minutes' => 60,
+            'status' => 'cancelled',
+            'client_notes' => 'تزریق فیلر لب',
+            'amount' => 650000,
+            'payment_status' => 'unpaid',
+            'deposit_amount' => 0,
+            'cancelled_at' => now()->subDays(1),
+            'cancel_reason' => 'بیمار به دلیل مسائل شخصی لغو کرد',
+        ]);
+
+        // نوبت 8: عدم حضور (no_show)
+        $this->createAppointment([
+            'user_id' => $patient2->id,
+            'service_id' => $service3->id,
+            'assigned_staff_id' => $doctor3->id,
+            'appointment_date' => $lastWeek->addDays(1)->toDateString(),
+            'appointment_time' => '10:30:00',
+            'duration_minutes' => 60,
+            'status' => 'no_show',
+            'client_notes' => 'مشاوره تزریقات',
+            'staff_notes' => 'بیمار حضور پیدا نکرد',
+            'amount' => 650000,
+            'payment_status' => 'unpaid',
+            'deposit_amount' => 0,
+            'confirmed_at' => $lastWeek->subDays(2),
+        ]);
+
+        // نوبت 9: تکمیل شده با بیعانه (deposit)
+        $this->createAppointment([
+            'user_id' => $patient1->id,
+            'service_id' => $service2->id,
+            'assigned_staff_id' => $doctor2->id,
+            'appointment_date' => $tomorrow->addDays(2)->toDateString(),
+            'appointment_time' => '12:00:00',
+            'duration_minutes' => 45,
+            'status' => 'confirmed',
+            'client_notes' => 'جلسه سوم لیزر موهای زائد',
+            'staff_notes' => 'پرداخت بیعانه انجام شده',
+            'amount' => 450000,
+            'payment_status' => 'partial',
+            'deposit_amount' => 150000,
+            'paid_at' => now()->subHours(4),
+            'confirmed_at' => now()->subHours(5),
+        ]);
+
+        // نوبت 10: درخواست جدید با بیعانه
+        $this->createAppointment([
+            'user_id' => $patient3->id,
+            'service_id' => $service1->id,
+            'assigned_staff_id' => null,
+            'appointment_date' => $nextWeek->addDays(3)->toDateString(),
+            'appointment_time' => '09:00:00',
+            'duration_minutes' => 30,
+            'status' => 'pending',
+            'client_notes' => 'مشاوره پوست برای درمان لک‌های صورت',
+            'amount' => 250000,
+            'payment_status' => 'partial',
+            'deposit_amount' => 100000,
+            'paid_at' => now()->subHours(1),
+        ]);
+
+        // ================ 7) پیام موفقیت ================
         $this->command->info('✅ تمام داده‌ها با موفقیت ایجاد شدند.');
         $this->command->info('📌 سرویس‌های ایجاد شده:');
         $this->command->info('   🔹 مشاوره پوست (۲۵۰,۰۰۰ تومان - ۳۰ دقیقه)');
@@ -240,10 +498,22 @@ class DatabaseSeeder extends Seeder
         $this->command->info('   🔹 دکتر رضایی (doctor2@clinic.com): مشاوره پوست + لیزر');
         $this->command->info('   🔹 دکتر کریمی (doctor3@clinic.com): لیزر + فیلر و تزریقات');
         $this->command->info('');
+        $this->command->info('📌 نوبت‌های ایجاد شده (۱۰ نوبت):');
+        $this->command->info('   🔹 ۲ نوبت در انتظار تایید (pending)');
+        $this->command->info('   🔹 ۲ نوبت تأیید شده (confirmed)');
+        $this->command->info('   🔹 ۱ نوبت در حال انجام (in_progress)');
+        $this->command->info('   🔹 ۲ نوبت تکمیل شده (completed) با امتیاز');
+        $this->command->info('   🔹 ۱ نوبت لغو شده (cancelled)');
+        $this->command->info('   🔹 ۱ نوبت عدم حضور (no_show)');
+        $this->command->info('   🔹 ۱ نوبت تأیید شده با بیعانه');
+        $this->command->info('');
         $this->command->info('📌 اطلاعات ورود کاربران:');
         $this->command->info('   🔹 مدیر: admin@clinic.com / admin123');
         $this->command->info('   🔹 پرسنل: employee@clinic.com / employee123');
-        $this->command->info('   🔹 مشتری: patient@clinic.com / patient123');
+        $this->command->info('   🔹 مشتری نمونه: patient@clinic.com / patient123');
+        $this->command->info('   🔹 سارا احمدی: sara@clinic.com / patient123');
+        $this->command->info('   🔹 مریم کریمی: maryam@clinic.com / patient123');
+        $this->command->info('   🔹 علی رضایی: ali@clinic.com / patient123');
         $this->command->info('   🔹 تامین‌کننده: supplier@clinic.com / supplier123');
         $this->command->info('   🔹 پزشک نمونه: doctor@clinic.com / doctor123');
         $this->command->info('   🔹 دکتر رضایی: doctor2@clinic.com / doctor123');
