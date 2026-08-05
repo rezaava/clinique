@@ -49,7 +49,7 @@
       @yield('content')
     </div>
   </div>
-
+<script src="{{ asset('alert/sweetalert2.js') }}"></script>
   <script>
     /* ═══════════════ تبدیل ارقام فارسی ═══════════════ */
       const faDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];

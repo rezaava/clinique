@@ -22,10 +22,23 @@
         --jdp-width: 250px;
     }
 
+    /* --------------------------------------------------------
+       باکس اینپوت تاریخ — همه چیز حالا نسبت به همین باکس
+       جانمایی می‌شود، نه با اعداد ثابت روی صفحه
+       -------------------------------------------------------- */
+    .date-input-wrap {
+        position: relative;
+    }
+
+    .date-input-wrap #jalaliDateInput {
+        padding-inline-end: 38px;
+        width: 100%;
+    }
+
     .icon-date {
         position: absolute;
-        top: 225px;
-        left: 30px;
+        inset-inline-end: 12px;
+        top: 50%;
         transform: translateY(-50%);
         color: var(--jdp-primary);
         cursor: pointer;
@@ -35,6 +48,8 @@
 
     /* =========================================================
      استایل و اندازه‌ی جعبه‌ی تقویم (jdp-container)
+     موقعیت (top/left) دیگر با CSS ثابت نیست و توسط جاوااسکریپت
+     نسبت به موقعیت واقعی اینپوت روی هر سایز صفحه محاسبه می‌شود
      ========================================================= */
     jdp-container {
         background: var(--bg);
@@ -44,11 +59,8 @@
         padding: .6rem .5rem !important;
         z-index: 1090 !important;
         position: fixed !important;
-        top: 498px !important;
-        left: 700px !important;
-        transform: translate(-50%, -50%) !important;
-        max-width: var(--jdp-width) !important;
-        min-width: var(--jdp-width) !important;
+        max-width: min(var(--jdp-width), calc(100vw - 20px)) !important;
+        min-width: min(var(--jdp-width), calc(100vw - 20px)) !important;
         font-size: 88% !important;
     }
 
@@ -84,9 +96,7 @@
         line-height: 24px !important;
     }
 
-    jdp-container .jdp-day-name.holly-day {
-        color: #ff5a7a !important;
-    }
+
 
     /* هر خانه‌ی روز - کوچیک‌تر از حالت پیش‌فرض */
     jdp-container .jdp-day {
@@ -98,8 +108,8 @@
         color: var(--text)!important;
     }
 
-    jdp-container .jdp-day.holly-day {
-        color: #ff5a7a !important;
+    jdp-container .jdp-day-name.holly-day, jdp-container .jdp-day-name.last-week, jdp-container .jdp-day.holly-day, jdp-container .jdp-day.last-week {
+        color: var( --red) !important;
     }
 
     jdp-container .jdp-day.today {
@@ -1426,10 +1436,6 @@
     }
 
     @media (max-width:860px) {
-        jdp-container {
-            top: 455px !important;
-            left: 318px !important;
-        }   
         .sidebar {
             transform: translateX(100%);
             box-shadow: var(--shadow-lg);
@@ -1492,10 +1498,6 @@
     }
 
     @media (max-width:560px) {
-        jdp-container {
-            top: 455px !important;
-            left: 165px !important;
-        }  
         .stat-grid {
             grid-template-columns: 1fr;
         }
@@ -1695,7 +1697,7 @@
 @section('content')
 
 <!-- مودال افزودن سریع -->
-<div class="modal-overlay" id="quickAddOverlay">
+<div class="modal-overlay {{ $errors->any() ? 'open' : '' }}" id="quickAddOverlay">
     <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="quickAddTitle">
         <div class="modal-head">
             <h3 class="modal-title" id="quickAddTitle">افزودن سریع</h3>
@@ -1713,19 +1715,22 @@
                 <div class="form-group">
                     <label for="qaTitle">عنوان وظیفه</label>
                     <input type="text" name="title" id="qaTitle" placeholder="مثلاً: تماس پیگیری بیمار">
+                    @error('title')<small style="color: tomato">! خطا : <span>{{$message}}</span></small>@enderror
                 </div>
                 <div class="form-group">
                     <label for="jalaliDateInput" class="form-label fw-semibold">تاریخ مورد نظر را انتخاب کنید</label>
-                    <input type="text" id="jalaliDateInput" data-jdp-only-date placeholder="مثلاً 1403/05/12" autocomplete="off">
-                        <input type="hidden" id="miladi" name="date_task">
-                    <label for="jalaliDateInput" class="icon-date" id="iconDate"><i
-                            class="fa-solid fa-calendar"></i></label>
+                    <div class="date-input-wrap">
+                        <input type="text" id="jalaliDateInput" data-jdp-only-date placeholder="مثلاً 1403/05/12" autocomplete="off">
+                        <label for="jalaliDateInput" class="icon-date" id="iconDate"><i class="fa-solid fa-calendar"></i></label>
+                    </div>
+                    <input type="hidden" id="miladi" name="date_task">
+                    @error('date_task')<small style="color: tomato">! خطا : <span>{{$message}}</span></small>@enderror
                 </div>
 
                 <div class="form-group">
                     <label for="jalaliDateInput" class="form-label fw-semibold">تایم مورد نظر را انتخاب کنید</label>
                     <input type="text" name="time_task" id="" placeholder="14:30">
-                    
+                    @error('time_task')<small style="color: tomato">! خطا : <span>{{$message}}</span></small>@enderror
                 </div>
 
                 <div class="form-group">
@@ -1735,6 +1740,7 @@
                         <option value="high">زیاد</option>
                         <option value="normal" selected>عادی</option>
                     </select>
+                    @error('priority')<small style="color: tomato">! خطا : <span>{{$message}}</span></small>@enderror
                 </div>
             </div>
             
@@ -1769,7 +1775,291 @@
                 </div>
                 <a href="#" class="sec-link">مشاهده همه ‹</a>
             </div>
-            <div class="kanban" id="kanban"></div>
+            <div class="kanban" id="kanban">
+                <div class="kcol">
+                    <div class="kcol-head k-critical">بحرانی<span class="kcol-count">۳</span></div>
+
+                    <div class="task-card">
+                        <div class="tc-top">
+                            <span class="tc-prio p-critical">بحرانی</span>
+                            <span class="tc-cat">پس از درمان</span>
+                            <span class="tc-time">۰۹:۳۰</span>
+                        </div>
+                        <div class="tc-body">
+                            <span class="tc-avatar" style="background:#7c3aed">ا‌ت</span>
+                            <div class="tc-info"><div class="tc-name">اِما تامپسون</div><div class="tc-desc">تماس بررسی پس از فیلر</div></div>
+                        </div>
+                        <div class="tc-meta">
+                            <span class="tc-price"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>۴۲ م ت</span>
+                            <span class="tc-assign"><span class="aa">د‌پ</span>دکتر پاتل</span>
+                        </div>
+                        <div class="tc-foot">
+                            <button class="tc-done"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>انجام شد</button>
+                            <button class="tc-mini" aria-label="تماس"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
+                            <button class="tc-mini" aria-label="پیام"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
+                            <button class="tc-mini" aria-label="باز کردن"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="tc-top">
+                            <span class="tc-prio p-critical">بحرانی</span>
+                            <span class="tc-cat">نگهداشت</span>
+                            <span class="tc-time">۱۰:۰۰</span>
+                        </div>
+                        <div class="tc-body">
+                            <span class="tc-avatar" style="background:#db2777">س‌ر</span>
+                            <div class="tc-info"><div class="tc-name">سوفیا ریس</div><div class="tc-desc">بازگشت VIP — ۹۰ روز غیرفعال</div></div>
+                        </div>
+                        <div class="tc-meta">
+                            <span class="tc-price"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>۱۲۰ م ت</span>
+                            <span class="tc-assign"><span class="aa">د‌چ</span>دکتر چن</span>
+                        </div>
+                        <div class="tc-foot">
+                            <button class="tc-done"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>انجام شد</button>
+                            <button class="tc-mini" aria-label="تماس"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
+                            <button class="tc-mini" aria-label="پیام"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
+                            <button class="tc-mini" aria-label="باز کردن"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="tc-top">
+                            <span class="tc-prio p-critical">بحرانی</span>
+                            <span class="tc-cat">دستگاه</span>
+                            <span class="tc-time">فوری</span>
+                        </div>
+                        <div class="tc-body">
+                            <span class="tc-avatar" style="background:#dc2626">!</span>
+                            <div class="tc-info"><div class="tc-name">هشدار دستگاه</div><div class="tc-desc">سرویس لیزر شماره ۲ عقب‌افتاده</div></div>
+                        </div>
+                        <div class="tc-meta">
+                            <span class="tc-cat">—</span>
+                            <span class="tc-assign"><span class="aa">ت‌ف</span>تیم فنی</span>
+                        </div>
+                        <div class="tc-foot">
+                            <button class="tc-done"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>انجام شد</button>
+                            <button class="tc-mini" aria-label="تماس"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
+                            <button class="tc-mini" aria-label="پیام"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
+                            <button class="tc-mini" aria-label="باز کردن"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kcol">
+                    <div class="kcol-head k-high">زیاد<span class="kcol-count">۴</span></div>
+
+                    <div class="task-card">
+                        <div class="tc-top">
+                            <span class="tc-prio p-high">زیاد</span>
+                            <span class="tc-cat">درمان</span>
+                            <span class="tc-time">۱۱:۰۰</span>
+                        </div>
+                        <div class="tc-body">
+                            <span class="tc-avatar" style="background:#4f46e5">ع‌ک</span>
+                            <div class="tc-info"><div class="tc-name">عایشه کامارا</div><div class="tc-desc">رزرو جلسه PRP — سوم از سری</div></div>
+                        </div>
+                        <div class="tc-meta">
+                            <span class="tc-price"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>۶۸ م ت</span>
+                            <span class="tc-assign"><span class="aa">د‌چ</span>دکتر چن</span>
+                        </div>
+                        <div class="tc-foot">
+                            <button class="tc-done"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>انجام شد</button>
+                            <button class="tc-mini" aria-label="تماس"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
+                            <button class="tc-mini" aria-label="پیام"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
+                            <button class="tc-mini" aria-label="باز کردن"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="tc-top">
+                            <span class="tc-prio p-high">زیاد</span>
+                            <span class="tc-cat">درآمد</span>
+                            <span class="tc-time">۱۲:۳۰</span>
+                        </div>
+                        <div class="tc-body">
+                            <span class="tc-avatar" style="background:#059669">و‌و</span>
+                            <div class="tc-info"><div class="tc-name">ویکتوریا والش</div><div class="tc-desc">فرصت فروش پکیج مراقبت پوست</div></div>
+                        </div>
+                        <div class="tc-meta">
+                            <span class="tc-price"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>۳۲ م ت</span>
+                            <span class="tc-assign"><span class="aa">پ‌ذ</span>پذیرش</span>
+                        </div>
+                        <div class="tc-foot">
+                            <button class="tc-done"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>انجام شد</button>
+                            <button class="tc-mini" aria-label="تماس"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
+                            <button class="tc-mini" aria-label="پیام"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
+                            <button class="tc-mini" aria-label="باز کردن"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="tc-top">
+                            <span class="tc-prio p-high">زیاد</span>
+                            <span class="tc-cat">پیگیری</span>
+                            <span class="tc-time">۱۴:۰۰</span>
+                        </div>
+                        <div class="tc-body">
+                            <span class="tc-avatar" style="background:#ea580c">ل‌ب</span>
+                            <div class="tc-info"><div class="tc-name">لوکاس بنت</div><div class="tc-desc">تماس پیگیری پس از پیلینگ شیمیایی</div></div>
+                        </div>
+                        <div class="tc-meta">
+                            <span class="tc-price"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>۱۸ م ت</span>
+                            <span class="tc-assign"><span class="aa">پ‌ا</span>پرستار امی</span>
+                        </div>
+                        <div class="tc-foot">
+                            <button class="tc-done"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>انجام شد</button>
+                            <button class="tc-mini" aria-label="تماس"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
+                            <button class="tc-mini" aria-label="پیام"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
+                            <button class="tc-mini" aria-label="باز کردن"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="tc-top">
+                            <span class="tc-prio p-high">زیاد</span>
+                            <span class="tc-cat">رزرو</span>
+                            <span class="tc-time">۱۵:۳۰</span>
+                        </div>
+                        <div class="tc-body">
+                            <span class="tc-avatar" style="background:#0d9488">ر‌ک</span>
+                            <div class="tc-info"><div class="tc-name">راشل کیم</div><div class="tc-desc">زمان‌بندی ترمیم بوتاکس</div></div>
+                        </div>
+                        <div class="tc-meta">
+                            <span class="tc-price"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>۳۵ م ت</span>
+                            <span class="tc-assign"><span class="aa">پ‌ذ</span>پذیرش</span>
+                        </div>
+                        <div class="tc-foot">
+                            <button class="tc-done"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>انجام شد</button>
+                            <button class="tc-mini" aria-label="تماس"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
+                            <button class="tc-mini" aria-label="پیام"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
+                            <button class="tc-mini" aria-label="باز کردن"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kcol">
+                    <div class="kcol-head k-normal">عادی<span class="kcol-count">۳</span></div>
+
+                    <div class="task-card">
+                        <div class="tc-top">
+                            <span class="tc-prio p-normal">عادی</span>
+                            <span class="tc-cat">مشاوره</span>
+                            <span class="tc-time">۱۵:۰۰</span>
+                        </div>
+                        <div class="tc-body">
+                            <span class="tc-avatar" style="background:#7c3aed">م‌ل</span>
+                            <div class="tc-info"><div class="tc-name">مارکوس لی</div><div class="tc-desc">آماده‌سازی مشاوره بیمار جدید</div></div>
+                        </div>
+                        <div class="tc-meta">
+                            <span class="tc-price"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>۲۵ م ت</span>
+                            <span class="tc-assign"><span class="aa">پ‌ذ</span>پذیرش</span>
+                        </div>
+                        <div class="tc-foot">
+                            <button class="tc-done"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>انجام شد</button>
+                            <button class="tc-mini" aria-label="تماس"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
+                            <button class="tc-mini" aria-label="پیام"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
+                            <button class="tc-mini" aria-label="باز کردن"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="tc-top">
+                            <span class="tc-prio p-normal">عادی</span>
+                            <span class="tc-cat">انبار</span>
+                            <span class="tc-time">پایان روز</span>
+                        </div>
+                        <div class="tc-body">
+                            <span class="tc-avatar" style="background:#2563eb">ا‌ن</span>
+                            <div class="tc-info"><div class="tc-name">انبار</div><div class="tc-desc">شارژ ویال بوتاکس — ۱۲ واحد</div></div>
+                        </div>
+                        <div class="tc-meta">
+                            <span class="tc-cat">—</span>
+                            <span class="tc-assign"><span class="aa">م‌ا</span>مدیر انبار</span>
+                        </div>
+                        <div class="tc-foot">
+                            <button class="tc-done"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>انجام شد</button>
+                            <button class="tc-mini" aria-label="تماس"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
+                            <button class="tc-mini" aria-label="پیام"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
+                            <button class="tc-mini" aria-label="باز کردن"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="tc-top">
+                            <span class="tc-prio p-normal">عادی</span>
+                            <span class="tc-cat">کمپین</span>
+                            <span class="tc-time">پایان روز</span>
+                        </div>
+                        <div class="tc-body">
+                            <span class="tc-avatar" style="background:#db2777">ب‌ز</span>
+                            <div class="tc-info"><div class="tc-name">بازاریابی</div><div class="tc-desc">پیگیری کمپین تابستان — ۲۳ سرنخ</div></div>
+                        </div>
+                        <div class="tc-meta">
+                            <span class="tc-price"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>۲۴۰ م ت</span>
+                            <span class="tc-assign"><span class="aa">ب‌ز</span>بازاریابی</span>
+                        </div>
+                        <div class="tc-foot">
+                            <button class="tc-done"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>انجام شد</button>
+                            <button class="tc-mini" aria-label="تماس"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
+                            <button class="tc-mini" aria-label="پیام"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
+                            <button class="tc-mini" aria-label="باز کردن"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kcol">
+                    <div class="kcol-head k-done">تکمیل‌شده<span class="kcol-count">۳</span></div>
+
+                    <div class="task-card">
+                        <div class="tc-top">
+                            <span class="tc-prio p-done">تکمیل‌شده</span>
+                            <span class="tc-cat">داخلی</span>
+                            <span class="tc-time">۰۹:۰۰</span>
+                        </div>
+                        <div class="tc-body">
+                            <span class="tc-avatar" style="background:#059669">ه‌پ</span>
+                            <div class="tc-info"><div class="tc-name">همه پرسنل</div><div class="tc-desc">جلسه صبحگاهی تیم</div></div>
+                        </div>
+                        <div class="tc-meta">
+                            <span class="tc-cat">—</span>
+                            <span class="tc-assign"><span class="aa">م‌د</span>مدیر</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="tc-top">
+                            <span class="tc-prio p-done">تکمیل‌شده</span>
+                            <span class="tc-cat">پس از درمان</span>
+                            <span class="tc-time">۰۹:۳۰</span>
+                        </div>
+                        <div class="tc-body">
+                            <span class="tc-avatar" style="background:#2563eb">ج‌ر</span>
+                            <div class="tc-info"><div class="tc-name">جیمز رودریگز</div><div class="tc-desc">پذیرش هایدرافیشیال و بازخورد</div></div>
+                        </div>
+                        <div class="tc-meta">
+                            <span class="tc-price"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>۲۲ م ت</span>
+                            <span class="tc-assign"><span class="aa">پ‌س</span>پرستار سارا</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="tc-top">
+                            <span class="tc-prio p-done">تکمیل‌شده</span>
+                            <span class="tc-cat">اداری</span>
+                            <span class="tc-time">۱۰:۰۰</span>
+                        </div>
+                        <div class="tc-body">
+                            <span class="tc-avatar" style="background:#0d9488">م‌ا</span>
+                            <div class="tc-info"><div class="tc-name">مالی</div><div class="tc-desc">ارسال گزارش فاکتور ماهانه</div></div>
+                        </div>
+                        <div class="tc-meta">
+                            <span class="tc-cat">—</span>
+                            <span class="tc-assign"><span class="aa">ا‌د</span>اداری</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- پیگیری + AI -->
@@ -1893,7 +2183,43 @@
 
         <div class="rail-card">
             <div class="sub-label">اقدامات سریع</div>
-            <div id="quickActions"></div>
+            <div id="quickActions">
+                <button class="qa-btn qa-blue btn-add">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                    وظیفه جدید
+                    <span class="chev">›</span>
+                </button>
+                <button class="qa-btn qa-green">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    تماس با بیمار
+                    <span class="chev">›</span>
+                </button>
+                <button class="qa-btn qa-purple">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    ارسال پیامک
+                    <span class="chev">›</span>
+                </button>
+                <button class="qa-btn qa-teal">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm5.98 14.02c-.25.71-1.45 1.35-2 1.44-.51.08-1.15.11-1.86-.12-.43-.14-.98-.32-1.69-.63-2.97-1.28-4.91-4.28-5.06-4.48-.15-.2-1.21-1.61-1.21-3.07 0-1.46.77-2.18 1.04-2.48.27-.3.6-.37.8-.37h.57c.18 0 .43-.07.67.51.25.6.85 2.07.92 2.22.07.15.12.33.02.53-.1.2-.15.33-.3.5-.15.18-.31.4-.45.54-.15.15-.3.31-.13.6.17.3.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.36 1.46.3.15.47.13.65-.08.18-.2.75-.87.95-1.17.2-.3.4-.25.67-.15.27.1 1.72.81 2.02.96.3.15.5.23.57.35.08.13.08.7-.17 1.41z"/></svg>
+                    ارسال واتساپ
+                    <span class="chev">›</span>
+                </button>
+                <button class="qa-btn qa-orange">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-6v14l-18-6v-2z"/><path d="M11 16.5l1 4.5a2 2 0 0 1-3.87 1.07L6.5 16.5"/></svg>
+                    ایجاد کمپین
+                    <span class="chev">›</span>
+                </button>
+                <button class="qa-btn qa-indigo">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    رزرو نوبت
+                    <span class="chev">›</span>
+                </button>
+                <button class="qa-btn qa-dark">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                    ثبت پرداخت
+                    <span class="chev">›</span>
+                </button>
+            </div>
         </div>
 
         <div class="rail-card">
@@ -1908,7 +2234,7 @@
 
     <script>
         (function () {
-  const btnAdd    = document.querySelector('.btn-add');
+  const btnAdds    = document.querySelectorAll('.btn-add');
   const overlay   = document.getElementById('quickAddOverlay');
   const btnClose  = document.getElementById('quickAddClose');
   const btnCancel = document.getElementById('quickAddCancel');
@@ -1924,8 +2250,9 @@
     overlay.classList.remove('open');
     document.body.classList.remove('modal-open');
   }
-
-  btnAdd?.addEventListener('click', openModal);
+btnAdds.forEach((btnAdd)=>{
+    btnAdd?.addEventListener('click', openModal);
+})
   btnClose?.addEventListener('click', closeModal);
   btnCancel?.addEventListener('click', closeModal);
 
@@ -1971,29 +2298,6 @@ const stats=[
   {icon:'alert',color:'red',val:'۳',sub:'نیازمند اقدام فوری',label:'وظایف عقب‌افتاده'},
   {icon:'dollar',color:'green',delta:'۲۱ م ت+',val:'۱۲۸ م ت',sub:'از پیگیری‌های امروز',label:'فرصت‌های درآمد'},
   {icon:'star',color:'gold',val:'۵',sub:'نیاز به توجه ویژه',label:'بیماران اولویت بالا'},
-];
-const kanban=[
-  {key:'critical',title:'بحرانی',cls:'k-critical',pcls:'p-critical',count:3,tasks:[
-    {cat:'پس از درمان',time:'۰۹:۳۰',init:'ا‌ت',color:'#7c3aed',name:'اِما تامپسون',desc:'تماس بررسی پس از فیلر',price:'۴۲ م ت',assign:'دکتر پاتل',aa:'د‌پ'},
-    {cat:'نگهداشت',time:'۱۰:۰۰',init:'س‌ر',color:'#db2777',name:'سوفیا ریس',desc:'بازگشت VIP — ۹۰ روز غیرفعال',price:'۱۲۰ م ت',assign:'دکتر چن',aa:'د‌چ'},
-    {cat:'دستگاه',time:'فوری',init:'!',color:'#dc2626',name:'هشدار دستگاه',desc:'سرویس لیزر شماره ۲ عقب‌افتاده',assign:'تیم فنی',aa:'ت‌ف'},
-  ]},
-  {key:'high',title:'زیاد',cls:'k-high',pcls:'p-high',count:4,tasks:[
-    {cat:'درمان',time:'۱۱:۰۰',init:'ع‌ک',color:'#4f46e5',name:'عایشه کامارا',desc:'رزرو جلسه PRP — سوم از سری',price:'۶۸ م ت',assign:'دکتر چن',aa:'د‌چ'},
-    {cat:'درآمد',time:'۱۲:۳۰',init:'و‌و',color:'#059669',name:'ویکتوریا والش',desc:'فرصت فروش پکیج مراقبت پوست',price:'۳۲ م ت',assign:'پذیرش',aa:'پ‌ذ'},
-    {cat:'پیگیری',time:'۱۴:۰۰',init:'ل‌ب',color:'#ea580c',name:'لوکاس بنت',desc:'تماس پیگیری پس از پیلینگ شیمیایی',price:'۱۸ م ت',assign:'پرستار امی',aa:'پ‌ا'},
-    {cat:'رزرو',time:'۱۵:۳۰',init:'ر‌ک',color:'#0d9488',name:'راشل کیم',desc:'زمان‌بندی ترمیم بوتاکس',price:'۳۵ م ت',assign:'پذیرش',aa:'پ‌ذ'},
-  ]},
-  {key:'normal',title:'عادی',cls:'k-normal',pcls:'p-normal',count:3,tasks:[
-    {cat:'مشاوره',time:'۱۵:۰۰',init:'م‌ل',color:'#7c3aed',name:'مارکوس لی',desc:'آماده‌سازی مشاوره بیمار جدید',price:'۲۵ م ت',assign:'پذیرش',aa:'پ‌ذ'},
-    {cat:'انبار',time:'پایان روز',init:'ا‌ن',color:'#2563eb',name:'انبار',desc:'شارژ ویال بوتاکس — ۱۲ واحد',assign:'مدیر انبار',aa:'م‌ا'},
-    {cat:'کمپین',time:'پایان روز',init:'ب‌ز',color:'#db2777',name:'بازاریابی',desc:'پیگیری کمپین تابستان — ۲۳ سرنخ',price:'۲۴۰ م ت',assign:'بازاریابی',aa:'ب‌ز'},
-  ]},
-  {key:'done',title:'تکمیل‌شده',cls:'k-done',pcls:'p-done',count:3,tasks:[
-    {cat:'داخلی',time:'۰۹:۰۰',init:'ه‌پ',color:'#059669',name:'همه پرسنل',desc:'جلسه صبحگاهی تیم',assign:'مدیر',aa:'م‌د',done:true},
-    {cat:'پس از درمان',time:'۰۹:۳۰',init:'ج‌ر',color:'#2563eb',name:'جیمز رودریگز',desc:'پذیرش هایدرافیشیال و بازخورد',price:'۲۲ م ت',assign:'پرستار سارا',aa:'پ‌س',done:true},
-    {cat:'اداری',time:'۱۰:۰۰',init:'م‌ا',color:'#0d9488',name:'مالی',desc:'ارسال گزارش فاکتور ماهانه',assign:'اداری',aa:'ا‌د',done:true},
-  ]},
 ];
 const followUps=[
   {init:'ک‌م',color:'#db2777',name:'کلودیا مورتی',treat:'ترمیم بوتاکس',days:'۲۸',prob:'۸۷٪',pc:'green',price:'۲۸ م ت'},
@@ -2047,15 +2351,6 @@ const alerts=[
   {cls:'gold',icon:'star',txt:'VIP — بدون رزرو فعال',n:'۲'},
   {cls:'red',icon:'xcircle',txt:'نوبت‌های لغوشده',n:'۱'},
 ];
-const quickActions=[
-  {icon:'plus',label:'وظیفه جدید',cls:'qa-blue'},
-  {icon:'phone',label:'تماس با بیمار',cls:'qa-green'},
-  {icon:'sms',label:'ارسال پیامک',cls:'qa-purple'},
-  {icon:'whatsapp',label:'ارسال واتساپ',cls:'qa-teal'},
-  {icon:'megaphone',label:'ایجاد کمپین',cls:'qa-orange'},
-  {icon:'appointments',label:'رزرو نوبت',cls:'qa-indigo'},
-  {icon:'card',label:'ثبت پرداخت',cls:'qa-dark'},
-];
 const glance=[
   {icon:'appointments',cls:'gb-blue',v:'۱۴',l:'نوبت'},
   {icon:'dollar',cls:'gb-green',v:'۸۲ م ت',l:'درآمد'},
@@ -2070,33 +2365,6 @@ document.getElementById('statGrid').innerHTML=stats.map(s=>`
     <div class="stat-val">${s.val}</div>
     <div class="stat-sub">${s.sub}</div>
     <div class="stat-label">${s.label}</div>
-  </div>`).join('');
-
-document.getElementById('kanban').innerHTML=kanban.map(col=>`
-  <div class="kcol">
-    <div class="kcol-head ${col.cls}">${col.title}<span class="kcol-count">${toFa(col.count)}</span></div>
-    ${col.tasks.map(t=>`
-      <div class="task-card">
-        <div class="tc-top">
-          <span class="tc-prio ${col.pcls}">${col.title}</span>
-          <span class="tc-cat">${t.cat}</span>
-          <span class="tc-time">${t.time}</span>
-        </div>
-        <div class="tc-body">
-          <span class="tc-avatar" style="background:${t.color}">${t.init}</span>
-          <div class="tc-info"><div class="tc-name">${t.name}</div><div class="tc-desc">${t.desc}</div></div>
-        </div>
-        <div class="tc-meta">
-          ${t.price?`<span class="tc-price">${svg('dollar',13)}${t.price}</span>`:'<span class="tc-cat">—</span>'}
-          <span class="tc-assign"><span class="aa">${t.aa}</span>${t.assign}</span>
-        </div>
-        ${!t.done?`<div class="tc-foot">
-          <button class="tc-done">${svg('checkcircle',15)}انجام شد</button>
-          <button class="tc-mini" aria-label="تماس">${svg('phone',15)}</button>
-          <button class="tc-mini" aria-label="پیام">${svg('chat',15)}</button>
-          <button class="tc-mini" aria-label="باز کردن">${svg('ext',15)}</button>
-        </div>`:''}
-      </div>`).join('')}
   </div>`).join('');
 
 document.getElementById('followUps').innerHTML=followUps.map(f=>`
@@ -2176,9 +2444,6 @@ document.getElementById('activityFeed').innerHTML=activity.map(a=>`
 document.getElementById('alerts').innerHTML=alerts.map(a=>`
   <div class="alert-row ${a.cls}">${svg(a.icon,17)}<span class="alert-txt">${a.txt}</span><span class="alert-n">${a.n}</span></div>`).join('');
 
-document.getElementById('quickActions').innerHTML=quickActions.map(q=>`
-  <button class="qa-btn ${q.cls}">${svg(q.icon,17)}${q.label}<span class="chev">›</span></button>`).join('');
-
 document.getElementById('glance').innerHTML=glance.map(g=>`
   <div class="glance-box ${g.cls}"><div class="glance-ic">${svg(g.icon,17)}</div><div class="glance-v">${g.v}</div><div class="glance-l">${g.l}</div></div>`).join('');
 
@@ -2222,7 +2487,64 @@ document.getElementById('kanban').addEventListener('click',e=>{
         });
         console.log(jalaliDatepicker);
         iconDate.addEventListener('click', () => jalaliDatepicker.show(input));
-    
+
+        /* ─────────────────────────────────────────────────────────
+           جانمایی پویای تقویم نسبت به موقعیت واقعی اینپوت.
+           قبلاً top/left با عدد ثابت در CSS تنظیم شده بود که فقط
+           در یک سایز خاص صفحه درست می‌ایستاد و در بقیه‌ی سایزها
+           (خصوصاً موبایل) باعث جابه‌جایی/همپوشانی با بقیه‌ی محتوا
+           می‌شد. حالا موقعیت هر بار بر اساس رکت واقعی اینپوت و
+           اندازه‌ی واقعی صفحه محاسبه و روی خود jdp-container ست
+           می‌شود، پس روی هر سایز صفحه‌ای درست کار می‌کند.
+           ───────────────────────────────────────────────────────── */
+        (function () {
+            const margin = 8;
+
+            function positionDatepicker() {
+                const jdp = document.querySelector('jdp-container');
+                if (!jdp || !input) return;
+
+                const rect = input.getBoundingClientRect();
+                const jdpW = jdp.offsetWidth || 250;
+                const jdpH = jdp.offsetHeight || 300;
+
+                let left = rect.left;
+                if (left + jdpW > window.innerWidth - margin) {
+                    left = window.innerWidth - jdpW - margin;
+                }
+                if (left < margin) left = margin;
+
+                let top = rect.bottom + margin;
+                if (top + jdpH > window.innerHeight - margin) {
+                    top = rect.top - jdpH - margin;
+                }
+                if (top < margin) top = margin;
+
+                jdp.style.top = top + 'px';
+                jdp.style.left = left + 'px';
+            }
+
+            function schedulePosition() {
+                // چند بار پشت سر هم صدا می‌زنیم چون jdp-container
+                // ممکن است با کمی تأخیر و بعد از رندر کامل به DOM اضافه/نمایان شود
+                positionDatepicker();
+                requestAnimationFrame(positionDatepicker);
+                setTimeout(positionDatepicker, 60);
+                setTimeout(positionDatepicker, 200);
+            }
+
+            input.addEventListener('focus', schedulePosition);
+            input.addEventListener('click', schedulePosition);
+            iconDate.addEventListener('click', schedulePosition);
+
+            window.addEventListener('resize', positionDatepicker);
+            window.addEventListener('scroll', positionDatepicker, true);
+
+            // برای اطمینان، وقتی jdp-container به DOM اضافه می‌شود هم موقعیتش را تنظیم می‌کنیم
+            const mo = new MutationObserver(schedulePosition);
+            mo.observe(document.body, { childList: true });
+        })();
+
     </script>
 
     @endsection
