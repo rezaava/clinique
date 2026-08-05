@@ -12,7 +12,10 @@ class TasksController extends Controller
 {
     //
     public function taskIndex(){
-        return view('Employee.tasks.task');
+        $criticalTasks = Task::where('priority' , 'critical')->get();
+        $highTasks = Task::where('priority' , 'high')->get();
+        $normalTasks = Task::where('priority' , 'normal')->get();
+        return view('Employee.tasks.task' , compact('criticalTasks' , 'highTasks' , 'normalTasks'));
     }
 
     public function taskAdd(Request $req){

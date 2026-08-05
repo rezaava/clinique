@@ -12,33 +12,28 @@
     <style>
         @font-face {
             font-family: iransans;
-            src: url({{ asset('fonts/IRANSansXFaNum-Regular.woff') }});
-        }
-        /* ===================== فونت وزیرمتن ===================== */
-        @font-face {
-            font-family: "Vazirmatn";
-            src: url("https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Regular.woff2") format("woff2");
+            src: url("{{ asset('fonts/IRANSansXFaNum-Regular.woff') }}") format('woff');
             font-weight: 400;
             font-display: swap;
         }
 
         @font-face {
-            font-family: "Vazirmatn";
-            src: url("https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Medium.woff2") format("woff2");
+            font-family: iransans;
+            src: url("{{ asset('fonts/IRANSansXFaNum-Medium.woff') }}") format('woff');
             font-weight: 500;
             font-display: swap;
         }
 
         @font-face {
-            font-family: "Vazirmatn";
-            src: url("https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-SemiBold.woff2") format("woff2");
+            font-family: iransans;
+            src: url("{{ asset('fonts/IRANSansXFaNum-DemiBold.woff') }}") format('woff');
             font-weight: 600;
             font-display: swap;
         }
 
         @font-face {
-            font-family: "Vazirmatn";
-            src: url("https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Bold.woff2") format("woff2");
+            font-family: iransans;
+            src: url("{{ asset('fonts/IRANSansXFaNum-Bold.woff') }}") format('woff');
             font-weight: 700;
             font-display: swap;
         }
@@ -90,7 +85,7 @@
             --gap: 20px;
             --rail-w:300px;
 
-            --font: "Vazirmatn", system-ui, -apple-system, sans-serif;
+            --font: iransans;
         }
 
         /* ===================== دارک‌مود ===================== */
