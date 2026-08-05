@@ -1772,7 +1772,7 @@
             <div class="sec-head">
                 <div>
                     <div class="sec-title">اولویت‌های امروز</div>
-                    <div class="sec-sub">تخته وظایف — برای تغییر وضعیت بکشید</div>
+                    <div class="sec-sub">تخته وظایف — برای تغییر وضعیت انجام شد را بزنید</div>
                 </div>
                 <a href="#" class="sec-link">مشاهده همه ‹</a>
             </div>
@@ -2144,7 +2144,7 @@ btnAdds.forEach((btnAdd)=>{
         /* ═══ داده‌ها ═══ */
 
 const stats=[
-  {icon:'checkcircle',color:'green',delta:'۳+',val:'۲۴',sub:'از ۳۱ مورد امروز',label:'وظایف تکمیل‌شده'},
+  {icon:'checkcircle',color:'green',delta:'۳+',val:'{{ $doneTasks->count() }}',sub:'از {{ $tasks->count() }} مورد امروز',label:'وظایف تکمیل‌شده'},
   {icon:'clock',color:'brand',val:'۷',sub:'۳ مورد تا قبل از ۱۴:۰۰',label:'وظایف در انتظار'},
   {icon:'alert',color:'red',val:'۳',sub:'نیازمند اقدام فوری',label:'وظایف عقب‌افتاده'},
   {icon:'dollar',color:'green',delta:'۲۱ م ت+',val:'۱۲۸ م ت',sub:'از پیگیری‌های امروز',label:'فرصت‌های درآمد'},

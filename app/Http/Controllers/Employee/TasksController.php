@@ -12,11 +12,12 @@ class TasksController extends Controller
 {
     //
     public function taskIndex(){
+        $tasks = Task::whereDate('date_task', today())->get();
         $criticalTasks = Task::where('priority' , 'critical')->whereDate('date_task', today())->get();
         $highTasks = Task::where('priority' , 'high')->whereDate('date_task', today())->get();
         $normalTasks = Task::where('priority' , 'normal')->whereDate('date_task', today())->get();
         $doneTasks = Task::where('priority' , 'done')->whereDate('date_task', today())->orderBy('time_task' , 'asc')->get();
-        return view('Employee.tasks.task' , compact('criticalTasks' , 'highTasks' , 'normalTasks' , 'doneTasks'));
+        return view('Employee.tasks.task' , compact('criticalTasks' , 'highTasks' , 'normalTasks' , 'doneTasks' , 'tasks'));
     }
 
     public function updateTask($id){
