@@ -55,6 +55,7 @@ Route::middleware('auth')->group(function () {
         Route::prefix('task')->group(function () {
             Route::get('/', [TasksController::class, 'taskIndex'])->name('task.index');
             Route::post('/add', [TasksController::class, 'taskAdd']);
+            Route::get('/done/{id}', [TasksController::class, 'updateTask']);
         });
 
         //روت های  بخش درمان ها

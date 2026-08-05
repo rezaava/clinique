@@ -643,7 +643,7 @@
         background: var(--green-soft);
         color: var(--green);
         font-weight: 600;
-        font-size: .80rem;
+        font-size: .70rem;
         padding: 8px;
         border-radius: var(--r-sm);
         transition: filter .18s ease;
@@ -1778,26 +1778,26 @@
             </div>
             <div class="kanban" id="kanban">
                 <div class="kcol">
-                    <div class="kcol-head k-critical">بحرانی<span class="kcol-count">۳</span></div>
+                    <div class="kcol-head k-critical">بحرانی<span class="kcol-count">{{$criticalTasks->count()}}</span></div>
 
                     @if($criticalTasks->count() > 0)
                         @foreach($criticalTasks as $task)
                             <div class="task-card">
                                 <div class="tc-top">
-                                    <span class="tc-prio p-critical">بحرانی</span>
+                                    <span class="tc-prio {{ $task->priority ? "p-critical" : "" }}">{{ $task->priority ? "بحرانی" : "" }}</span>
                                     <span class="tc-cat">پس از درمان</span>
                                     <span class="tc-time">{{$task->time_task}}</span>
                                 </div>
                                 <div class="tc-body">
                                     <span class="tc-avatar" style="background:#7c3aed">ا‌ت</span>
-                                    <div class="tc-info"><div class="tc-name">اِما تامپسون</div><div class="tc-desc">تماس بررسی پس از فیلر</div></div>
+                                    <div class="tc-info"><div class="tc-name">اِما تامپسون</div><div class="tc-desc">{{$task->title}}</div></div>
                                 </div>
                                 <div class="tc-meta">
                                     <span class="tc-price"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>۴۲ م ت</span>
                                     <span class="tc-assign"><span class="aa">د‌پ</span>دکتر پاتل</span>
                                 </div>
                                 <div class="tc-foot">
-                                    <button class="tc-done"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>انجام شد</button>
+                                    <a href="/employee/task/done/{{ $task->id }}" class="tc-done"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>انجام شد</a>
                                     <button class="tc-mini" aria-label="تماس"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
                                     <button class="tc-mini" aria-label="پیام"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
                                     <button class="tc-mini" aria-label="باز کردن"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
@@ -1810,81 +1810,104 @@
                         </div>
                     @endif
 
+                </div>
+
+                <div class="kcol">
+                    <div class="kcol-head k-high">زیاد<span class="kcol-count">{{$highTasks->count()}}</span></div>
+
+                    @if($highTasks->count() > 0)
+                        @foreach($highTasks as $task)
+                            <div class="task-card">
+                                <div class="tc-top">
+                                    <span class="tc-prio {{ $task->priority ? "p-high" : "" }}">{{ $task->priority ? "زیاد" : "" }}</span>
+                                    <span class="tc-cat">پس از درمان</span>
+                                    <span class="tc-time">{{$task->time_task}}</span>
+                                </div>
+                                <div class="tc-body">
+                                    <span class="tc-avatar" style="background:#7c3aed">ا‌ت</span>
+                                    <div class="tc-info"><div class="tc-name">اِما تامپسون</div><div class="tc-desc">{{$task->title}}</div></div>
+                                </div>
+                                <div class="tc-meta">
+                                    <span class="tc-price"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>۴۲ م ت</span>
+                                    <span class="tc-assign"><span class="aa">د‌پ</span>دکتر پاتل</span>
+                                </div>
+                                <div class="tc-foot">
+                                    <a href="/employee/task/done/{{ $task->id }}" class="tc-done"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>انجام شد</a>
+                                    <button class="tc-mini" aria-label="تماس"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
+                                    <button class="tc-mini" aria-label="پیام"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
+                                    <button class="tc-mini" aria-label="باز کردن"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        <div class="task-card">
+                            <p style="font-size: 0.80rem">وظیفه ای وجود نداره </p>
+                        </div>
+                    @endif
 
                 </div>
 
                 <div class="kcol">
-                    <div class="kcol-head k-high">زیاد<span class="kcol-count">۴</span></div>
+                    <div class="kcol-head k-normal">عادی<span class="kcol-count">{{$normalTasks->count()}}</span></div>
 
-                    <div class="task-card">
-                        <div class="tc-top">
-                            <span class="tc-prio p-high">زیاد</span>
-                            <span class="tc-cat">درمان</span>
-                            <span class="tc-time">۱۱:۰۰</span>
+                    @if($normalTasks->count() > 0)
+                        @foreach($normalTasks as $task)
+                            <div class="task-card">
+                                <div class="tc-top">
+                                    <span class="tc-prio {{ $task->priority ? "p-normal" : "" }}">{{ $task->priority ? "عادی" : "" }}</span>
+                                    <span class="tc-cat">پس از درمان</span>
+                                    <span class="tc-time">{{$task->time_task}}</span>
+                                </div>
+                                <div class="tc-body">
+                                    <span class="tc-avatar" style="background:#7c3aed">ا‌ت</span>
+                                    <div class="tc-info"><div class="tc-name">اِما تامپسون</div><div class="tc-desc">{{$task->title}}</div></div>
+                                </div>
+                                <div class="tc-meta">
+                                    <span class="tc-price"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>۴۲ م ت</span>
+                                    <span class="tc-assign"><span class="aa">د‌پ</span>دکتر پاتل</span>
+                                </div>
+                                <div class="tc-foot">
+                                    <a href="/employee/task/done/{{ $task->id }}" class="tc-done"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>انجام شد</a>
+                                    <button class="tc-mini" aria-label="تماس"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
+                                    <button class="tc-mini" aria-label="پیام"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
+                                    <button class="tc-mini" aria-label="باز کردن"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        <div class="task-card">
+                            <p style="font-size: 0.80rem">وظیفه ای وجود نداره </p>
                         </div>
-                        <div class="tc-body">
-                            <span class="tc-avatar" style="background:#4f46e5">ع‌ک</span>
-                            <div class="tc-info"><div class="tc-name">عایشه کامارا</div><div class="tc-desc">رزرو جلسه PRP — سوم از سری</div></div>
-                        </div>
-                        <div class="tc-meta">
-                            <span class="tc-price"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>۶۸ م ت</span>
-                            <span class="tc-assign"><span class="aa">د‌چ</span>دکتر چن</span>
-                        </div>
-                        <div class="tc-foot">
-                            <button class="tc-done"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>انجام شد</button>
-                            <button class="tc-mini" aria-label="تماس"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
-                            <button class="tc-mini" aria-label="پیام"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
-                            <button class="tc-mini" aria-label="باز کردن"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="kcol">
-                    <div class="kcol-head k-normal">عادی<span class="kcol-count">۳</span></div>
-
-                    <div class="task-card">
-                        <div class="tc-top">
-                            <span class="tc-prio p-normal">عادی</span>
-                            <span class="tc-cat">مشاوره</span>
-                            <span class="tc-time">۱۵:۰۰</span>
-                        </div>
-                        <div class="tc-body">
-                            <span class="tc-avatar" style="background:#7c3aed">م‌ل</span>
-                            <div class="tc-info"><div class="tc-name">مارکوس لی</div><div class="tc-desc">آماده‌سازی مشاوره بیمار جدید</div></div>
-                        </div>
-                        <div class="tc-meta">
-                            <span class="tc-price"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>۲۵ م ت</span>
-                            <span class="tc-assign"><span class="aa">پ‌ذ</span>پذیرش</span>
-                        </div>
-                        <div class="tc-foot">
-                            <button class="tc-done"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>انجام شد</button>
-                            <button class="tc-mini" aria-label="تماس"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
-                            <button class="tc-mini" aria-label="پیام"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
-                            <button class="tc-mini" aria-label="باز کردن"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
-                        </div>
-                    </div>
+                    @endif
 
                 </div>
 
                 <div class="kcol">
-                    <div class="kcol-head k-done">تکمیل‌شده<span class="kcol-count">۳</span></div>
+                    <div class="kcol-head k-done">تکمیل‌شده<span class="kcol-count">{{$doneTasks->count()}}</span></div>
 
-                    <div class="task-card">
-                        <div class="tc-top">
-                            <span class="tc-prio p-done">تکمیل‌شده</span>
-                            <span class="tc-cat">داخلی</span>
-                            <span class="tc-time">۰۹:۰۰</span>
+                    @if($doneTasks->count() > 0)
+                        @foreach($doneTasks as $task)
+                            <div class="task-card">
+                                <div class="tc-top">
+                                    <span class="tc-prio {{ $task->priority ? "p-done" : "" }}">{{ $task->priority ? "تکمیل شده" : "" }}</span>
+                                    <span class="tc-cat">پس از درمان</span>
+                                    <span class="tc-time">{{$task->time_task}}</span>
+                                </div>
+                                <div class="tc-body">
+                                    <span class="tc-avatar" style="background:#7c3aed">ا‌ت</span>
+                                    <div class="tc-info"><div class="tc-name">اِما تامپسون</div><div class="tc-desc">{{$task->title}}</div></div>
+                                </div>
+                                <div class="tc-meta">
+                                    <span class="tc-price"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>۴۲ م ت</span>
+                                    <span class="tc-assign"><span class="aa">د‌پ</span>دکتر پاتل</span>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        <div class="task-card">
+                            <p style="font-size: 0.80rem">وظیفه ای وجود نداره </p>
                         </div>
-                        <div class="tc-body">
-                            <span class="tc-avatar" style="background:#059669">ه‌پ</span>
-                            <div class="tc-info"><div class="tc-name">همه پرسنل</div><div class="tc-desc">جلسه صبحگاهی تیم</div></div>
-                        </div>
-                        <div class="tc-meta">
-                            <span class="tc-cat">—</span>
-                            <span class="tc-assign"><span class="aa">م‌د</span>مدیر</span>
-                        </div>
-                    </div>
+                    @endif
 
                 </div>
             </div>

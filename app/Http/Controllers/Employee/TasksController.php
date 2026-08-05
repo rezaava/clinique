@@ -12,10 +12,20 @@ class TasksController extends Controller
 {
     //
     public function taskIndex(){
-        $criticalTasks = Task::where('priority' , 'critical')->get();
-        $highTasks = Task::where('priority' , 'high')->get();
-        $normalTasks = Task::where('priority' , 'normal')->get();
-        return view('Employee.tasks.task' , compact('criticalTasks' , 'highTasks' , 'normalTasks'));
+        $criticalTasks = Task::where('priority' , 'critical')->whereDate('date_task', today())->get();
+        $highTasks = Task::where('priority' , 'high')->whereDate('date_task', today())->get();
+        $normalTasks = Task::where('priority' , 'normal')->whereDate('date_task', today())->get();
+        $doneTasks = Task::where('priority' , 'done')->whereDate('date_task', today())->orderBy('time_task' , 'asc')->get();
+        return view('Employee.tasks.task' , compact('criticalTasks' , 'highTasks' , 'normalTasks' , 'doneTasks'));
+    }
+
+    public function updateTask($id){
+        $task = Task::where('id' , $id)->first();
+
+        $task->priority = "done";
+        $task->save();
+
+        return redirect()->back()->with('success' , 'وضعیت وظیفه به تکمیل شده تبدیل شد');
     }
 
     public function taskAdd(Request $req){
@@ -30,12 +40,12 @@ class TasksController extends Controller
         ];
 
         $messages = [
-            'title.required'   => 'لطفا عنوان تسک  را وارد کنید.',
-            'date_task.required'   => 'لطفا تاریخ انجام تسک را وارد کنید.',
-            'date_task.date_format'   => 'لطفا تاریخ انجام تسک را درست وارد کنید  نمونه 1405/02/01   .',
-            'time_task.required'   => 'لطفا زمان انجام تسک را وارد کنید.',
-            'time_task.date_format'   => 'لطفا زمان انجام تسک را مانند نمونه وارد کنید 08:00 یا 14:00.',
-            'priority.required'   => 'لطفا اولویت انجام تسک را مشخص کنید.',
+            'title.required'   => 'لطفا عنوان وظیفه  را وارد کنید.',
+            'date_task.required'   => 'لطفا تاریخ انجام وظیفه را وارد کنید.',
+            'date_task.date_format'   => 'لطفا تاریخ انجام وظیفه را درست وارد کنید  نمونه 1405/02/01   .',
+            'time_task.required'   => 'لطفا زمان انجام وظیفه را وارد کنید.',
+            'time_task.date_format'   => 'لطفا زمان انجام وظیفه را مانند نمونه وارد کنید 08:00 یا 14:00.',
+            'priority.required'   => 'لطفا اولویت انجام وظیفه را مشخص کنید.',
         
         ];
 
@@ -54,6 +64,6 @@ class TasksController extends Controller
         $task->status = 0;
         $task->user_id = Auth::user()->id;
         $task->save();
-        return redirect()->back()->with('success' , 'افزودن تسک با موفقیت انجام شد.');
+        return redirect()->back()->with('success' , 'افزودن وظیفه با موفقیت انجام شد.');
     }
 }
