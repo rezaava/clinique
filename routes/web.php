@@ -38,7 +38,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // ================ Protected Routes (Authenticated) ================
 Route::middleware('auth')->group(function () {
 
-    Route::prefix('employee')->name('employee.')->group(function () {
+    Route::prefix('employee')->name('employee.')->middleware('role:employee')->group(function () {
         Route::get('/', [DashboardController::class, 'dashboardIndex'])->name('dashboard.index');
 
         //روت های  بخش بیماران
@@ -105,7 +105,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // بخشش های مربوط به ادمین
-    Route::prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
         Route::get('/', [AdDashboardController::class, 'dashboardIndex'])->name('dashboardAd.index');
 
         //روت های  بخش بیماران
