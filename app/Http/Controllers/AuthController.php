@@ -21,8 +21,11 @@ class AuthController extends Controller
             if (Auth::user()->hasRole('employee')) {
                 return redirect()->route('dashboard.index');
             }
-            if (Auth::user()->hasRole('patient')) {
+            elseif (Auth::user()->hasRole('patient')) {
                 return redirect()->route('appointments.create');
+            }
+            elseif (Auth::user()->hasRole('admin')) {
+                return redirect()->route('admin.dashboard.index');
             }
         }
         return view('auth.login');

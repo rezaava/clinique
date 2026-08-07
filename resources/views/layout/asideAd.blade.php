@@ -11,8 +11,8 @@
 
   <nav class="nav" id="nav">
     <div class="nav-label">منوی اصلی</div>
-    <a href="{{ route('employee.dashboard.index') }}"
-      class="nav-item {{ request()->routeIs('employee.dashboard.index') ? 'active' : '' }}" aria-current="page">
+    <a href="{{ route('admin.dashboard.index') }}"
+      class="nav-item {{ request()->routeIs('admin.dashboard.index') ? 'active' : '' }}" aria-current="page">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"></path>
@@ -20,7 +20,7 @@
       <span>داشبورد</span>
 
     </a>
-    <a href="{{ route('employee.patient.index') }}" class="nav-item {{ request()->routeIs('employee.patient.index') ? 'active' : '' }}">
+    <a href="{{ route('admin.patient.index') }}" class="nav-item {{ request()->routeIs('admin.patient.index') ? 'active' : '' }}">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -30,7 +30,7 @@
       <span>بیماران</span>
 
     </a>
-    <a href="{{ route('employee.turn.index') }}" class="nav-item {{ request()->routeIs('employee.turn.index') ? 'active' : '' }}">
+    <a href="{{ route('admin.turn.index') }}" class="nav-item {{ request()->routeIs('admin.turn.index') ? 'active' : '' }}">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <rect x="3" y="4" width="18" height="18" rx="2"></rect>
@@ -40,7 +40,7 @@
       <span class="nav-badge">۳</span>
     </a>
 
-    <a href="{{ route('employee.calendar.index') }}" class="nav-item {{ request()->routeIs('employee.calendar.index') ? 'active' : '' }}">
+    <a href="{{ route('admin.calendar.index') }}" class="nav-item {{ request()->routeIs('admin.calendar.index') ? 'active' : '' }}">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"></path>
@@ -50,7 +50,7 @@
       <span class="nav-badge">۳</span>
     </a>
 
-    <a href="{{ route('employee.task.index') }}" class="nav-item {{ request()->routeIs('employee.task.index') ? 'active' : '' }}">
+    <a href="{{ route('admin.task.index') }}" class="nav-item {{ request()->routeIs('admin.task.index') ? 'active' : '' }}">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <rect x="3" y="4" width="18" height="18" rx="2"></rect>
@@ -60,23 +60,7 @@
       <span>مرکز وظایف</span>
       <span class="nav-badge">۸</span>
     </a>
-    <a href="{{ route('employee.treatment.index') }}" class="nav-item {{ request()->routeIs('employee.treatment.index') ? 'active' : '' }}">
-      <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-        stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"></path>
-      </svg>
-      <span>درمان‌ها</span>
-
-    </a>
-    <a href="{{ route('employee.followup.index') }}" class="nav-item {{ request()->routeIs('employee.followup.index') ? 'active' : '' }}">
-      <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-        stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-      </svg>
-      <span>پیگیری‌ها</span>
-      <span class="nav-badge">۷</span>
-    </a>
-    <a href="{{ route('employee.campaign.index') }}" class="nav-item {{ request()->routeIs('employee.campaign.index') ? 'active' : '' }}">
+    <a href="{{ route('admin.campaign.index') }}" class="nav-item {{ request()->routeIs('admin.campaign.index') ? 'active' : '' }}">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <path d="m22 2-7 20-4-9-9-4Z"></path>
@@ -85,7 +69,7 @@
       <span>کمپین‌ها</span>
 
     </a>
-    <a href="{{ route('employee.warehouse.index') }}" class="nav-item {{ request()->routeIs('employee.warehouse.index') ? 'active' : '' }}">
+    <a href="{{ route('admin.warehouse.index') }}" class="nav-item {{ request()->routeIs('admin.warehouse.index') ? 'active' : '' }}">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <path
@@ -96,7 +80,7 @@
       <span>انبار</span>
       <span class="nav-badge">۲</span>
     </a>
-    <a href="{{ route('employee.device.index') }}" class="nav-item {{ request()->routeIs('employee.device.index') ? 'active' : '' }}">
+    <a href="{{ route('admin.device.index') }}" class="nav-item {{ request()->routeIs('admin.device.index') ? 'active' : '' }}">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <rect x="4" y="4" width="16" height="16" rx="2"></rect>
@@ -106,7 +90,7 @@
       <span>دستگاه‌ها</span>
 
     </a>
-    <a href="{{ route('employee.financial.index') }}" class="nav-item {{ request()->routeIs('employee.financial.index') ? 'active' : '' }}">
+    <a href="{{ route('admin.financial.index') }}" class="nav-item {{ request()->routeIs('admin.financial.index') ? 'active' : '' }}">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
@@ -114,7 +98,7 @@
       <span>مالی</span>
 
     </a>
-    <a href="{{ route('employee.report.index') }}" class="nav-item {{ request()->routeIs('employee.report.index') ? 'active' : '' }}">
+    <a href="{{ route('admin.report.index') }}" class="nav-item {{ request()->routeIs('admin.report.index') ? 'active' : '' }}">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 3v18h18"></path>
@@ -123,7 +107,7 @@
       <span>گزارش‌ها</span>
 
     </a>
-    <a href="{{ route('employee.setting.index') }}" class="nav-item {{ request()->routeIs('employee.setting.index') ? 'active' : '' }}">
+    <a href="{{ route('admin.setting.index') }}" class="nav-item {{ request()->routeIs('admin.setting.index') ? 'active' : '' }}">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="3"></circle>

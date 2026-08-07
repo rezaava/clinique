@@ -1,12 +1,17 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\AppointmentsController;
-use App\Http\Controllers\BookController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\InventoryController;
-use App\Http\Controllers\SupplierController;
-use App\Http\Controllers\BrandController;
+use App\Http\Controllers\Admin\AdCampaignController;
+use App\Http\Controllers\Admin\AdDashboardController;
+use App\Http\Controllers\Admin\AdDevicesController;
+use App\Http\Controllers\Admin\AdFinancialController;
+use App\Http\Controllers\Admin\AdFollowupController;
+use App\Http\Controllers\Admin\AdPatientController;
+use App\Http\Controllers\Admin\AdReportController;
+use App\Http\Controllers\Admin\AdSettingController;
+use App\Http\Controllers\Admin\AdTasksController;
+use App\Http\Controllers\Admin\AdTurnController;
+use App\Http\Controllers\Admin\AdWarehouseController;
 use App\Http\Controllers\Employee\CalendarController;
 use App\Http\Controllers\Employee\CampaignController;
 use App\Http\Controllers\Employee\DashboardController;
@@ -32,8 +37,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // ================ Protected Routes (Authenticated) ================
 Route::middleware('auth')->group(function () {
-    
-    Route::prefix('employee')->group(function () {
+
+    Route::prefix('employee')->name('employee.')->group(function () {
         Route::get('/', [DashboardController::class, 'dashboardIndex'])->name('dashboard.index');
 
         //روت های  بخش بیماران
@@ -96,6 +101,62 @@ Route::middleware('auth')->group(function () {
         //روت های  بخش تنظیمات
         Route::prefix('setting')->group(function () {
             Route::get('/', [SettingController::class, 'settingIndex'])->name('setting.index');
+        });
+    });
+
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/', [AdDashboardController::class, 'dashboardIndex'])->name('dashboard.index');
+
+        //روت های  بخش بیماران
+        Route::prefix('patients')->group(function () {
+            Route::get('/', [AdPatientController::class, 'patientIndex'])->name('patient.index');
+        });
+
+        //روت های  بخش نوبت ها
+        Route::prefix('turn')->group(function () {
+            Route::get('/', [AdTurnController::class, 'turnIndex'])->name('turn.index');
+        });
+
+        //روت های  بخش تقویم ها
+        Route::prefix('calendar')->group(function () {
+            Route::get('/', [CalendarController::class, 'calendarIndex'])->name('calendar.index');
+        });
+
+        //روت های  بخش مرکز وظایف
+        Route::prefix('task')->group(function () {
+            Route::get('/', [AdTasksController::class, 'taskIndex'])->name('task.index');
+            Route::post('/add', [AdTasksController::class, 'taskAdd']);
+            Route::get('/done/{id}', [AdTasksController::class, 'updateTask']);
+        });
+
+        //روت های  بخش کمپین ها
+        Route::prefix('campaign')->group(function () {
+            Route::get('/', [AdCampaignController::class, 'campaignIndex'])->name('campaign.index');
+        });
+
+        //روت های  بخش انبار
+        Route::prefix('warehouse')->group(function () {
+            Route::get('/', [AdWarehouseController::class, 'warehouseIndex'])->name('warehouse.index');
+        });
+
+        //روت های  بخش دستگاه ها
+        Route::prefix('device')->group(function () {
+            Route::get('/', [AdDevicesController::class, 'deviceIndex'])->name('device.index');
+        });
+
+        //روت های  بخش مالی
+        Route::prefix('financial')->group(function () {
+            Route::get('/', [AdFinancialController::class, 'financialIndex'])->name('financial.index');
+        });
+
+        //روت های  بخش گزارش ها
+        Route::prefix('report')->group(function () {
+            Route::get('/', [AdReportController::class, 'reportIndex'])->name('report.index');
+        });
+
+        //روت های  بخش تنظیمات
+        Route::prefix('setting')->group(function () {
+            Route::get('/', [AdSettingController::class, 'settingIndex'])->name('setting.index');
         });
     });
 });
