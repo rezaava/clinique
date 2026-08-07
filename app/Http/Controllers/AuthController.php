@@ -19,13 +19,13 @@ class AuthController extends Controller
     {
         if (Auth::user()) {
             if (Auth::user()->hasRole('employee')) {
-                return redirect()->route('dashboard.index');
+                return redirect()->route('employee.dashboard.index');
             }
             elseif (Auth::user()->hasRole('patient')) {
                 return redirect()->route('appointments.create');
             }
             elseif (Auth::user()->hasRole('admin')) {
-                return redirect()->route('admin.dashboard.index');
+                return redirect()->route('admin.dashboardAd.index');
             }
         }
         return view('auth.login');

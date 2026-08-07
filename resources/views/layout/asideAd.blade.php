@@ -11,8 +11,8 @@
 
   <nav class="nav" id="nav">
     <div class="nav-label">منوی اصلی</div>
-    <a href="{{ route('admin.dashboard.index') }}"
-      class="nav-item {{ request()->routeIs('admin.dashboard.index') ? 'active' : '' }}" aria-current="page">
+    <a href="{{ route('admin.dashboardAd.index') }}"
+      class="nav-item {{ request()->routeIs('admin.dashboardAd.index') ? 'active' : '' }}" aria-current="page">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"></path>
@@ -20,7 +20,7 @@
       <span>داشبورد</span>
 
     </a>
-    <a href="{{ route('admin.patient.index') }}" class="nav-item {{ request()->routeIs('admin.patient.index') ? 'active' : '' }}">
+    <a href="{{ route('admin.patientAd.index') }}" class="nav-item {{ request()->routeIs('admin.patientAd.index') ? 'active' : '' }}">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -30,7 +30,7 @@
       <span>بیماران</span>
 
     </a>
-    <a href="{{ route('admin.turn.index') }}" class="nav-item {{ request()->routeIs('admin.turn.index') ? 'active' : '' }}">
+    <a href="{{ route('admin.turnAd.index') }}" class="nav-item {{ request()->routeIs('admin.turnAd.index') ? 'active' : '' }}">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <rect x="3" y="4" width="18" height="18" rx="2"></rect>
@@ -40,7 +40,7 @@
       <span class="nav-badge">۳</span>
     </a>
 
-    <a href="{{ route('admin.calendar.index') }}" class="nav-item {{ request()->routeIs('admin.calendar.index') ? 'active' : '' }}">
+    <a href="{{ route('admin.calendarAd.index') }}" class="nav-item {{ request()->routeIs('admin.calendarAd.index') ? 'active' : '' }}">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"></path>
@@ -50,7 +50,7 @@
       <span class="nav-badge">۳</span>
     </a>
 
-    <a href="{{ route('admin.task.index') }}" class="nav-item {{ request()->routeIs('admin.task.index') ? 'active' : '' }}">
+    <a href="{{ route('admin.taskAd.index') }}" class="nav-item {{ request()->routeIs('admin.taskAd.index') ? 'active' : '' }}">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <rect x="3" y="4" width="18" height="18" rx="2"></rect>
@@ -60,7 +60,7 @@
       <span>مرکز وظایف</span>
       <span class="nav-badge">۸</span>
     </a>
-    <a href="{{ route('admin.campaign.index') }}" class="nav-item {{ request()->routeIs('admin.campaign.index') ? 'active' : '' }}">
+    <a href="{{ route('admin.campaignAd.index') }}" class="nav-item {{ request()->routeIs('admin.campaignAd.index') ? 'active' : '' }}">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <path d="m22 2-7 20-4-9-9-4Z"></path>
@@ -69,7 +69,7 @@
       <span>کمپین‌ها</span>
 
     </a>
-    <a href="{{ route('admin.warehouse.index') }}" class="nav-item {{ request()->routeIs('admin.warehouse.index') ? 'active' : '' }}">
+    <a href="{{ route('admin.warehouseAd.index') }}" class="nav-item {{ request()->routeIs('admin.warehouseAd.index') ? 'active' : '' }}">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <path
@@ -80,7 +80,7 @@
       <span>انبار</span>
       <span class="nav-badge">۲</span>
     </a>
-    <a href="{{ route('admin.device.index') }}" class="nav-item {{ request()->routeIs('admin.device.index') ? 'active' : '' }}">
+    <a href="{{ route('admin.deviceAd.index') }}" class="nav-item {{ request()->routeIs('admin.deviceAd.index') ? 'active' : '' }}">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <rect x="4" y="4" width="16" height="16" rx="2"></rect>
@@ -90,7 +90,7 @@
       <span>دستگاه‌ها</span>
 
     </a>
-    <a href="{{ route('admin.financial.index') }}" class="nav-item {{ request()->routeIs('admin.financial.index') ? 'active' : '' }}">
+    <a href="{{ route('admin.financialAd.index') }}" class="nav-item {{ request()->routeIs('admin.financialAd.index') ? 'active' : '' }}">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
@@ -98,7 +98,7 @@
       <span>مالی</span>
 
     </a>
-    <a href="{{ route('admin.report.index') }}" class="nav-item {{ request()->routeIs('admin.report.index') ? 'active' : '' }}">
+    <a href="{{ route('admin.reportAd.index') }}" class="nav-item {{ request()->routeIs('admin.reportAd.index') ? 'active' : '' }}">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 3v18h18"></path>
@@ -107,7 +107,7 @@
       <span>گزارش‌ها</span>
 
     </a>
-    <a href="{{ route('admin.setting.index') }}" class="nav-item {{ request()->routeIs('admin.setting.index') ? 'active' : '' }}">
+    <a href="{{ route('admin.settingAd.index') }}" class="nav-item {{ request()->routeIs('admin.settingAd.index') ? 'active' : '' }}">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="3"></circle>
