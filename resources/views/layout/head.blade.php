@@ -80,7 +80,7 @@
             --shadow-lg: 0 12px 32px rgba(16, 24, 40, 0.1);
 
             /* چیدمان */
-            --sidebar-w: 248px;
+            --sidebar-w: 250px;
             --header-h: 72px;
             --gap: 20px;
             --rail-w:300px;
