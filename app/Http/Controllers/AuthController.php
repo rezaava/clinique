@@ -123,7 +123,7 @@ class AuthController extends Controller
             $user->save();
 
             if (Auth::user()->hasRole('employee')) {
-                return redirect()->route('dashboard.index')->with('success', 'ورود با موفقیت انجام شد');
+                return redirect()->route('employee.dashboard.index')->with('success', 'ورود با موفقیت انجام شد');
             }
         }
 

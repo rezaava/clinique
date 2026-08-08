@@ -10,9 +10,26 @@
 
 @section('btn')
 
+<button class="pill-btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01" />
+    </svg>کلینیک مرکزی<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round">
+        <path d="m6 9 6 6 6-6" />
+    </svg></button>
+<button class="pill-btn">۱۰ — ۲۰ تیر ۱۴۰۴<svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="m6 9 6 6 6-6" />
+    </svg></button>
+<button class="pill-btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+    </svg>خروجی گزارش</button>
+
 @endsection
 
 @section('text-search')
+جستجوی بیمار، درمان، گزارش...
 @endsection
 
 @section('subtitle')
@@ -23,8 +40,8 @@
 
 <style>
     .body-grid {
-        display: grid;
-        grid-template-columns: 1fr var(--rail-w);
+        display: grid !important;
+        grid-template-columns: 1fr var(--rail-w) !important;
         gap: var(--gap);
         padding: 20px;
         align-items: start;
@@ -1040,7 +1057,7 @@
     /* ستون کناری */
     .rail {
         position: sticky;
-        top: calc(65px + 20px);
+        top: calc(var(--header-h, 72px) + 20px);
         display: flex;
         flex-direction: column;
         gap: var(--gap);
@@ -1435,6 +1452,9 @@
             transition: none !important;
         }
     }
+
+    .pill-btn { display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border-radius:20px; border:1px solid var(--border); font-size:.87rem; font-weight:600; color:var(--text-2); transition:all .18s ease; white-space:nowrap; }
+.pill-btn:hover { border-color:var(--border-strong); color:var(--text); background:var(--surface-2); }
 </style>
 
 @endsection
