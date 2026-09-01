@@ -25,7 +25,7 @@ class AuthController extends Controller
                 return redirect()->route('appointments.create');
             }
             elseif (Auth::user()->hasRole('admin')) {
-                return redirect()->route('admin.dashboard.index');
+                return redirect()->route('admin.dashboardAd.index');
             }
         }
         return view('auth.login');

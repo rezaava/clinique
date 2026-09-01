@@ -33,12 +33,12 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // ================ Protected Routes (Authenticated) ================
 Route::middleware('auth')->group(function () {
 
-    Route::prefix('employee')->name('employee.')->group(function () {
+    Route::prefix('employee')->name('employee.')->middleware('role:employee')->group(function () {
         Route::get('/', [DashboardController::class, 'dashboardIndex'])->name('dashboard.index');
 
         //روت های  بخش بیماران
@@ -104,59 +104,60 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('/', [AdDashboardController::class, 'dashboardIndex'])->name('dashboard.index');
+    // بخشش های مربوط به ادمین
+    Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
+        Route::get('/', [AdDashboardController::class, 'dashboardIndex'])->name('dashboardAd.index');
 
         //روت های  بخش بیماران
         Route::prefix('patients')->group(function () {
-            Route::get('/', [AdPatientController::class, 'patientIndex'])->name('patient.index');
+            Route::get('/', [AdPatientController::class, 'patientIndex'])->name('patientAd.index');
         });
 
         //روت های  بخش نوبت ها
         Route::prefix('turn')->group(function () {
-            Route::get('/', [AdTurnController::class, 'turnIndex'])->name('turn.index');
+            Route::get('/', [AdTurnController::class, 'turnIndex'])->name('turnAd.index');
         });
 
         //روت های  بخش تقویم ها
         Route::prefix('calendar')->group(function () {
-            Route::get('/', [CalendarController::class, 'calendarIndex'])->name('calendar.index');
+            Route::get('/', [CalendarController::class, 'calendarIndex'])->name('calendarAd.index');
         });
 
         //روت های  بخش مرکز وظایف
         Route::prefix('task')->group(function () {
-            Route::get('/', [AdTasksController::class, 'taskIndex'])->name('task.index');
-            Route::post('/add', [AdTasksController::class, 'taskAdd']);
-            Route::get('/done/{id}', [AdTasksController::class, 'updateTask']);
+            Route::get('/', [AdTasksController::class, 'taskIndex'])->name('taskAd.index');
+            Route::post('/add', [AdTasksController::class, 'taskAdAdd']);
+            Route::get('/done/{id}', [AdTasksController::class, 'updateAdTask']);
         });
 
         //روت های  بخش کمپین ها
         Route::prefix('campaign')->group(function () {
-            Route::get('/', [AdCampaignController::class, 'campaignIndex'])->name('campaign.index');
+            Route::get('/', [AdCampaignController::class, 'campaignIndex'])->name('campaignAd.index');
         });
 
         //روت های  بخش انبار
         Route::prefix('warehouse')->group(function () {
-            Route::get('/', [AdWarehouseController::class, 'warehouseIndex'])->name('warehouse.index');
+            Route::get('/', [AdWarehouseController::class, 'warehouseIndex'])->name('warehouseAd.index');
         });
 
         //روت های  بخش دستگاه ها
         Route::prefix('device')->group(function () {
-            Route::get('/', [AdDevicesController::class, 'deviceIndex'])->name('device.index');
+            Route::get('/', [AdDevicesController::class, 'deviceIndex'])->name('deviceAd.index');
         });
 
         //روت های  بخش مالی
         Route::prefix('financial')->group(function () {
-            Route::get('/', [AdFinancialController::class, 'financialIndex'])->name('financial.index');
+            Route::get('/', [AdFinancialController::class, 'financialIndex'])->name('financialAd.index');
         });
 
         //روت های  بخش گزارش ها
         Route::prefix('report')->group(function () {
-            Route::get('/', [AdReportController::class, 'reportIndex'])->name('report.index');
+            Route::get('/', [AdReportController::class, 'reportIndex'])->name('reportAd.index');
         });
 
         //روت های  بخش تنظیمات
         Route::prefix('setting')->group(function () {
-            Route::get('/', [AdSettingController::class, 'settingIndex'])->name('setting.index');
+            Route::get('/', [AdSettingController::class, 'settingIndex'])->name('settingAd.index');
         });
     });
 });
