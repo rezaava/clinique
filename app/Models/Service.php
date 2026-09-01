@@ -31,6 +31,11 @@ class Service extends Model
 
     // ================ Relationships ================
 
+    public function faqs()
+    {
+        return $this->hasMany(FAQ::class);
+    }
+
     // Appointments
     public function appointments()
     {

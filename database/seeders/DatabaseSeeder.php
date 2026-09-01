@@ -10,6 +10,7 @@ use App\Models\Appointment;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use App\Models\FAQ;
 
 class DatabaseSeeder extends Seeder
 {
@@ -75,6 +76,22 @@ class DatabaseSeeder extends Seeder
     protected function attachServicesToDoctor(User $doctor, array $serviceIds)
     {
         $doctor->services()->attach($serviceIds);
+    }
+
+    /**
+     * Helper function for creating FAQ
+     */
+    protected function createFAQ(int $serviceId, string $text, string $answer)
+    {
+        $faq = new FAQ();
+
+        $faq->service_id = $serviceId;
+        $faq->text = $text;
+        $faq->answer = $answer;
+
+        $faq->save();
+
+        return $faq;
     }
 
     /**
@@ -239,6 +256,73 @@ class DatabaseSeeder extends Seeder
             'duration_minutes' => 60,
             'is_active' => true,
         ]);
+
+        // ================ 3.1) ایجاد FAQها ================
+
+        // FAQهای مشاوره پوست
+        $this->createFAQ(
+            $service1->id,
+            'مشاوره پوست چقدر طول می‌کشد؟',
+            'مدت زمان مشاوره معمولاً حدود ۳۰ دقیقه است و بسته به شرایط پوست شما ممکن است کمی متفاوت باشد.'
+        );
+
+        $this->createFAQ(
+            $service1->id,
+            'آیا قبل از مراجعه باید کاری انجام دهم؟',
+            'بهتر است قبل از مراجعه از استفاده از محصولات تحریک‌کننده پوست خودداری کنید و اطلاعات مربوط به محصولات مصرفی خود را همراه داشته باشید.'
+        );
+
+        $this->createFAQ(
+            $service1->id,
+            'آیا بعد از مشاوره درمان شروع می‌شود؟',
+            'پس از بررسی شرایط پوست، پزشک روش درمانی مناسب را پیشنهاد می‌دهد و در صورت نیاز مراحل درمانی بعدی تعیین می‌شود.'
+        );
+
+
+        // FAQهای لیزر موهای زائد
+        $this->createFAQ(
+            $service2->id,
+            'لیزر موهای زائد چقدر طول می‌کشد؟',
+            'مدت زمان لیزر به ناحیه مورد نظر بستگی دارد و معمولاً بین ۳۰ تا ۶۰ دقیقه زمان می‌برد.'
+        );
+
+        $this->createFAQ(
+            $service2->id,
+            'آیا لیزر موهای زائد درد دارد؟',
+            'ممکن است هنگام انجام لیزر کمی احساس گرما یا سوزش خفیف داشته باشید، اما شدت آن معمولاً قابل تحمل است.'
+        );
+
+        $this->createFAQ(
+            $service2->id,
+            'چند جلسه لیزر نیاز است؟',
+            'تعداد جلسات به نوع پوست، ضخامت مو، ناحیه مورد نظر و شرایط فردی بستگی دارد و معمولاً به چند جلسه نیاز است.'
+        );
+
+        $this->createFAQ(
+            $service2->id,
+            'آیا قبل از لیزر باید موها را اصلاح کرد؟',
+            'بله، معمولاً توصیه می‌شود قبل از جلسه موهای ناحیه مورد نظر با تیغ اصلاح شوند و از روش‌هایی مانند اپیلاسیون استفاده نشود.'
+        );
+
+
+        // FAQهای فیلر و تزریقات
+        $this->createFAQ(
+            $service3->id,
+            'تزریق فیلر چقدر طول می‌کشد؟',
+            'بسته به ناحیه مورد درمان، تزریق فیلر معمولاً بین ۳۰ تا ۶۰ دقیقه زمان می‌برد.'
+        );
+
+        $this->createFAQ(
+            $service3->id,
+            'آیا تزریق فیلر درد دارد؟',
+            'ممکن است کمی ناراحتی یا سوزش احساس شود. در صورت نیاز می‌توان از روش‌های بی‌حسی موضعی برای کاهش ناراحتی استفاده کرد.'
+        );
+
+        $this->createFAQ(
+            $service3->id,
+            'ماندگاری فیلر چقدر است؟',
+            'ماندگاری فیلر به نوع ماده، محل تزریق، میزان متابولیسم بدن و شرایط فردی بستگی دارد.'
+        );
 
         // ================ 4) ایجاد ۳ پزشک ================
 
