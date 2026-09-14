@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\FAQ;
+use App\Models\Credential;
 
 class DatabaseSeeder extends Seeder
 {
@@ -42,7 +43,9 @@ class DatabaseSeeder extends Seeder
         $user->referral_code = $data['referral_code'];
         $user->status = $data['status'] ?? 'active';
         $user->points = $data['points'] ?? 0;
-        
+        $user->experience = $data['experience'] ?? null;
+        $user->about = $data['about'] ?? null;
+
         $user->save();
         $user->addRole($role);
 
@@ -125,6 +128,20 @@ class DatabaseSeeder extends Seeder
         $appointment->save();
 
         return $appointment;
+    }
+
+    protected function createCredential(
+        User $user,
+        string $title,
+        string $text,
+        ?string $type = null
+    ) {
+        return Credential::create([
+            'user_id' => $user->id,
+            'title' => $title,
+            'text' => $text,
+            'type' => $type,
+        ]);
     }
 
     public function run()
@@ -336,6 +353,8 @@ class DatabaseSeeder extends Seeder
             'referral_code' => 'DOC001',
             'status' => 'active',
             'points' => 0,
+            'experience' => 8,
+            'about' => 'پزشک متخصص پوست و زیبایی با بیش از ۸ سال تجربه در زمینه درمان مشکلات پوستی و خدمات زیبایی.',
         ], 'doctor');
 
         // پزشک دوم
@@ -348,6 +367,8 @@ class DatabaseSeeder extends Seeder
             'referral_code' => 'DOC002',
             'status' => 'active',
             'points' => 0,
+            'experience' => 6,
+            'about' => 'دکتر رضایی با ۶ سال سابقه در زمینه پوست، لیزر و مراقبت‌های تخصصی پوست فعالیت می‌کند.',
         ], 'doctor');
 
         // پزشک سوم
@@ -360,8 +381,80 @@ class DatabaseSeeder extends Seeder
             'referral_code' => 'DOC003',
             'status' => 'active',
             'points' => 0,
+            'experience' => 10,
+            'about' => 'دکتر کریمی با ۱۰ سال سابقه در زمینه خدمات زیبایی، لیزر و تزریقات تخصصی فعالیت دارد.',
         ], 'doctor');
 
+        // ================ 4.1) ایجاد مدارک و سوابق پزشکان ================
+
+        // پزشک اول
+        $this->createCredential(
+            $doctor1,
+            'دارای بورد تخصصی',
+            'پزشکی زیبایی و آرایشی',
+            'board'
+        );
+
+        $this->createCredential(
+            $doctor1,
+            'فلوشیپ بین‌المللی',
+            'زیبایی پیشرفته صورت، لندن',
+            'fellowship'
+        );
+
+        $this->createCredential(
+            $doctor1,
+            'عضو',
+            'انجمن اروپایی پزشکی زیبایی',
+            'member'
+        );
+
+
+        // پزشک دوم
+        $this->createCredential(
+            $doctor2,
+            'دارای بورد تخصصی',
+            'پوست و زیبایی',
+            'board'
+        );
+
+        $this->createCredential(
+            $doctor2,
+            'دوره تخصصی',
+            'لیزر و درمان‌های پیشرفته پوست',
+            'fellowship'
+        );
+
+        $this->createCredential(
+            $doctor2,
+            'عضو',
+            'انجمن متخصصین پوست و زیبایی',
+            'member'
+        );
+
+
+        // پزشک سوم
+        $this->createCredential(
+            $doctor3,
+            'دارای بورد تخصصی',
+            'پوست و مو',
+            'board'
+        );
+
+        $this->createCredential(
+            $doctor3,
+            'فلوشیپ بین‌المللی',
+            'تزریقات و جوانسازی صورت',
+            'fellowship'
+        );
+
+        $this->createCredential(
+            $doctor3,
+            'عضو',
+            'انجمن پزشکی زیبایی ایران',
+            'member'
+        );
+        
         // ================ 5) ایجاد ارتباطات user_service ================
         
         // پزشک اول: هر ۳ سرویس

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\API\SiteController;
+use App\Http\Controllers\API\SpecialistController;
 use App\Http\Controllers\API\ServiesController;
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -13,6 +14,8 @@ Route::get('/home', [SiteController::class, 'home']);
 
 Route::get('/services', [ServiesController::class, 'index']);
 Route::get('/services/{id}', [ServiesController::class, 'show']);
+
+Route::get('/specialist-profile/{id}', [SpecialistController::class, 'profile']);
 
 Route::middleware('auth:api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);

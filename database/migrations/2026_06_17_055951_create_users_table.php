@@ -45,6 +45,10 @@ return new class extends Migration
             $table->string('health_info')->nullable();
             $table->text('medical_notes')->nullable();
             
+            // اطلاعات دکتر
+            $table->string('experience')->nullable();
+            $table->text('about')->nullable();
+            
             // اطلاعات مارکتینگ
             $table->string('source')->nullable();
             $table->string('tags')->nullable();

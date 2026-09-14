@@ -117,6 +117,11 @@ class User extends Authenticatable implements LaratrustUser
         return $this->hasMany(UserTag::class);
     }
 
+    public function credentials()
+    {
+        return $this->hasMany(Credential::class);
+    }
+
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'user_tags');
