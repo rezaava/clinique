@@ -52,6 +52,12 @@ return new class extends Migration
             // اطلاعات مارکتینگ
             $table->string('source')->nullable();
             $table->string('tags')->nullable();
+
+            // تنظیمات اعلان‌ها
+            $table->tinyInteger('appointment_reminders')->default(1);
+            $table->tinyInteger('sms_notifications')->default(1);
+            $table->tinyInteger('email_updates')->default(0);
+            $table->tinyInteger('marketing_messages')->default(0);
             
             // امتیازات و سطح - تغییر از tier به tier_id
             $table->integer('points')->default(0);

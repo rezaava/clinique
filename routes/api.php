@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\API\SiteController;
 use App\Http\Controllers\API\SpecialistController;
 use App\Http\Controllers\API\ServiesController;
+use App\Http\Controllers\API\ProfileController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -16,6 +17,9 @@ Route::get('/services', [ServiesController::class, 'index']);
 Route::get('/services/{id}', [ServiesController::class, 'show']);
 
 Route::get('/specialist-profile/{id}', [SpecialistController::class, 'profile']);
+
+Route::get('/profile', [ProfileController::class, 'profile']);
+Route::get('/profile/toggle/{toggleName}/{value}', [ProfileController::class, 'toggle']);
 
 Route::middleware('auth:api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
