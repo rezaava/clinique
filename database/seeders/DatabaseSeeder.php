@@ -1,23 +1,18 @@
 <?php
-
 namespace Database\Seeders;
-
 use Illuminate\Database\Seeder;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Service;
 use App\Models\Appointment;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\FAQ;
 use App\Models\Credential;
-
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Helper function for creating roles
-     */
     protected function createRole(string $name, string $display_name, string $description = null)
     {
         $role = new Role();
@@ -25,13 +20,8 @@ class DatabaseSeeder extends Seeder
         $role->display_name = $display_name;
         $role->description = $description ?? $display_name;
         $role->save();
-
         return $role;
     }
-
-    /**
-     * Helper function for creating users
-     */
     protected function createUser(array $data, string $role)
     {
         $user = new User();
@@ -45,16 +35,10 @@ class DatabaseSeeder extends Seeder
         $user->points = $data['points'] ?? 0;
         $user->experience = $data['experience'] ?? null;
         $user->about = $data['about'] ?? null;
-
         $user->save();
         $user->addRole($role);
-
         return $user;
     }
-
-    /**
-     * Helper function for creating services
-     */
     protected function createService(array $data)
     {
         $service = new Service();
@@ -67,39 +51,22 @@ class DatabaseSeeder extends Seeder
         $service->duration_minutes = $data['duration_minutes'] ?? 30;
         $service->is_active = $data['is_active'] ?? true;
         $service->review_count = $data['review_count'] ?? 0;
-        
         $service->save();
-
         return $service;
     }
-
-    /**
-     * Helper function for attaching services to doctors
-     */
     protected function attachServicesToDoctor(User $doctor, array $serviceIds)
     {
         $doctor->services()->attach($serviceIds);
     }
-
-    /**
-     * Helper function for creating FAQ
-     */
     protected function createFAQ(int $serviceId, string $text, string $answer)
     {
         $faq = new FAQ();
-
         $faq->service_id = $serviceId;
         $faq->text = $text;
         $faq->answer = $answer;
-
         $faq->save();
-
         return $faq;
     }
-
-    /**
-     * Helper function for creating appointments
-     */
     protected function createAppointment(array $data)
     {
         $appointment = new Appointment();
@@ -124,18 +91,36 @@ class DatabaseSeeder extends Seeder
         $appointment->staff_rating = $data['staff_rating'] ?? null;
         $appointment->review = $data['review'] ?? null;
         $appointment->reviewed_at = $data['reviewed_at'] ?? null;
-        
         $appointment->save();
-
+        if (($data['payment_status'] ?? 'unpaid') !== 'unpaid' && ($data['paid_amount'] ?? 0) > 0) {
+            $paidAmount = $data['paid_amount'];
+            $finalAmount = $data['final_amount'] ?? $data['amount'];
+            $remainingAmount = max(0, $finalAmount - $paidAmount);
+            $transactionStatus = $paidAmount >= $finalAmount ? 'paid' : 'partial';
+            Transaction::create([
+                'user_id' => $appointment->user_id,
+                'appointment_id' => $appointment->id,
+                'discount_id' => $data['discount_id'] ?? null,
+                'transaction_number' => 'TRX-' . strtoupper(Str::random(12)),
+                'type' => 'payment',
+                'payment_method' => $data['payment_method'] ?? 'online',
+                'amount' => $data['amount'] ?? 0,
+                'discount_amount' => $data['discount_amount'] ?? 0,
+                'final_amount' => $finalAmount,
+                'paid_amount' => $paidAmount,
+                'remaining_amount' => $remainingAmount,
+                'status' => $transactionStatus,
+                'description' => $data['transaction_description'] ?? 'پرداخت مربوط به نوبت',
+                'reference_number' => $data['reference_number'] ?? null,
+                'meta_data' => $data['transaction_meta_data'] ?? null,
+                'paid_at' => $data['paid_at'] ?? now(),
+                'created_by' => $data['created_by'] ?? null,
+            ]);
+        }
         return $appointment;
     }
-
-    protected function createCredential(
-        User $user,
-        string $title,
-        string $text,
-        ?string $type = null
-    ) {
+    protected function createCredential(User $user, string $title, string $text, ?string $type = null)
+    {
         return Credential::create([
             'user_id' => $user->id,
             'title' => $title,
@@ -143,19 +128,13 @@ class DatabaseSeeder extends Seeder
             'type' => $type,
         ]);
     }
-
     public function run()
     {
-        // ================ 1) ایجاد نقش‌های سیستم ================
         $this->createRole('admin', 'مدیر', 'مدیر کلینیک با دسترسی کامل');
         $this->createRole('employee', 'پرسنل', 'پرسنل کلینیک (پزشک، اپراتور، منشی)');
         $this->createRole('doctor', 'پزشک', 'پزشک متخصص');
         $this->createRole('patient', 'بیمار/مشتری', 'مشتری کلینیک');
         $this->createRole('supplier', 'تامین‌کننده', 'تامین‌کننده تجهیزات و مواد مصرفی');
-
-        // ================ 2) ایجاد کاربران نمونه ================
-
-        // ادمین
         $admin = $this->createUser([
             'first_name' => 'مدیر',
             'last_name' => 'سیستم',
@@ -166,8 +145,6 @@ class DatabaseSeeder extends Seeder
             'status' => 'active',
             'points' => 0,
         ], 'admin');
-
-        // پرسنل (منشی)
         $employee = $this->createUser([
             'first_name' => 'پرسنل',
             'last_name' => 'نمونه',
@@ -178,8 +155,6 @@ class DatabaseSeeder extends Seeder
             'status' => 'active',
             'points' => 0,
         ], 'employee');
-
-        // مشتری اول
         $patient1 = $this->createUser([
             'first_name' => 'مشتری',
             'last_name' => 'نمونه',
@@ -190,8 +165,6 @@ class DatabaseSeeder extends Seeder
             'status' => 'active',
             'points' => 0,
         ], 'patient');
-
-        // مشتری دوم (برای نوبت‌ها)
         $patient2 = $this->createUser([
             'first_name' => 'سارا',
             'last_name' => 'احمدی',
@@ -202,8 +175,6 @@ class DatabaseSeeder extends Seeder
             'status' => 'active',
             'points' => 10,
         ], 'patient');
-
-        // مشتری سوم (برای نوبت‌ها)
         $patient3 = $this->createUser([
             'first_name' => 'مریم',
             'last_name' => 'کریمی',
@@ -214,8 +185,6 @@ class DatabaseSeeder extends Seeder
             'status' => 'active',
             'points' => 25,
         ], 'patient');
-
-        // مشتری چهارم (برای نوبت‌ها)
         $patient4 = $this->createUser([
             'first_name' => 'علی',
             'last_name' => 'رضایی',
@@ -226,8 +195,6 @@ class DatabaseSeeder extends Seeder
             'status' => 'active',
             'points' => 5,
         ], 'patient');
-
-        // تامین‌کننده
         $supplier = $this->createUser([
             'first_name' => 'تامین',
             'last_name' => 'کننده',
@@ -238,9 +205,6 @@ class DatabaseSeeder extends Seeder
             'status' => 'active',
             'points' => 0,
         ], 'supplier');
-
-        // ================ 3) ایجاد ۳ سرویس ================
-        
         $service1 = $this->createService([
             'name' => 'مشاوره پوست',
             'slug' => 'mashavareh-pust',
@@ -251,7 +215,6 @@ class DatabaseSeeder extends Seeder
             'duration_minutes' => 30,
             'is_active' => true,
         ]);
-
         $service2 = $this->createService([
             'name' => 'لیزر موهای زائد',
             'slug' => 'lazer-moo-ha-ye-zaed',
@@ -262,7 +225,6 @@ class DatabaseSeeder extends Seeder
             'duration_minutes' => 45,
             'is_active' => true,
         ]);
-
         $service3 = $this->createService([
             'name' => 'فیلر و تزریقات',
             'slug' => 'filler-va-tazrighat',
@@ -273,77 +235,16 @@ class DatabaseSeeder extends Seeder
             'duration_minutes' => 60,
             'is_active' => true,
         ]);
-
-        // ================ 3.1) ایجاد FAQها ================
-
-        // FAQهای مشاوره پوست
-        $this->createFAQ(
-            $service1->id,
-            'مشاوره پوست چقدر طول می‌کشد؟',
-            'مدت زمان مشاوره معمولاً حدود ۳۰ دقیقه است و بسته به شرایط پوست شما ممکن است کمی متفاوت باشد.'
-        );
-
-        $this->createFAQ(
-            $service1->id,
-            'آیا قبل از مراجعه باید کاری انجام دهم؟',
-            'بهتر است قبل از مراجعه از استفاده از محصولات تحریک‌کننده پوست خودداری کنید و اطلاعات مربوط به محصولات مصرفی خود را همراه داشته باشید.'
-        );
-
-        $this->createFAQ(
-            $service1->id,
-            'آیا بعد از مشاوره درمان شروع می‌شود؟',
-            'پس از بررسی شرایط پوست، پزشک روش درمانی مناسب را پیشنهاد می‌دهد و در صورت نیاز مراحل درمانی بعدی تعیین می‌شود.'
-        );
-
-
-        // FAQهای لیزر موهای زائد
-        $this->createFAQ(
-            $service2->id,
-            'لیزر موهای زائد چقدر طول می‌کشد؟',
-            'مدت زمان لیزر به ناحیه مورد نظر بستگی دارد و معمولاً بین ۳۰ تا ۶۰ دقیقه زمان می‌برد.'
-        );
-
-        $this->createFAQ(
-            $service2->id,
-            'آیا لیزر موهای زائد درد دارد؟',
-            'ممکن است هنگام انجام لیزر کمی احساس گرما یا سوزش خفیف داشته باشید، اما شدت آن معمولاً قابل تحمل است.'
-        );
-
-        $this->createFAQ(
-            $service2->id,
-            'چند جلسه لیزر نیاز است؟',
-            'تعداد جلسات به نوع پوست، ضخامت مو، ناحیه مورد نظر و شرایط فردی بستگی دارد و معمولاً به چند جلسه نیاز است.'
-        );
-
-        $this->createFAQ(
-            $service2->id,
-            'آیا قبل از لیزر باید موها را اصلاح کرد؟',
-            'بله، معمولاً توصیه می‌شود قبل از جلسه موهای ناحیه مورد نظر با تیغ اصلاح شوند و از روش‌هایی مانند اپیلاسیون استفاده نشود.'
-        );
-
-
-        // FAQهای فیلر و تزریقات
-        $this->createFAQ(
-            $service3->id,
-            'تزریق فیلر چقدر طول می‌کشد؟',
-            'بسته به ناحیه مورد درمان، تزریق فیلر معمولاً بین ۳۰ تا ۶۰ دقیقه زمان می‌برد.'
-        );
-
-        $this->createFAQ(
-            $service3->id,
-            'آیا تزریق فیلر درد دارد؟',
-            'ممکن است کمی ناراحتی یا سوزش احساس شود. در صورت نیاز می‌توان از روش‌های بی‌حسی موضعی برای کاهش ناراحتی استفاده کرد.'
-        );
-
-        $this->createFAQ(
-            $service3->id,
-            'ماندگاری فیلر چقدر است؟',
-            'ماندگاری فیلر به نوع ماده، محل تزریق، میزان متابولیسم بدن و شرایط فردی بستگی دارد.'
-        );
-
-        // ================ 4) ایجاد ۳ پزشک ================
-
-        // پزشک اول
+        $this->createFAQ($service1->id, 'مشاوره پوست چقدر طول می‌کشد؟', 'مدت زمان مشاوره معمولاً حدود ۳۰ دقیقه است و بسته به شرایط پوست شما ممکن است کمی متفاوت باشد.');
+        $this->createFAQ($service1->id, 'آیا قبل از مراجعه باید کاری انجام دهم؟', 'بهتر است قبل از مراجعه از استفاده از محصولات تحریک‌کننده پوست خودداری کنید و اطلاعات مربوط به محصولات مصرفی خود را همراه داشته باشید.');
+        $this->createFAQ($service1->id, 'آیا بعد از مشاوره درمان شروع می‌شود؟', 'پس از بررسی شرایط پوست، پزشک روش درمانی مناسب را پیشنهاد می‌دهد و در صورت نیاز مراحل درمانی بعدی تعیین می‌شود.');
+        $this->createFAQ($service2->id, 'لیزر موهای زائد چقدر طول می‌کشد؟', 'مدت زمان لیزر به ناحیه مورد نظر بستگی دارد و معمولاً بین ۳۰ تا ۶۰ دقیقه زمان می‌برد.');
+        $this->createFAQ($service2->id, 'آیا لیزر موهای زائد درد دارد؟', 'ممکن است هنگام انجام لیزر کمی احساس گرما یا سوزش خفیف داشته باشید، اما شدت آن معمولاً قابل تحمل است.');
+        $this->createFAQ($service2->id, 'چند جلسه لیزر نیاز است؟', 'تعداد جلسات به نوع پوست، ضخامت مو، ناحیه مورد نظر و شرایط فردی بستگی دارد و معمولاً به چند جلسه نیاز است.');
+        $this->createFAQ($service2->id, 'آیا قبل از لیزر باید موها را اصلاح کرد؟', 'بله، معمولاً توصیه می‌شود قبل از جلسه موهای ناحیه مورد نظر با تیغ اصلاح شوند و از روش‌هایی مانند اپیلاسیون استفاده نشود.');
+        $this->createFAQ($service3->id, 'تزریق فیلر چقدر طول می‌کشد؟', 'بسته به ناحیه مورد درمان، تزریق فیلر معمولاً بین ۳۰ تا ۶۰ دقیقه زمان می‌برد.');
+        $this->createFAQ($service3->id, 'آیا تزریق فیلر درد دارد؟', 'ممکن است کمی ناراحتی یا سوزش احساس شود. در صورت نیاز می‌توان از روش‌های بی‌حسی موضعی برای کاهش ناراحتی استفاده کرد.');
+        $this->createFAQ($service3->id, 'ماندگاری فیلر چقدر است؟', 'ماندگاری فیلر به نوع ماده، محل تزریق، میزان متابولیسم بدن و شرایط فردی بستگی دارد.');
         $doctor1 = $this->createUser([
             'first_name' => 'پزشک',
             'last_name' => 'نمونه',
@@ -356,8 +257,6 @@ class DatabaseSeeder extends Seeder
             'experience' => 8,
             'about' => 'پزشک متخصص پوست و زیبایی با بیش از ۸ سال تجربه در زمینه درمان مشکلات پوستی و خدمات زیبایی.',
         ], 'doctor');
-
-        // پزشک دوم
         $doctor2 = $this->createUser([
             'first_name' => 'دکتر',
             'last_name' => 'رضایی',
@@ -370,8 +269,6 @@ class DatabaseSeeder extends Seeder
             'experience' => 6,
             'about' => 'دکتر رضایی با ۶ سال سابقه در زمینه پوست، لیزر و مراقبت‌های تخصصی پوست فعالیت می‌کند.',
         ], 'doctor');
-
-        // پزشک سوم
         $doctor3 = $this->createUser([
             'first_name' => 'دکتر',
             'last_name' => 'کریمی',
@@ -384,106 +281,26 @@ class DatabaseSeeder extends Seeder
             'experience' => 10,
             'about' => 'دکتر کریمی با ۱۰ سال سابقه در زمینه خدمات زیبایی، لیزر و تزریقات تخصصی فعالیت دارد.',
         ], 'doctor');
-
-        // ================ 4.1) ایجاد مدارک و سوابق پزشکان ================
-
-        // پزشک اول
-        $this->createCredential(
-            $doctor1,
-            'دارای بورد تخصصی',
-            'پزشکی زیبایی و آرایشی',
-            'board'
-        );
-
-        $this->createCredential(
-            $doctor1,
-            'فلوشیپ بین‌المللی',
-            'زیبایی پیشرفته صورت، لندن',
-            'fellowship'
-        );
-
-        $this->createCredential(
-            $doctor1,
-            'عضو',
-            'انجمن اروپایی پزشکی زیبایی',
-            'member'
-        );
-
-
-        // پزشک دوم
-        $this->createCredential(
-            $doctor2,
-            'دارای بورد تخصصی',
-            'پوست و زیبایی',
-            'board'
-        );
-
-        $this->createCredential(
-            $doctor2,
-            'دوره تخصصی',
-            'لیزر و درمان‌های پیشرفته پوست',
-            'fellowship'
-        );
-
-        $this->createCredential(
-            $doctor2,
-            'عضو',
-            'انجمن متخصصین پوست و زیبایی',
-            'member'
-        );
-
-
-        // پزشک سوم
-        $this->createCredential(
-            $doctor3,
-            'دارای بورد تخصصی',
-            'پوست و مو',
-            'board'
-        );
-
-        $this->createCredential(
-            $doctor3,
-            'فلوشیپ بین‌المللی',
-            'تزریقات و جوانسازی صورت',
-            'fellowship'
-        );
-
-        $this->createCredential(
-            $doctor3,
-            'عضو',
-            'انجمن پزشکی زیبایی ایران',
-            'member'
-        );
-        
-        // ================ 5) ایجاد ارتباطات user_service ================
-        
-        // پزشک اول: هر ۳ سرویس
-        $this->attachServicesToDoctor($doctor1, [
-            $service1->id,
-            $service2->id,
-            $service3->id,
-        ]);
-
-        // پزشک دوم: سرویس‌های ۱ و ۲
-        $this->attachServicesToDoctor($doctor2, [
-            $service1->id,
-            $service2->id,
-        ]);
-
-        // پزشک سوم: سرویس‌های ۲ و ۳
-        $this->attachServicesToDoctor($doctor3, [
-            $service2->id,
-            $service3->id,
-        ]);
-
-        // ================ 6) ایجاد نوبت‌ها ================
-
+        $this->createCredential($doctor1, 'دارای بورد تخصصی', 'پزشکی زیبایی و آرایشی', 'board');
+        $this->createCredential($doctor1, 'فلوشیپ بین‌المللی', 'زیبایی پیشرفته صورت، لندن', 'fellowship');
+        $this->createCredential($doctor1, 'عضو', 'انجمن اروپایی پزشکی زیبایی', 'member');
+        $this->createCredential($doctor2, 'دارای بورد تخصصی', 'پوست و زیبایی', 'board');
+        $this->createCredential($doctor2, 'دوره تخصصی', 'لیزر و درمان‌های پیشرفته پوست', 'fellowship');
+        $this->createCredential($doctor2, 'عضو', 'انجمن متخصصین پوست و زیبایی', 'member');
+        $this->createCredential($doctor3, 'دارای بورد تخصصی', 'پوست و مو', 'board');
+        $this->createCredential($doctor3, 'فلوشیپ بین‌المللی', 'تزریقات و جوانسازی صورت', 'fellowship');
+        $this->createCredential($doctor3, 'عضو', 'انجمن پزشکی زیبایی ایران', 'member');
+        $this->attachServicesToDoctor($doctor1, [$service1->id, $service2->id, $service3->id]);
+        $this->attachServicesToDoctor($doctor2, [$service1->id, $service2->id]);
+        $this->attachServicesToDoctor($doctor3, [$service2->id, $service3->id]);
         $today = Carbon::today();
         $tomorrow = Carbon::tomorrow();
+        $thisWeek = Carbon::today()->addDays(3);
         $nextWeek = Carbon::today()->addDays(7);
+        $twoWeeks = Carbon::today()->addDays(14);
         $lastWeek = Carbon::today()->subDays(7);
-
-        // نوبت 1: درخواست جدید (pending)
+        $twoWeeksAgo = Carbon::today()->subDays(14);
+        $threeWeeksAgo = Carbon::today()->subDays(21);
         $this->createAppointment([
             'user_id' => $patient2->id,
             'service_id' => $service1->id,
@@ -497,8 +314,6 @@ class DatabaseSeeder extends Seeder
             'payment_status' => 'unpaid',
             'deposit_amount' => 0,
         ]);
-
-        // نوبت 2: درخواست جدید (pending) - سرویس لیزر
         $this->createAppointment([
             'user_id' => $patient3->id,
             'service_id' => $service2->id,
@@ -512,8 +327,6 @@ class DatabaseSeeder extends Seeder
             'payment_status' => 'unpaid',
             'deposit_amount' => 0,
         ]);
-
-        // نوبت 3: تأیید شده (confirmed) - توسط دکتر1
         $this->createAppointment([
             'user_id' => $patient1->id,
             'service_id' => $service3->id,
@@ -527,11 +340,10 @@ class DatabaseSeeder extends Seeder
             'amount' => 650000,
             'payment_status' => 'partial',
             'deposit_amount' => 200000,
+            'paid_amount' => 200000,
             'paid_at' => now()->subHours(2),
             'confirmed_at' => now()->subHours(3),
         ]);
-
-        // نوبت 4: در حال انجام (in_progress) - توسط دکتر2
         $this->createAppointment([
             'user_id' => $patient2->id,
             'service_id' => $service2->id,
@@ -545,11 +357,10 @@ class DatabaseSeeder extends Seeder
             'amount' => 450000,
             'payment_status' => 'paid',
             'deposit_amount' => 450000,
+            'paid_amount' => 450000,
             'paid_at' => now()->subHours(2),
             'confirmed_at' => now()->subDays(5),
         ]);
-
-        // نوبت 5: تکمیل شده (completed) - با امتیاز
         $this->createAppointment([
             'user_id' => $patient3->id,
             'service_id' => $service1->id,
@@ -563,21 +374,20 @@ class DatabaseSeeder extends Seeder
             'amount' => 250000,
             'payment_status' => 'paid',
             'deposit_amount' => 250000,
-            'paid_at' => $lastWeek->addHours(2),
-            'confirmed_at' => $lastWeek->subDays(1),
-            'completed_at' => $lastWeek->addHours(1),
+            'paid_amount' => 250000,
+            'paid_at' => $lastWeek->copy()->addHours(2),
+            'confirmed_at' => $lastWeek->copy()->subDays(1),
+            'completed_at' => $lastWeek->copy()->addHours(1),
             'rating' => 5,
             'staff_rating' => 5,
             'review' => 'بسیار عالی! دکتر خیلی دقیق و حرفه‌ای بودند.',
-            'reviewed_at' => $lastWeek->addHours(2),
+            'reviewed_at' => $lastWeek->copy()->addHours(2),
         ]);
-
-        // نوبت 6: تکمیل شده (completed) - با امتیاز متوسط
         $this->createAppointment([
             'user_id' => $patient4->id,
             'service_id' => $service2->id,
             'assigned_staff_id' => $doctor3->id,
-            'appointment_date' => $lastWeek->subDays(2)->toDateString(),
+            'appointment_date' => $twoWeeksAgo->toDateString(),
             'appointment_time' => '16:00:00',
             'duration_minutes' => 45,
             'status' => 'completed',
@@ -586,21 +396,20 @@ class DatabaseSeeder extends Seeder
             'amount' => 450000,
             'payment_status' => 'paid',
             'deposit_amount' => 450000,
-            'paid_at' => $lastWeek->subDays(2)->addHours(2),
-            'confirmed_at' => $lastWeek->subDays(3),
-            'completed_at' => $lastWeek->subDays(2)->addHours(1),
+            'paid_amount' => 450000,
+            'paid_at' => $twoWeeksAgo->copy()->addHours(2),
+            'confirmed_at' => $twoWeeksAgo->copy()->subDays(3),
+            'completed_at' => $twoWeeksAgo->copy()->addHours(1),
             'rating' => 3,
             'staff_rating' => 4,
             'review' => 'خوب بود اما نتونستن کامل موها رو بزنن',
-            'reviewed_at' => $lastWeek->subDays(2)->addHours(2),
+            'reviewed_at' => $twoWeeksAgo->copy()->addHours(2),
         ]);
-
-        // نوبت 7: لغو شده (cancelled)
         $this->createAppointment([
             'user_id' => $patient4->id,
             'service_id' => $service3->id,
             'assigned_staff_id' => $doctor1->id,
-            'appointment_date' => $today->toDateString(),
+            'appointment_date' => $today->copy()->addDays(1)->toDateString(),
             'appointment_time' => '15:30:00',
             'duration_minutes' => 60,
             'status' => 'cancelled',
@@ -611,13 +420,11 @@ class DatabaseSeeder extends Seeder
             'cancelled_at' => now()->subDays(1),
             'cancel_reason' => 'بیمار به دلیل مسائل شخصی لغو کرد',
         ]);
-
-        // نوبت 8: عدم حضور (no_show)
         $this->createAppointment([
             'user_id' => $patient2->id,
             'service_id' => $service3->id,
             'assigned_staff_id' => $doctor3->id,
-            'appointment_date' => $lastWeek->addDays(1)->toDateString(),
+            'appointment_date' => $threeWeeksAgo->toDateString(),
             'appointment_time' => '10:30:00',
             'duration_minutes' => 60,
             'status' => 'no_show',
@@ -626,15 +433,13 @@ class DatabaseSeeder extends Seeder
             'amount' => 650000,
             'payment_status' => 'unpaid',
             'deposit_amount' => 0,
-            'confirmed_at' => $lastWeek->subDays(2),
+            'confirmed_at' => $threeWeeksAgo->copy()->subDays(2),
         ]);
-
-        // نوبت 9: تکمیل شده با بیعانه (deposit)
         $this->createAppointment([
             'user_id' => $patient1->id,
             'service_id' => $service2->id,
             'assigned_staff_id' => $doctor2->id,
-            'appointment_date' => $tomorrow->addDays(2)->toDateString(),
+            'appointment_date' => $twoWeeks->toDateString(),
             'appointment_time' => '12:00:00',
             'duration_minutes' => 45,
             'status' => 'confirmed',
@@ -643,16 +448,15 @@ class DatabaseSeeder extends Seeder
             'amount' => 450000,
             'payment_status' => 'partial',
             'deposit_amount' => 150000,
+            'paid_amount' => 150000,
             'paid_at' => now()->subHours(4),
             'confirmed_at' => now()->subHours(5),
         ]);
-
-        // نوبت 10: درخواست جدید با بیعانه
         $this->createAppointment([
             'user_id' => $patient3->id,
             'service_id' => $service1->id,
             'assigned_staff_id' => null,
-            'appointment_date' => $nextWeek->addDays(3)->toDateString(),
+            'appointment_date' => $nextWeek->copy()->addDays(3)->toDateString(),
             'appointment_time' => '09:00:00',
             'duration_minutes' => 30,
             'status' => 'pending',
@@ -660,29 +464,208 @@ class DatabaseSeeder extends Seeder
             'amount' => 250000,
             'payment_status' => 'partial',
             'deposit_amount' => 100000,
+            'paid_amount' => 100000,
             'paid_at' => now()->subHours(1),
         ]);
-
-        // ================ 7) پیام موفقیت ================
+        $this->createAppointment([
+            'user_id' => $patient4->id,
+            'service_id' => $service3->id,
+            'assigned_staff_id' => $doctor3->id,
+            'appointment_date' => $thisWeek->toDateString(),
+            'appointment_time' => '11:30:00',
+            'duration_minutes' => 60,
+            'status' => 'confirmed',
+            'client_notes' => 'تزریق بوتاکس',
+            'staff_notes' => 'مراجعه برای تزریق بوتاکس پیشانی',
+            'amount' => 650000,
+            'payment_status' => 'paid',
+            'deposit_amount' => 650000,
+            'paid_amount' => 650000,
+            'paid_at' => now()->subHours(6),
+            'confirmed_at' => now()->subHours(8),
+        ]);
+        $this->createAppointment([
+            'user_id' => $patient1->id,
+            'service_id' => $service1->id,
+            'assigned_staff_id' => $doctor2->id,
+            'appointment_date' => $tomorrow->copy()->addDays(2)->toDateString(),
+            'appointment_time' => '15:00:00',
+            'duration_minutes' => 30,
+            'status' => 'confirmed',
+            'client_notes' => 'بررسی لک‌های صورت',
+            'amount' => 250000,
+            'payment_status' => 'partial',
+            'deposit_amount' => 125000,
+            'paid_amount' => 125000,
+            'paid_at' => now()->subHours(10),
+            'confirmed_at' => now()->subHours(11),
+        ]);
+        $this->createAppointment([
+            'user_id' => $patient2->id,
+            'service_id' => $service2->id,
+            'assigned_staff_id' => $doctor1->id,
+            'appointment_date' => $nextWeek->copy()->addDays(1)->toDateString(),
+            'appointment_time' => '10:00:00',
+            'duration_minutes' => 45,
+            'status' => 'pending',
+            'client_notes' => 'لیزر دست‌ها',
+            'amount' => 450000,
+            'payment_status' => 'unpaid',
+            'deposit_amount' => 0,
+        ]);
+        $this->createAppointment([
+            'user_id' => $patient3->id,
+            'service_id' => $service3->id,
+            'assigned_staff_id' => $doctor3->id,
+            'appointment_date' => $today->copy()->addDays(2)->toDateString(),
+            'appointment_time' => '17:00:00',
+            'duration_minutes' => 60,
+            'status' => 'confirmed',
+            'client_notes' => 'مشاوره برای فیلر لب',
+            'amount' => 650000,
+            'payment_status' => 'partial',
+            'deposit_amount' => 300000,
+            'paid_amount' => 300000,
+            'paid_at' => now()->subDays(1),
+            'confirmed_at' => now()->subHours(10),
+        ]);
+        $this->createAppointment([
+            'user_id' => $patient4->id,
+            'service_id' => $service1->id,
+            'assigned_staff_id' => $doctor1->id,
+            'appointment_date' => $lastWeek->copy()->addDays(2)->toDateString(),
+            'appointment_time' => '14:00:00',
+            'duration_minutes' => 30,
+            'status' => 'completed',
+            'client_notes' => 'مشاوره درمان جوش',
+            'staff_notes' => 'درمان اولیه تجویز شد',
+            'amount' => 250000,
+            'payment_status' => 'paid',
+            'deposit_amount' => 250000,
+            'paid_amount' => 250000,
+            'paid_at' => $lastWeek->copy()->addDays(2)->addHours(2),
+            'confirmed_at' => $lastWeek->copy()->addDays(1),
+            'completed_at' => $lastWeek->copy()->addDays(2)->addHours(1),
+            'rating' => 4,
+            'staff_rating' => 5,
+            'review' => 'مشاوره خوب و کامل بود.',
+            'reviewed_at' => $lastWeek->copy()->addDays(2)->addHours(3),
+        ]);
+        $this->createAppointment([
+            'user_id' => $patient1->id,
+            'service_id' => $service2->id,
+            'assigned_staff_id' => $doctor2->id,
+            'appointment_date' => $lastWeek->copy()->addDays(3)->toDateString(),
+            'appointment_time' => '09:30:00',
+            'duration_minutes' => 45,
+            'status' => 'completed',
+            'client_notes' => 'لیزر صورت',
+            'staff_notes' => 'جلسه انجام شد',
+            'amount' => 450000,
+            'payment_status' => 'paid',
+            'deposit_amount' => 450000,
+            'paid_amount' => 450000,
+            'paid_at' => $lastWeek->copy()->addDays(3)->addHours(2),
+            'confirmed_at' => $lastWeek->copy()->addDays(1),
+            'completed_at' => $lastWeek->copy()->addDays(3)->addHours(1),
+            'rating' => 5,
+            'staff_rating' => 5,
+            'review' => 'خیلی راضی بودم.',
+            'reviewed_at' => $lastWeek->copy()->addDays(3)->addHours(3),
+        ]);
+        $this->createAppointment([
+            'user_id' => $patient2->id,
+            'service_id' => $service3->id,
+            'assigned_staff_id' => $doctor1->id,
+            'appointment_date' => $twoWeeks->copy()->addDays(2)->toDateString(),
+            'appointment_time' => '13:30:00',
+            'duration_minutes' => 60,
+            'status' => 'confirmed',
+            'client_notes' => 'تزریق فیلر گونه',
+            'amount' => 650000,
+            'payment_status' => 'partial',
+            'deposit_amount' => 250000,
+            'paid_amount' => 250000,
+            'paid_at' => now()->subDays(2),
+            'confirmed_at' => now()->subDays(2),
+        ]);
+        $this->createAppointment([
+            'user_id' => $patient3->id,
+            'service_id' => $service1->id,
+            'assigned_staff_id' => $doctor2->id,
+            'appointment_date' => $twoWeeksAgo->copy()->addDays(4)->toDateString(),
+            'appointment_time' => '11:00:00',
+            'duration_minutes' => 30,
+            'status' => 'completed',
+            'client_notes' => 'مشاوره پوست',
+            'staff_notes' => 'جلسه با موفقیت انجام شد',
+            'amount' => 250000,
+            'payment_status' => 'paid',
+            'deposit_amount' => 250000,
+            'paid_amount' => 250000,
+            'paid_at' => $twoWeeksAgo->copy()->addDays(4)->addHours(2),
+            'confirmed_at' => $twoWeeksAgo->copy()->addDays(3),
+            'completed_at' => $twoWeeksAgo->copy()->addDays(4)->addHours(1),
+            'rating' => 4,
+            'staff_rating' => 4,
+            'review' => 'خدمات مناسب بود.',
+            'reviewed_at' => $twoWeeksAgo->copy()->addDays(4)->addHours(3),
+        ]);
+        $this->createAppointment([
+            'user_id' => $patient4->id,
+            'service_id' => $service2->id,
+            'assigned_staff_id' => null,
+            'appointment_date' => $today->copy()->addDays(5)->toDateString(),
+            'appointment_time' => '16:30:00',
+            'duration_minutes' => 45,
+            'status' => 'pending',
+            'client_notes' => 'درخواست لیزر موهای زائد',
+            'amount' => 450000,
+            'payment_status' => 'unpaid',
+            'deposit_amount' => 0,
+        ]);
+        $this->createAppointment([
+            'user_id' => $patient1->id,
+            'service_id' => $service3->id,
+            'assigned_staff_id' => $doctor3->id,
+            'appointment_date' => $today->copy()->addDays(6)->toDateString(),
+            'appointment_time' => '12:30:00',
+            'duration_minutes' => 60,
+            'status' => 'confirmed',
+            'client_notes' => 'تزریق ژل',
+            'amount' => 650000,
+            'payment_status' => 'paid',
+            'deposit_amount' => 650000,
+            'paid_amount' => 650000,
+            'paid_at' => now()->subHours(3),
+            'confirmed_at' => now()->subHours(4),
+        ]);
+        $this->createAppointment([
+            'user_id' => $patient2->id,
+            'service_id' => $service1->id,
+            'assigned_staff_id' => $doctor1->id,
+            'appointment_date' => $threeWeeksAgo->copy()->addDays(3)->toDateString(),
+            'appointment_time' => '10:00:00',
+            'duration_minutes' => 30,
+            'status' => 'cancelled',
+            'client_notes' => 'مشاوره پوست',
+            'amount' => 250000,
+            'payment_status' => 'partial',
+            'deposit_amount' => 100000,
+            'paid_amount' => 100000,
+            'paid_at' => now()->subWeeks(3),
+            'cancelled_at' => now()->subWeeks(3)->addDay(),
+            'cancel_reason' => 'لغو توسط بیمار',
+        ]);
         $this->command->info('✅ تمام داده‌ها با موفقیت ایجاد شدند.');
+        $this->command->info('📌 تعداد نوبت‌های ایجاد شده: ۲۰');
+        $this->command->info('📌 برای نوبت‌های دارای پرداخت، یک Transaction ایجاد شده است.');
+        $this->command->info('📌 نوبت‌های بدون پرداخت، Transaction ندارند.');
+        $this->command->info('');
         $this->command->info('📌 سرویس‌های ایجاد شده:');
         $this->command->info('   🔹 مشاوره پوست (۲۵۰,۰۰۰ تومان - ۳۰ دقیقه)');
         $this->command->info('   🔹 لیزر موهای زائد (۴۵۰,۰۰۰ تومان - ۴۵ دقیقه)');
         $this->command->info('   🔹 فیلر و تزریقات (۶۵۰,۰۰۰ تومان - ۶۰ دقیقه)');
-        $this->command->info('');
-        $this->command->info('📌 پزشکان و سرویس‌های آنها:');
-        $this->command->info('   🔹 پزشک نمونه (doctor@clinic.com): هر ۳ سرویس');
-        $this->command->info('   🔹 دکتر رضایی (doctor2@clinic.com): مشاوره پوست + لیزر');
-        $this->command->info('   🔹 دکتر کریمی (doctor3@clinic.com): لیزر + فیلر و تزریقات');
-        $this->command->info('');
-        $this->command->info('📌 نوبت‌های ایجاد شده (۱۰ نوبت):');
-        $this->command->info('   🔹 ۲ نوبت در انتظار تایید (pending)');
-        $this->command->info('   🔹 ۲ نوبت تأیید شده (confirmed)');
-        $this->command->info('   🔹 ۱ نوبت در حال انجام (in_progress)');
-        $this->command->info('   🔹 ۲ نوبت تکمیل شده (completed) با امتیاز');
-        $this->command->info('   🔹 ۱ نوبت لغو شده (cancelled)');
-        $this->command->info('   🔹 ۱ نوبت عدم حضور (no_show)');
-        $this->command->info('   🔹 ۱ نوبت تأیید شده با بیعانه');
         $this->command->info('');
         $this->command->info('📌 اطلاعات ورود کاربران:');
         $this->command->info('   🔹 مدیر: admin@clinic.com / admin123');

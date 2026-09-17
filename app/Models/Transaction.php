@@ -20,6 +20,8 @@ class Transaction extends Model
         'amount',
         'discount_amount',
         'final_amount',
+        'paid_amount',
+        'remaining_amount',
         'status',
         'description',
         'reference_number',
@@ -32,6 +34,8 @@ class Transaction extends Model
         'amount' => 'decimal:2',
         'discount_amount' => 'decimal:2',
         'final_amount' => 'decimal:2',
+        'paid_amount' => 'decimal:2',
+        'remaining_amount' => 'decimal:2',
         'paid_at' => 'datetime',
         'meta_data' => 'array',
     ];
@@ -60,14 +64,24 @@ class Transaction extends Model
 
     // ================ Scopes ================
 
-    public function scopeCompleted($query)
+    public function scopeUnpaid($query)
     {
-        return $query->where('status', 'completed');
+        return $query->where('status', 'unpaid');
     }
 
-    public function scopePending($query)
+    public function scopePartial($query)
     {
-        return $query->where('status', 'pending');
+        return $query->where('status', 'partial');
+    }
+
+    public function scopePaid($query)
+    {
+        return $query->where('status', 'paid');
+    }
+
+    public function scopeRefunded($query)
+    {
+        return $query->where('status', 'refunded');
     }
 
     // ================ Boot Methods ================
@@ -81,5 +95,26 @@ class Transaction extends Model
                 $transaction->transaction_number = 'TRX-' . strtoupper(uniqid());
             }
         });
+    }
+
+    // ================ Helpers ================
+
+    public function updatePaymentStatus()
+    {
+        if ($this->paid_amount <= 0) {
+            $this->status = 'unpaid';
+        } elseif ($this->paid_amount < $this->final_amount) {
+            $this->status = 'partial';
+        } else {
+            $this->status = 'paid';
+            $this->remaining_amount = 0;
+        }
+
+        $this->remaining_amount = max(
+            0,
+            $this->final_amount - $this->paid_amount
+        );
+
+        return $this;
     }
 }
