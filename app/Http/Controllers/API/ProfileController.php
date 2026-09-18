@@ -25,6 +25,38 @@ class ProfileController extends Controller
             ],
         ]);
     }
+    public function doctors($id = null)
+    {
+        $query = User::whereHas('roles', function ($query) {
+            $query->where('name', 'doctor');
+        });
+
+        if ($id) {
+            $query->whereHas('services', function ($query) use ($id) {
+                $query->whereKey($id);
+            });
+        }
+
+        $doctors = $query->with('services')->get();
+
+        foreach ($doctors as $doctor) {
+            if ($id) {
+                $service = $doctor->services->firstWhere('id', $id);
+            } else {
+                $service = $doctor->services->first();
+            }
+
+            $doctor->ability = $service?->name;
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'اطلاعات دکتر ها با موفقیت دریافت شد.',
+            'data' => [
+                'user' => $doctors,
+            ],
+        ]);
+    }
     public function toggle($toggleName, $value)
     {
         $user = User::findOrFail(1);

@@ -22,6 +22,8 @@ Route::get('/specialist-profile/{id}', [SpecialistController::class, 'profile'])
 Route::get('/profile', [ProfileController::class, 'profile']);
 Route::get('/profile/toggle/{toggleName}/{value}', [ProfileController::class, 'toggle']);
 
+Route::get('/doctors/{id?}', [ProfileController::class, 'doctors']);
+
 Route::get('/appointments', [AppointmentController::class, 'index']);
 Route::get('/appointment/det/{id}', [AppointmentController::class, 'det']);
 
