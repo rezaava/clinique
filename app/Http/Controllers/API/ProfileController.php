@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Appointment;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
@@ -47,6 +48,14 @@ class ProfileController extends Controller
             }
 
             $doctor->ability = $service?->name;
+
+            $appointments = Appointment::where('assigned_staff_id',$doctor->id)->whereNotNull('staff_rating')->get();
+
+            $doctor->rating = $appointments->avg('staff_rating')
+                ? round($appointments->avg('staff_rating'), 1)
+                : 0;
+
+            $doctor->rating_count = $appointments->count();
         }
 
         return response()->json([
