@@ -12,6 +12,7 @@ class SiteController extends Controller
     {
         $services = Service::where('is_active', 1)
             ->orderByDesc('id')
+            ->with('category')
             ->get();
 
         $doctor = User::whereHas('roles', function ($query) {

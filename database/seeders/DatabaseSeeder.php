@@ -8,6 +8,7 @@ use App\Models\Appointment;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\Models\ServiceCategory;
 use Carbon\Carbon;
 use App\Models\FAQ;
 use App\Models\Credential;
@@ -42,6 +43,8 @@ class DatabaseSeeder extends Seeder
     protected function createService(array $data)
     {
         $service = new Service();
+
+        $service->cat_id = $data['cat_id'];
         $service->name = $data['name'];
         $service->slug = $data['slug'] ?? Str::slug($data['name']);
         $service->short_description = $data['short_description'] ?? null;
@@ -51,7 +54,9 @@ class DatabaseSeeder extends Seeder
         $service->duration_minutes = $data['duration_minutes'] ?? 30;
         $service->is_active = $data['is_active'] ?? true;
         $service->review_count = $data['review_count'] ?? 0;
+
         $service->save();
+
         return $service;
     }
     protected function attachServicesToDoctor(User $doctor, array $serviceIds)
@@ -205,7 +210,28 @@ class DatabaseSeeder extends Seeder
             'status' => 'active',
             'points' => 0,
         ], 'supplier');
+        $categorySkin = ServiceCategory::create([
+            'name' => 'پوست',
+            'slug' => 'poost',
+            'description' => 'خدمات تخصصی پوست و مراقبت از پوست',
+            'is_active' => true,
+        ]);
+
+        $categoryLaser = ServiceCategory::create([
+            'name' => 'لیزر',
+            'slug' => 'laser',
+            'description' => 'خدمات لیزر و حذف موهای زائد',
+            'is_active' => true,
+        ]);
+
+        $categoryInjection = ServiceCategory::create([
+            'name' => 'تزریقات زیبایی',
+            'slug' => 'tazrighat-zibayi',
+            'description' => 'خدمات تزریق فیلر، بوتاکس و ژل',
+            'is_active' => true,
+        ]);
         $service1 = $this->createService([
+            'cat_id' => $categorySkin->id,
             'name' => 'مشاوره پوست',
             'slug' => 'mashavareh-pust',
             'short_description' => 'مشاوره تخصصی پوست و زیبایی توسط پزشکان مجرب',
@@ -216,6 +242,7 @@ class DatabaseSeeder extends Seeder
             'is_active' => true,
         ]);
         $service2 = $this->createService([
+            'cat_id' => $categoryLaser->id,
             'name' => 'لیزر موهای زائد',
             'slug' => 'lazer-moo-ha-ye-zaed',
             'short_description' => 'لیزر موهای زائد با دستگاه‌های پیشرفته و تکنولوژی روز دنیا',
@@ -226,6 +253,7 @@ class DatabaseSeeder extends Seeder
             'is_active' => true,
         ]);
         $service3 = $this->createService([
+            'cat_id' => $categoryInjection->id,
             'name' => 'فیلر و تزریقات',
             'slug' => 'filler-va-tazrighat',
             'short_description' => 'تزریق فیلر، بوتاکس و ژل با بهترین مواد و تکنیک‌های روز',

@@ -42,6 +42,11 @@ class Service extends Model
         return $this->hasMany(Appointment::class);
     }
 
+    public function category()
+    {
+        return $this->belongsTo(ServiceCategory::class, 'cat_id');
+    }
+
     // User Services (تخصص پرسنل)
     public function userServices()
     {

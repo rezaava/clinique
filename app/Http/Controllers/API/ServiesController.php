@@ -12,6 +12,7 @@ class ServiesController extends Controller
     {
         $services = Service::where('is_active', 1)
             ->orderByDesc('id')
+            ->with('category')
             ->get();
 
         foreach ($services as $service) {
