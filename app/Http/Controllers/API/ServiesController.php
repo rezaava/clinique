@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Service;
+use App\Models\ServiceCategory;
 use Illuminate\Http\JsonResponse;
 
 class ServiesController extends Controller
@@ -15,6 +16,8 @@ class ServiesController extends Controller
             ->with('category')
             ->get();
 
+        $category = ServiceCategory::get();
+        
         foreach ($services as $service) {
             $service->rating = $service->appointments()
                 ->whereNotNull('rating')
@@ -29,6 +32,7 @@ class ServiesController extends Controller
             'success' => true,
             'message' => 'لیست خدمات با موفقیت دریافت شد.',
             'data' => $services,
+            'category' => $category,
         ]);
     }
 
