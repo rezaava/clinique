@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use App\Models\ServiceCategory;
 use Carbon\Carbon;
 use App\Models\FAQ;
+use App\Models\ServiceSuitability;
 use App\Models\Credential;
 class DatabaseSeeder extends Seeder
 {
@@ -39,6 +40,14 @@ class DatabaseSeeder extends Seeder
         $user->save();
         $user->addRole($role);
         return $user;
+    }
+    protected function createServiceSuitability(int $serviceId, string $text, int $level)
+    {
+        return ServiceSuitability::create([
+            'service_id' => $serviceId,
+            'text' => $text,
+            'level' => $level,
+        ]);
     }
     protected function createService(array $data)
     {
@@ -273,6 +282,63 @@ class DatabaseSeeder extends Seeder
         $this->createFAQ($service3->id, 'تزریق فیلر چقدر طول می‌کشد؟', 'بسته به ناحیه مورد درمان، تزریق فیلر معمولاً بین ۳۰ تا ۶۰ دقیقه زمان می‌برد.');
         $this->createFAQ($service3->id, 'آیا تزریق فیلر درد دارد؟', 'ممکن است کمی ناراحتی یا سوزش احساس شود. در صورت نیاز می‌توان از روش‌های بی‌حسی موضعی برای کاهش ناراحتی استفاده کرد.');
         $this->createFAQ($service3->id, 'ماندگاری فیلر چقدر است؟', 'ماندگاری فیلر به نوع ماده، محل تزریق، میزان متابولیسم بدن و شرایط فردی بستگی دارد.');
+        // ================ Service Suitabilities ================
+        // مشاوره پوست
+        $this->createServiceSuitability(
+            $service1->id,
+            'اگر درباره مشکلات پوستی مثل جوش، لک، خشکی، چربی یا حساسیت پوست سوال دارید.',
+            1
+        );
+
+        $this->createServiceSuitability(
+            $service1->id,
+            'اگر به دنبال بررسی تخصصی پوست و دریافت برنامه درمانی مناسب هستید.',
+            2
+        );
+
+        $this->createServiceSuitability(
+            $service1->id,
+            'اگر مشکل پوستی شما طولانی‌مدت یا پیچیده است و نیاز به بررسی تخصصی پزشک دارید.',
+            3
+        );
+
+        // لیزر موهای زائد
+        $this->createServiceSuitability(
+            $service2->id,
+            'اگر از رشد موهای زائد بدن یا صورت ناراضی هستید.',
+            1
+        );
+
+        $this->createServiceSuitability(
+            $service2->id,
+            'اگر به دنبال کاهش قابل توجه رشد موهای زائد و داشتن پوستی صاف‌تر هستید.',
+            2
+        );
+
+        $this->createServiceSuitability(
+            $service2->id,
+            'اگر موهای زائد ضخیم و مقاوم دارید و به دنبال یک برنامه منظم برای کاهش آن‌ها هستید.',
+            3
+        );
+
+        // فیلر و تزریقات
+        $this->createServiceSuitability(
+            $service3->id,
+            'اگر می‌خواهید تغییرات ظریف و طبیعی در ظاهر صورت خود ایجاد کنید.',
+            1
+        );
+
+        $this->createServiceSuitability(
+            $service3->id,
+            'اگر برای رفع چین و چروک، حجم‌دهی یا اصلاح فرم برخی نواحی صورت به دنبال راهکار زیبایی هستید.',
+            2
+        );
+
+        $this->createServiceSuitability(
+            $service3->id,
+            'اگر برای انتخاب نوع تزریق، مقدار مناسب و روش انجام آن نیاز به بررسی و مشاوره تخصصی دارید.',
+            3
+        );
         $doctor1 = $this->createUser([
             'first_name' => 'پزشک',
             'last_name' => 'نمونه',

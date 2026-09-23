@@ -46,7 +46,10 @@ class Service extends Model
     {
         return $this->belongsTo(ServiceCategory::class, 'cat_id');
     }
-
+    public function suitabilities()
+    {
+        return $this->hasMany(ServiceSuitability::class);
+    }
     // User Services (تخصص پرسنل)
     public function userServices()
     {

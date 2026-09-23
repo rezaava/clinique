@@ -105,7 +105,7 @@ class ServiesController extends Controller
         }
 
         $service->faqs = $service->faqs()->orderBy('id')->get();
-
+        $service->suitabilities = $service->suitabilities()->orderBy('id')->get();
 
         $service->staff = $staff;
         
