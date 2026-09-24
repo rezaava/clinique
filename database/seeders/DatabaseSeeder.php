@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use App\Models\FAQ;
 use App\Models\ServiceSuitability;
 use App\Models\Credential;
+use App\Models\ServiceTreatmentStep;
 class DatabaseSeeder extends Seeder
 {
     protected function createRole(string $name, string $display_name, string $description = null)
@@ -47,6 +48,19 @@ class DatabaseSeeder extends Seeder
             'service_id' => $serviceId,
             'text' => $text,
             'level' => $level,
+        ]);
+    }
+    protected function createTreatmentStep(
+        int $serviceId,
+        string $name,
+        string $svg,
+        int $sortOrder
+    ) {
+        return ServiceTreatmentStep::create([
+            'service_id' => $serviceId,
+            'name' => $name,
+            'svg' => $svg,
+            'sort_order' => $sortOrder,
         ]);
     }
     protected function createService(array $data)
@@ -338,6 +352,95 @@ class DatabaseSeeder extends Seeder
             $service3->id,
             'اگر برای انتخاب نوع تزریق، مقدار مناسب و روش انجام آن نیاز به بررسی و مشاوره تخصصی دارید.',
             3
+        );
+        // ================ Service Treatment Steps ================
+        // مشاوره پوست
+        $this->createTreatmentStep(
+            $service1->id,
+            'مشاوره',
+            'M12 2v4M6 6h12M6 10h12M6 14h8',
+            1
+        );
+
+        $this->createTreatmentStep(
+            $service1->id,
+            'بررسی پوست',
+            'M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2ZM8 12l2 2 4-4',
+            2
+        );
+
+        $this->createTreatmentStep(
+            $service1->id,
+            'تشخیص',
+            'M9 11a3 3 0 1 0 6 0a3 3 0 1 0-6 0ZM4 20a8 8 0 0 1 16 0',
+            3
+        );
+
+        $this->createTreatmentStep(
+            $service1->id,
+            'برنامه درمان',
+            'M4 4h16v16H4zM8 8h8M8 12h8M8 16h5',
+            4
+        );
+
+
+        // لیزر موهای زائد
+        $this->createTreatmentStep(
+            $service2->id,
+            'مشاوره',
+            'M12 2v4M6 6h12M6 10h12M6 14h8',
+            1
+        );
+
+        $this->createTreatmentStep(
+            $service2->id,
+            'آماده‌سازی',
+            'M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5S5 13 5 15a7 7 0 0 0 7 7z',
+            2
+        );
+
+        $this->createTreatmentStep(
+            $service2->id,
+            'انجام لیزر',
+            'M12 2l1.5 5.5L19 9l-5.5 1.5L12 16l-1.5-5.5L5 9l5.5-1.5z',
+            3
+        );
+
+        $this->createTreatmentStep(
+            $service2->id,
+            'مراقبت پس از درمان',
+            'M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2',
+            4
+        );
+
+
+        // فیلر و تزریقات
+        $this->createTreatmentStep(
+            $service3->id,
+            'مشاوره',
+            'M12 2v4M6 6h12M6 10h12M6 14h8',
+            1
+        );
+
+        $this->createTreatmentStep(
+            $service3->id,
+            'بررسی و طراحی',
+            'M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2ZM8 16l8-8',
+            2
+        );
+
+        $this->createTreatmentStep(
+            $service3->id,
+            'تزریق',
+            'M14 4l6 6-10 10H4v-6L14 4ZM12 6l6 6',
+            3
+        );
+
+        $this->createTreatmentStep(
+            $service3->id,
+            'مراقبت پس از تزریق',
+            'M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2ZM8 12l2 2 4-4',
+            4
         );
         $doctor1 = $this->createUser([
             'first_name' => 'پزشک',

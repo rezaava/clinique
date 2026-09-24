@@ -50,6 +50,11 @@ class Service extends Model
     {
         return $this->hasMany(ServiceSuitability::class);
     }
+    public function treatmentSteps()
+    {
+        return $this->hasMany(ServiceTreatmentStep::class)
+            ->orderBy('sort_order');
+    }
     // User Services (تخصص پرسنل)
     public function userServices()
     {
