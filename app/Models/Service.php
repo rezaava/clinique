@@ -52,8 +52,11 @@ class Service extends Model
     }
     public function treatmentSteps()
     {
-        return $this->hasMany(ServiceTreatmentStep::class)
-            ->orderBy('sort_order');
+        return $this->hasMany(ServiceTreatmentStep::class)->orderBy('sort_order');
+    }
+    public function expectations()
+    {
+        return $this->hasMany(ServiceExpectation::class)->orderBy('sort_order');
     }
     // User Services (تخصص پرسنل)
     public function userServices()

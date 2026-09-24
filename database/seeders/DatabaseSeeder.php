@@ -8,6 +8,7 @@ use App\Models\Appointment;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\Models\ServiceExpectation;
 use App\Models\ServiceCategory;
 use Carbon\Carbon;
 use App\Models\FAQ;
@@ -24,6 +25,19 @@ class DatabaseSeeder extends Seeder
         $role->description = $description ?? $display_name;
         $role->save();
         return $role;
+    }
+    protected function createExpectation(
+        int $serviceId,
+        string $text,
+        string $status,
+        int $sortOrder
+    ) {
+        return ServiceExpectation::create([
+            'service_id' => $serviceId,
+            'text' => $text,
+            'status' => $status,
+            'sort_order' => $sortOrder,
+        ]);
     }
     protected function createUser(array $data, string $role)
     {
@@ -351,6 +365,72 @@ class DatabaseSeeder extends Seeder
         $this->createServiceSuitability(
             $service3->id,
             'اگر برای انتخاب نوع تزریق، مقدار مناسب و روش انجام آن نیاز به بررسی و مشاوره تخصصی دارید.',
+            3
+        );
+        // ================ Service Expectations ================
+        // مشاوره پوست
+        $this->createExpectation(
+            $service1->id,
+            'قبل از درمان پوست خود را با شوینده ملایم تمیز کنید.',
+            'before',
+            1
+        );
+
+        $this->createExpectation(
+            $service1->id,
+            'در ابتدا پوست بررسی و برای درمان آماده می‌شود.',
+            'during',
+            2
+        );
+
+        $this->createExpectation(
+            $service1->id,
+            'بعد از درمان ممکن است کمی قرمزی یا حساسیت موقت داشته باشید.',
+            'after',
+            3
+        );
+
+        // لیزر موهای زائد
+        $this->createExpectation(
+            $service2->id,
+            'حداقل ۲۴ ساعت قبل از درمان از اپیلاسیون و روش‌های کندن مو استفاده نکنید.',
+            'before',
+            1
+        );
+
+        $this->createExpectation(
+            $service2->id,
+            'در طول درمان ممکن است احساس گرما یا سوزش خفیف داشته باشید.',
+            'during',
+            2
+        );
+
+        $this->createExpectation(
+            $service2->id,
+            'تا مدتی پس از درمان از قرار گرفتن مستقیم در معرض آفتاب خودداری کنید.',
+            'after',
+            3
+        );
+
+        // فیلر و تزریقات
+        $this->createExpectation(
+            $service3->id,
+            'قبل از تزریق، در صورت مصرف دارو یا داشتن حساسیت، پزشک را مطلع کنید.',
+            'before',
+            1
+        );
+
+        $this->createExpectation(
+            $service3->id,
+            'پزشک ناحیه مورد نظر را بررسی کرده و تزریق را انجام می‌دهد.',
+            'during',
+            2
+        );
+
+        $this->createExpectation(
+            $service3->id,
+            'ممکن است تورم یا قرمزی خفیف و موقت در محل تزریق ایجاد شود.',
+            'after',
             3
         );
         // ================ Service Treatment Steps ================
