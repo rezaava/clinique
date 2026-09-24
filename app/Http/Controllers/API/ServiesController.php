@@ -108,6 +108,7 @@ class ServiesController extends Controller
         $service->suitabilities = $service->suitabilities()->orderBy('id')->get();
         $service->treatmentSteps = $service->treatmentSteps()->orderBy('id')->get();
         $service->expectations = $service->expectations()->orderBy('id')->get();
+        $service->aftercares = $service->aftercares()->orderBy('id')->get();
 
         $service->staff = $staff;
         

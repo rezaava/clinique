@@ -58,6 +58,11 @@ class Service extends Model
     {
         return $this->hasMany(ServiceExpectation::class)->orderBy('sort_order');
     }
+    public function aftercares()
+    {
+        return $this->hasMany(ServiceAftercare::class)
+            ->orderBy('sort_order');
+    }
     // User Services (تخصص پرسنل)
     public function userServices()
     {

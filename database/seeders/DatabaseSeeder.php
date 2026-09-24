@@ -13,6 +13,7 @@ use App\Models\ServiceCategory;
 use Carbon\Carbon;
 use App\Models\FAQ;
 use App\Models\ServiceSuitability;
+use App\Models\ServiceAftercare;
 use App\Models\Credential;
 use App\Models\ServiceTreatmentStep;
 class DatabaseSeeder extends Seeder
@@ -25,6 +26,17 @@ class DatabaseSeeder extends Seeder
         $role->description = $description ?? $display_name;
         $role->save();
         return $role;
+    }
+    protected function createAftercare(
+        int $serviceId,
+        string $text,
+        int $sortOrder
+    ) {
+        return ServiceAftercare::create([
+            'service_id' => $serviceId,
+            'text' => $text,
+            'sort_order' => $sortOrder,
+        ]);
     }
     protected function createExpectation(
         int $serviceId,
@@ -300,6 +312,69 @@ class DatabaseSeeder extends Seeder
             'duration_minutes' => 60,
             'is_active' => true,
         ]);
+        // ================ Service Aftercares ================
+        // مشاوره پوست
+        $this->createAftercare(
+            $service1->id,
+            'بعد از مشاوره، توصیه‌های تخصصی پزشک را طبق برنامه درمانی دنبال کنید.',
+            1
+        );
+
+        $this->createAftercare(
+            $service1->id,
+            'از محصولات پوستی تجویز شده توسط متخصص به صورت منظم استفاده کنید.',
+            2
+        );
+
+        $this->createAftercare(
+            $service1->id,
+            'در صورت مشاهده واکنش غیرطبیعی، با متخصص خود تماس بگیرید.',
+            3
+        );
+
+        // لیزر موهای زائد
+        $this->createAftercare(
+            $service2->id,
+            'تا ۲۴ ساعت از سونا، جکوزی و ورزش سنگین خودداری کنید.',
+            1
+        );
+
+        $this->createAftercare(
+            $service2->id,
+            'تا چند روز از قرار گرفتن مستقیم در معرض نور شدید خورشید خودداری کنید.',
+            2
+        );
+
+        $this->createAftercare(
+            $service2->id,
+            'از ضدآفتاب مناسب برای محافظت از پوست استفاده کنید.',
+            3
+        );
+
+        $this->createAftercare(
+            $service2->id,
+            'در صورت بروز التهاب یا واکنش غیرعادی، با متخصص خود مشورت کنید.',
+            4
+        );
+
+        // فیلر و تزریقات
+        $this->createAftercare(
+            $service3->id,
+            'تا ۲۴ ساعت محل تزریق را ماساژ یا دستکاری نکنید.',
+            1
+        );
+
+        $this->createAftercare(
+            $service3->id,
+            'تا مدتی از ورزش سنگین و گرمای شدید خودداری کنید.',
+            2
+        );
+
+        $this->createAftercare(
+            $service3->id,
+            'دستورالعمل‌های پزشک را برای مراقبت از محل تزریق رعایت کنید.',
+            3
+        );
         $this->createFAQ($service1->id, 'مشاوره پوست چقدر طول می‌کشد؟', 'مدت زمان مشاوره معمولاً حدود ۳۰ دقیقه است و بسته به شرایط پوست شما ممکن است کمی متفاوت باشد.');
         $this->createFAQ($service1->id, 'آیا قبل از مراجعه باید کاری انجام دهم؟', 'بهتر است قبل از مراجعه از استفاده از محصولات تحریک‌کننده پوست خودداری کنید و اطلاعات مربوط به محصولات مصرفی خود را همراه داشته باشید.');
         $this->createFAQ($service1->id, 'آیا بعد از مشاوره درمان شروع می‌شود؟', 'پس از بررسی شرایط پوست، پزشک روش درمانی مناسب را پیشنهاد می‌دهد و در صورت نیاز مراحل درمانی بعدی تعیین می‌شود.');
