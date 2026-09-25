@@ -14,8 +14,8 @@ class Appointment extends Model
         'user_id',
         'service_id',
         'assigned_staff_id',
+        'doctor_working_time_slot_id',
         'appointment_date',
-        'appointment_time',
         'duration_minutes',
         'status',
         'client_notes',
@@ -36,7 +36,6 @@ class Appointment extends Model
 
     protected $casts = [
         'appointment_date' => 'date',
-        'appointment_time' => 'datetime',
         'duration_minutes' => 'integer',
         'amount' => 'decimal:2',
         'deposit_amount' => 'decimal:2',
@@ -64,6 +63,11 @@ class Appointment extends Model
     public function assignedStaff()
     {
         return $this->belongsTo(User::class, 'assigned_staff_id');
+    }
+
+    public function doctorWorkingTimeSlot()
+    {
+        return $this->belongsTo(WorkingTimeSlot::class, 'doctor_working_time_slot_id');
     }
 
     public function transaction()
@@ -95,7 +99,6 @@ class Appointment extends Model
 
     public function scopeUpcoming($query)
     {
-        return $query->whereDate('appointment_date', '>=', now()->toDateString())
-            ->whereIn('status', ['pending', 'confirmed']);
+        return $query->whereDate('appointment_date','>=',now()->toDateString())->whereIn('status', ['pending','confirmed']);
     }
 }

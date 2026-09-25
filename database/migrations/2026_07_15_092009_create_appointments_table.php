@@ -10,23 +10,54 @@ return new class extends Migration
     {
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete(); // کلاینت
-            $table->foreignId('service_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('assigned_staff_id')->nullable()->constrained('users')->nullOnDelete(); // پرسنل انجام‌دهنده
+
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            $table->foreignId('service_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            $table->foreignId('assigned_staff_id')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
+            /*
+            |--------------------------------------------------------------------------
+            | زمان کاری پزشک
+            |--------------------------------------------------------------------------
+            */
+
+            $table->foreignId('doctor_working_time_slot_id')
+                ->nullable()
+                ->constrained('doctor_working_time_slot')
+                ->nullOnDelete();
 
             $table->date('appointment_date');
-            $table->time('appointment_time');
+
             $table->integer('duration_minutes')->default(30);
 
             $table->enum('status', [
-                'pending', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show'
+                'pending',
+                'confirmed',
+                'in_progress',
+                'completed',
+                'cancelled',
+                'no_show'
             ])->default('pending');
 
             $table->text('client_notes')->nullable();
             $table->text('staff_notes')->nullable();
 
             $table->decimal('amount', 15, 2)->default(0);
-            $table->enum('payment_status', ['unpaid', 'partial', 'paid'])->default('unpaid');
+            $table->enum('payment_status', [
+                'unpaid',
+                'partial',
+                'paid'
+            ])->default('unpaid');
+
             $table->decimal('deposit_amount', 15, 2)->default(0);
             $table->timestamp('paid_at')->nullable();
 
@@ -36,8 +67,8 @@ return new class extends Migration
             $table->text('cancel_reason')->nullable();
 
             // امتیاز و نظر کلاینت
-            $table->tinyInteger('rating')->unsigned()->nullable(); // به خدمت
-            $table->tinyInteger('staff_rating')->unsigned()->nullable(); // به پرسنل
+            $table->tinyInteger('rating')->unsigned()->nullable();
+            $table->tinyInteger('staff_rating')->unsigned()->nullable();
             $table->text('review')->nullable();
             $table->timestamp('reviewed_at')->nullable();
 
@@ -48,7 +79,8 @@ return new class extends Migration
             $table->index(['service_id', 'appointment_date']);
             $table->index('status');
             $table->index('assigned_staff_id');
-            $table->index(['appointment_date', 'appointment_time']);
+            $table->index('doctor_working_time_slot_id');
+            $table->index(['appointment_date', 'doctor_working_time_slot_id']);
         });
     }
 
