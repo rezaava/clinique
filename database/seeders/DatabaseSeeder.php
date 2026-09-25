@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use App\Models\FAQ;
 use App\Models\ServiceSuitability;
 use App\Models\ServiceAftercare;
+use App\Models\WorkingDay;
 use App\Models\Credential;
 use App\Models\ServiceTreatmentStep;
 class DatabaseSeeder extends Seeder
@@ -184,6 +185,47 @@ class DatabaseSeeder extends Seeder
     }
     public function run()
     {
+        WorkingDay::create([
+            'name_fa' => 'شنبه',
+            'name_en' => 'Saturday',
+            'day' => 0,
+        ]);
+
+        WorkingDay::create([
+            'name_fa' => 'یکشنبه',
+            'name_en' => 'Sunday',
+            'day' => 1,
+        ]);
+
+        WorkingDay::create([
+            'name_fa' => 'دوشنبه',
+            'name_en' => 'Monday',
+            'day' => 2,
+        ]);
+
+        WorkingDay::create([
+            'name_fa' => 'سه‌شنبه',
+            'name_en' => 'Tuesday',
+            'day' => 3,
+        ]);
+
+        WorkingDay::create([
+            'name_fa' => 'چهارشنبه',
+            'name_en' => 'Wednesday',
+            'day' => 4,
+        ]);
+
+        WorkingDay::create([
+            'name_fa' => 'پنجشنبه',
+            'name_en' => 'Thursday',
+            'day' => 5,
+        ]);
+
+        WorkingDay::create([
+            'name_fa' => 'جمعه',
+            'name_en' => 'Friday',
+            'day' => 6,
+        ]);
         $this->createRole('admin', 'مدیر', 'مدیر کلینیک با دسترسی کامل');
         $this->createRole('employee', 'پرسنل', 'پرسنل کلینیک (پزشک، اپراتور، منشی)');
         $this->createRole('doctor', 'پزشک', 'پزشک متخصص');
