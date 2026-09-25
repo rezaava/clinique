@@ -15,6 +15,7 @@ use App\Models\FAQ;
 use App\Models\ServiceSuitability;
 use App\Models\ServiceAftercare;
 use App\Models\WorkingDay;
+use App\Models\WorkingTimeSlot;
 use App\Models\Credential;
 use App\Models\ServiceTreatmentStep;
 class DatabaseSeeder extends Seeder
@@ -221,10 +222,90 @@ class DatabaseSeeder extends Seeder
             'day' => 5,
         ]);
 
-        WorkingDay::create([
-            'name_fa' => 'جمعه',
-            'name_en' => 'Friday',
-            'day' => 6,
+        $workingDays = WorkingDay::all()->keyBy('day');
+
+        WorkingTimeSlot::create([
+            'working_day_id' => $workingDays[0]->id,
+            'start_time' => '08:00',
+            'end_time' => '10:00',
+        ]);
+
+        WorkingTimeSlot::create([
+            'working_day_id' => $workingDays[0]->id,
+            'start_time' => '10:30',
+            'end_time' => '12:30',
+        ]);
+
+        WorkingTimeSlot::create([
+            'working_day_id' => $workingDays[0]->id,
+            'start_time' => '16:00',
+            'end_time' => '18:00',
+        ]);
+
+        WorkingTimeSlot::create([
+            'working_day_id' => $workingDays[1]->id,
+            'start_time' => '08:00',
+            'end_time' => '10:00',
+        ]);
+
+        WorkingTimeSlot::create([
+            'working_day_id' => $workingDays[1]->id,
+            'start_time' => '10:30',
+            'end_time' => '12:30',
+        ]);
+
+        WorkingTimeSlot::create([
+            'working_day_id' => $workingDays[1]->id,
+            'start_time' => '16:00',
+            'end_time' => '18:00',
+        ]);
+
+        WorkingTimeSlot::create([
+            'working_day_id' => $workingDays[2]->id,
+            'start_time' => '08:00',
+            'end_time' => '12:00',
+        ]);
+
+        WorkingTimeSlot::create([
+            'working_day_id' => $workingDays[2]->id,
+            'start_time' => '16:00',
+            'end_time' => '20:00',
+        ]);
+
+        WorkingTimeSlot::create([
+            'working_day_id' => $workingDays[3]->id,
+            'start_time' => '08:00',
+            'end_time' => '12:00',
+        ]);
+
+        WorkingTimeSlot::create([
+            'working_day_id' => $workingDays[3]->id,
+            'start_time' => '16:00',
+            'end_time' => '20:00',
+        ]);
+
+        WorkingTimeSlot::create([
+            'working_day_id' => $workingDays[4]->id,
+            'start_time' => '08:00',
+            'end_time' => '12:00',
+        ]);
+
+        WorkingTimeSlot::create([
+            'working_day_id' => $workingDays[4]->id,
+            'start_time' => '16:00',
+            'end_time' => '20:00',
+        ]);
+
+        WorkingTimeSlot::create([
+            'working_day_id' => $workingDays[5]->id,
+            'start_time' => '08:00',
+            'end_time' => '12:00',
+        ]);
+
+        WorkingTimeSlot::create([
+            'working_day_id' => $workingDays[5]->id,
+            'start_time' => '16:00',
+            'end_time' => '18:00'
         ]);
         $this->createRole('admin', 'مدیر', 'مدیر کلینیک با دسترسی کامل');
         $this->createRole('employee', 'پرسنل', 'پرسنل کلینیک (پزشک، اپراتور، منشی)');

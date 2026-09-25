@@ -15,4 +15,8 @@ class WorkingDay extends Model
     protected $casts = [
         'day' => 'integer',
     ];
+    public function workingTimeSlots()
+    {
+        return $this->hasMany(WorkingTimeSlot::class);
+    }
 }
