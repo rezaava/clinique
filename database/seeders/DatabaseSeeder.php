@@ -756,18 +756,218 @@ class DatabaseSeeder extends Seeder
             'experience' => 10,
             'about' => 'دکتر کریمی با ۱۰ سال سابقه در زمینه خدمات زیبایی، لیزر و تزریقات تخصصی فعالیت دارد.',
         ], 'doctor');
-        $this->createCredential($doctor1, 'دارای بورد تخصصی', 'پزشکی زیبایی و آرایشی', 'board');
-        $this->createCredential($doctor1, 'فلوشیپ بین‌المللی', 'زیبایی پیشرفته صورت، لندن', 'fellowship');
-        $this->createCredential($doctor1, 'عضو', 'انجمن اروپایی پزشکی زیبایی', 'member');
-        $this->createCredential($doctor2, 'دارای بورد تخصصی', 'پوست و زیبایی', 'board');
-        $this->createCredential($doctor2, 'دوره تخصصی', 'لیزر و درمان‌های پیشرفته پوست', 'fellowship');
-        $this->createCredential($doctor2, 'عضو', 'انجمن متخصصین پوست و زیبایی', 'member');
-        $this->createCredential($doctor3, 'دارای بورد تخصصی', 'پوست و مو', 'board');
-        $this->createCredential($doctor3, 'فلوشیپ بین‌المللی', 'تزریقات و جوانسازی صورت', 'fellowship');
-        $this->createCredential($doctor3, 'عضو', 'انجمن پزشکی زیبایی ایران', 'member');
-        $this->attachServicesToDoctor($doctor1, [$service1->id, $service2->id, $service3->id]);
-        $this->attachServicesToDoctor($doctor2, [$service1->id, $service2->id]);
-        $this->attachServicesToDoctor($doctor3, [$service2->id, $service3->id]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | اتصال پزشکان به WorkingTimeSlot ها
+        |--------------------------------------------------------------------------
+        */
+
+        // پزشک 1
+        $doctor1->workingTimeSlots()->attach([
+            // شنبه
+            $workingDays[0]->workingTimeSlots()
+                ->where('start_time', '08:00')
+                ->first()->id,
+
+            $workingDays[0]->workingTimeSlots()
+                ->where('start_time', '16:00')
+                ->first()->id,
+
+            // یکشنبه
+            $workingDays[1]->workingTimeSlots()
+                ->where('start_time', '10:30')
+                ->first()->id,
+
+            $workingDays[1]->workingTimeSlots()
+                ->where('start_time', '16:00')
+                ->first()->id,
+
+            // دوشنبه
+            $workingDays[2]->workingTimeSlots()
+                ->where('start_time', '08:00')
+                ->first()->id,
+
+            // سه‌شنبه
+            $workingDays[3]->workingTimeSlots()
+                ->where('start_time', '16:00')
+                ->first()->id,
+
+            // چهارشنبه
+            $workingDays[4]->workingTimeSlots()
+                ->where('start_time', '08:00')
+                ->first()->id,
+
+            // پنجشنبه
+            $workingDays[5]->workingTimeSlots()
+                ->where('start_time', '16:00')
+                ->first()->id,
+        ]);
+
+
+        // پزشک 2
+        $doctor2->workingTimeSlots()->attach([
+            // شنبه
+            $workingDays[0]->workingTimeSlots()
+                ->where('start_time', '10:30')
+                ->first()->id,
+
+            // یکشنبه
+            $workingDays[1]->workingTimeSlots()
+                ->where('start_time', '08:00')
+                ->first()->id,
+
+            // دوشنبه
+            $workingDays[2]->workingTimeSlots()
+                ->where('start_time', '16:00')
+                ->first()->id,
+
+            // سه‌شنبه
+            $workingDays[3]->workingTimeSlots()
+                ->where('start_time', '08:00')
+                ->first()->id,
+
+            // چهارشنبه
+            $workingDays[4]->workingTimeSlots()
+                ->where('start_time', '16:00')
+                ->first()->id,
+
+            // پنجشنبه
+            $workingDays[5]->workingTimeSlots()
+                ->where('start_time', '08:00')
+                ->first()->id,
+        ]);
+
+
+        // پزشک 3
+        $doctor3->workingTimeSlots()->attach([
+            // شنبه
+            $workingDays[0]->workingTimeSlots()
+                ->where('start_time', '08:00')
+                ->first()->id,
+
+            $workingDays[0]->workingTimeSlots()
+                ->where('start_time', '10:30')
+                ->first()->id,
+
+            // یکشنبه
+            $workingDays[1]->workingTimeSlots()
+                ->where('start_time', '16:00')
+                ->first()->id,
+
+            // دوشنبه
+            $workingDays[2]->workingTimeSlots()
+                ->where('start_time', '08:00')
+                ->first()->id,
+
+            $workingDays[2]->workingTimeSlots()
+                ->where('start_time', '16:00')
+                ->first()->id,
+
+            // چهارشنبه
+            $workingDays[4]->workingTimeSlots()
+                ->where('start_time', '08:00')
+                ->first()->id,
+
+            // پنجشنبه
+            $workingDays[5]->workingTimeSlots()
+                ->where('start_time', '16:00')
+                ->first()->id,
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Credentials
+        |--------------------------------------------------------------------------
+        */
+
+        $this->createCredential(
+            $doctor1,
+            'دارای بورد تخصصی',
+            'پزشکی زیبایی و آرایشی',
+            'board'
+        );
+
+        $this->createCredential(
+            $doctor1,
+            'فلوشیپ بین‌المللی',
+            'زیبایی پیشرفته صورت، لندن',
+            'fellowship'
+        );
+
+        $this->createCredential(
+            $doctor1,
+            'عضو',
+            'انجمن اروپایی پزشکی زیبایی',
+            'member'
+        );
+
+
+        $this->createCredential(
+            $doctor2,
+            'دارای بورد تخصصی',
+            'پوست و زیبایی',
+            'board'
+        );
+
+        $this->createCredential(
+            $doctor2,
+            'دوره تخصصی',
+            'لیزر و درمان‌های پیشرفته پوست',
+            'fellowship'
+        );
+
+        $this->createCredential(
+            $doctor2,
+            'عضو',
+            'انجمن متخصصین پوست و زیبایی',
+            'member'
+        );
+
+
+        $this->createCredential(
+            $doctor3,
+            'دارای بورد تخصصی',
+            'پوست و مو',
+            'board'
+        );
+
+        $this->createCredential(
+            $doctor3,
+            'فلوشیپ بین‌المللی',
+            'تزریقات و جوانسازی صورت',
+            'fellowship'
+        );
+
+        $this->createCredential(
+            $doctor3,
+            'عضو',
+            'انجمن پزشکی زیبایی ایران',
+            'member'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | اتصال سرویس‌ها به پزشکان
+        |--------------------------------------------------------------------------
+        */
+
+        $this->attachServicesToDoctor(
+            $doctor1,
+            [$service1->id, $service2->id, $service3->id]
+        );
+
+        $this->attachServicesToDoctor(
+            $doctor2,
+            [$service1->id, $service2->id]
+        );
+
+        $this->attachServicesToDoctor(
+            $doctor3,
+            [$service2->id, $service3->id]
+        );
         $today = Carbon::today();
         $tomorrow = Carbon::tomorrow();
         $thisWeek = Carbon::today()->addDays(3);

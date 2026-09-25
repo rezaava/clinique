@@ -138,6 +138,10 @@ class User extends Authenticatable implements LaratrustUser
         return $this->belongsToMany(Service::class, 'user_service');
     }
 
+    public function workingTimeSlots()
+    {
+        return $this->belongsToMany(WorkingTimeSlot::class,'doctor_working_time_slot')->withTimestamps();
+    }
     // ================ Supplier Relationships (Many-to-Many) ================
     
     // Devices (دستگاه‌ها - به عنوان تأمین‌کننده چندبه‌چند)
