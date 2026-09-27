@@ -17,7 +17,7 @@ class ServiesController extends Controller
             ->get();
 
         $category = ServiceCategory::get();
-        
+
         foreach ($services as $service) {
             $service->rating = $service->appointments()
                 ->whereNotNull('rating')
@@ -38,13 +38,30 @@ class ServiesController extends Controller
 
     public function show($id)
     {
-        $service = Service::where('is_active', 1)->findOrFail($id);
+        $service = Service::where('is_active', 1)
+            ->findOrFail($id);
 
-        $service->rating = round($service->appointments()->whereNotNull('rating')->avg('rating'),1);
+        /*
+         * امتیاز کلی خدمت
+         */
+        $service->rating = round(
+            $service->appointments()
+                ->whereNotNull('rating')
+                ->avg('rating'),
+            1
+        );
 
-        $service->reviews = $service->appointments()->whereNotNull('rating')->whereNotNull('review')->count();
+        /*
+         * تعداد نظرات
+         */
+        $service->reviews = $service->appointments()
+            ->whereNotNull('rating')
+            ->whereNotNull('review')
+            ->count();
 
-
+        /*
+         * لیست نظرات
+         */
         $service->reviews_list = $service->appointments()
             ->with('user:id,first_name,last_name,avatar')
             ->whereNotNull('rating')
@@ -77,43 +94,101 @@ class ServiesController extends Controller
             })
             ->values();
 
-
+        /*
+         * پزشکان / پرسنل ارائه‌دهنده خدمت
+         */
         $staff = $service->staff()->get();
 
         foreach ($staff as $person) {
-            $person->staff_rating = round($person->assignedAppointments()->where('service_id', $service->id)->whereNotNull('staff_rating')->avg('staff_rating'),1);
 
+            /*
+             * میانگین امتیاز پزشک برای همین خدمت
+             */
+            $person->staff_rating = round(
+                $person->assignedAppointments()
+                    ->where('service_id', $service->id)
+                    ->whereNotNull('staff_rating')
+                    ->avg('staff_rating'),
+                1
+            );
 
-            $person->staff_rating_count = $person->assignedAppointments()->where('service_id', $service->id)->whereNotNull('staff_rating')->count();
-
-
-            $person->next_appointment = $person->assignedAppointments()
+            /*
+             * تعداد امتیازهای پزشک برای همین خدمت
+             */
+            $person->staff_rating_count = $person->assignedAppointments()
                 ->where('service_id', $service->id)
-                ->whereIn('status', ['pending', 'confirmed'])
-                ->whereDate(
-                    'appointment_date',
-                    '>=',
-                    now()->toDateString()
-                )
-                ->orderBy('appointment_date')
-                ->orderBy('appointment_time')
-                ->first();
+                ->whereNotNull('staff_rating')
+                ->count();
 
-            $doctorService = $person->services()->inRandomOrder()->first();
+            /*
+             * نزدیک‌ترین نوبت آزاد پزشک
+             *
+             * زمان از working_time_slots گرفته می‌شود
+             * و دیگر appointment_time وجود ندارد.
+             */
+            $person->next_appointment = $person->getNearestAvailableSlot();
+
+            /*
+             * تخصص / مهارت پزشک
+             */
+            $doctorService = $person->services()
+                ->inRandomOrder()
+                ->first();
 
             $person->skill = $doctorService?->name;
         }
 
-        $service->faqs = $service->faqs()->orderBy('id')->get();
-        $service->suitabilities = $service->suitabilities()->orderBy('id')->get();
-        $service->treatmentSteps = $service->treatmentSteps()->orderBy('id')->get();
-        $service->expectations = $service->expectations()->orderBy('id')->get();
-        $service->aftercares = $service->aftercares()->orderBy('id')->get();
+        /*
+         * سوالات متداول
+         */
+        $service->faqs = $service->faqs()
+            ->orderBy('id')
+            ->get();
 
+        /*
+         * مناسب برای چه کسانی
+         */
+        $service->suitabilities = $service->suitabilities()
+            ->orderBy('id')
+            ->get();
+
+        /*
+         * مراحل درمان
+         */
+        $service->treatmentSteps = $service->treatmentSteps()
+            ->orderBy('id')
+            ->get();
+
+        /*
+         * انتظارات
+         */
+        $service->expectations = $service->expectations()
+            ->orderBy('id')
+            ->get();
+
+        /*
+         * مراقبت‌های بعد از درمان
+         */
+        $service->aftercares = $service->aftercares()
+            ->orderBy('id')
+            ->get();
+
+        /*
+         * پزشکان
+         */
         $service->staff = $staff;
-        
-        $relatedServices = Service::where('is_active', 1)->where('id', '!=', $service->id)->inRandomOrder()->limit(3)->get();
+
+        /*
+         * خدمات مرتبط
+         */
+        $relatedServices = Service::where('is_active', 1)
+            ->where('id', '!=', $service->id)
+            ->inRandomOrder()
+            ->limit(3)
+            ->get();
+
         $service['related_services'] = $relatedServices;
+
         return response()->json([
             'success' => true,
             'message' => 'اطلاعات خدمت با موفقیت دریافت شد.',

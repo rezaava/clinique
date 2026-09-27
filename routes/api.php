@@ -25,6 +25,7 @@ Route::get('/profile/toggle/{toggleName}/{value}', [ProfileController::class, 't
 Route::get('/doctors/{id?}', [ProfileController::class, 'doctors']);
 
 Route::get('/appointments', [AppointmentController::class, 'index']);
+Route::post('/booking', [AppointmentController::class, 'booking']);
 Route::get('/appointment/det/{id}', [AppointmentController::class, 'det']);
 
 Route::middleware('auth:api')->group(function () {
