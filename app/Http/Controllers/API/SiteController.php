@@ -25,7 +25,10 @@ class SiteController extends Controller
             ? $doctor->services()->inRandomOrder()->first()
             : null;
             
+        $doctorAvailable = $doctor->getNearestAvailableSlot();
+            
         $doctor['ability'] = $doctorService?->name;
+        $doctor['available'] = $doctorAvailable;
         return response()->json([
             'success' => true,
             'message' => 'اطلاعات صفحه اصلی با موفقیت دریافت شد.',

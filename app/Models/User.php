@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laratrust\Contracts\LaratrustUser;
 use Laratrust\Traits\HasRolesAndPermissions;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable implements LaratrustUser
 {
@@ -239,5 +240,107 @@ class User extends Authenticatable implements LaratrustUser
     public function isSupplier(): bool
     {
         return $this->hasRole('supplier');
+    }
+    public function getNearestAvailableSlot(?Carbon $fromDate = null)
+    {
+        $fromDate = $fromDate ?: Carbon::today();
+
+        $activeStatuses = [
+            'pending',
+            'confirmed',
+            'in_progress',
+        ];
+
+        for ($i = 0; $i < 30; $i++) {
+
+            $date = $fromDate->copy()->addDays($i);
+
+            // Carbon:
+            // Sunday = 0
+            // Monday = 1
+            // ...
+            // Saturday = 6
+            //
+            // Project:
+            // Saturday = 0
+            // Sunday   = 1
+            // Monday   = 2
+            // ...
+            // Friday   = 6
+
+            $customDay = ($date->dayOfWeek + 1) % 7;
+
+            $slots = $this->workingTimeSlots()
+                ->whereHas('workingDay', function ($query) use ($customDay) {
+                    $query->where('day', $customDay);
+                })
+                ->orderBy('start_time')
+                ->get();
+
+            foreach ($slots as $slot) {
+
+                /*
+                * اگر تاریخ امروز است، تایم‌هایی که شروعشان
+                * قبل از ساعت فعلی است نباید نمایش داده شوند.
+                */
+                if ($date->isToday()) {
+
+                    $currentTime = Carbon::now();
+                    $slotStartTime = Carbon::parse(
+                        $date->toDateString() . ' ' . $slot->start_time
+                    );
+
+                    if ($slotStartTime->lt($currentTime)) {
+                        continue;
+                    }
+                }
+
+                /*
+                * پیدا کردن ID رکورد doctor_working_time_slot
+                */
+                $doctorWorkingTimeSlotId = DB::table('doctor_working_time_slot')
+                    ->where('user_id', $this->id)
+                    ->where('working_time_slot_id', $slot->id)
+                    ->value('id');
+
+                if (!$doctorWorkingTimeSlotId) {
+                    continue;
+                }
+
+                /*
+                * بررسی اینکه این نوبت در این تاریخ قبلاً رزرو نشده باشد.
+                */
+                $isBooked = Appointment::where(
+                        'doctor_working_time_slot_id',
+                        $doctorWorkingTimeSlotId
+                    )
+                    ->whereDate('appointment_date', $date->toDateString())
+                    ->whereIn('status', $activeStatuses)
+                    ->exists();
+
+                if ($isBooked) {
+                    continue;
+                }
+
+                return [
+                    'available' => true,
+
+                    'date' => $date->isToday()
+                        ? 'امروز'
+                        : ($date->isTomorrow()
+                            ? 'فردا'
+                            : $date->format('Y-m-d')),
+
+                    'time' => Carbon::parse($slot->start_time)
+                        ->format('H:i'),
+                ];
+            }
+        }
+
+        return [
+            'available' => false,
+            'date' => null,
+            'time' => null,
+        ];
     }
 }
