@@ -13,6 +13,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/home', [SiteController::class, 'home']);
+Route::get('/workdays', [SiteController::class, 'workdays']);
 
 Route::get('/services', [ServiesController::class, 'index']);
 Route::get('/services/{id}', [ServiesController::class, 'show']);
@@ -26,6 +27,7 @@ Route::get('/doctors/{id?}', [ProfileController::class, 'doctors']);
 
 Route::get('/appointments', [AppointmentController::class, 'index']);
 Route::post('/booking', [AppointmentController::class, 'booking']);
+Route::get('/freetimes/{date}/{service}', [AppointmentController::class, 'freetimes']);
 Route::get('/appointment/det/{id}', [AppointmentController::class, 'det']);
 
 Route::middleware('auth:api')->group(function () {

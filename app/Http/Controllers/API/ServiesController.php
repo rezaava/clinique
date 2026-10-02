@@ -26,6 +26,8 @@ class ServiesController extends Controller
             $service->reviews = $service->appointments()
                 ->whereNotNull('rating')
                 ->count();
+
+            $service->price = $service->userServices()->min('price');
         }
 
         return response()->json([

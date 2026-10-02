@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Service;
 use App\Models\User;
+use App\Models\WorkingDay;
 
 class SiteController extends Controller
 {
@@ -36,6 +37,17 @@ class SiteController extends Controller
                 'services' => $services,
                 'doctor' => $doctor,
             ],
+        ]);
+    }
+
+    public function workdays()
+    {
+        $workdays = WorkingDay::orderBy('day')->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'روزهای کاری با موفقیت دریافت شد.',
+            'data' => $workdays,
         ]);
     }
 }
