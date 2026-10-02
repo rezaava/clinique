@@ -71,7 +71,7 @@ class Service extends Model
 
     public function staff()
     {
-        return $this->belongsToMany(User::class, 'user_service');
+        return $this->belongsToMany(User::class, 'user_service')->withPivot('price')->withTimestamps();
     }
 
     // ================ Scopes ================

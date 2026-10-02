@@ -119,7 +119,6 @@ class DatabaseSeeder extends Seeder
         $service->short_description = $data['short_description'] ?? null;
         $service->seo_content = $data['seo_content'] ?? null;
         $service->article_content = $data['article_content'] ?? null;
-        $service->price = $data['price'];
         $service->duration_minutes = $data['duration_minutes'] ?? 30;
         $service->is_active = $data['is_active'] ?? true;
         $service->review_count = $data['review_count'] ?? 0;
@@ -129,9 +128,15 @@ class DatabaseSeeder extends Seeder
         return $service;
     }
 
-    protected function attachServicesToDoctor(User $doctor, array $serviceIds)
-    {
-        $doctor->services()->attach($serviceIds);
+    protected function attachServicesToDoctor(
+        User $doctor,
+        array $services
+    ) {
+        foreach ($services as $serviceId => $price) {
+            $doctor->services()->attach($serviceId, [
+                'price' => $price,
+            ]);
+        }
     }
 
     protected function createFAQ(
@@ -665,7 +670,6 @@ class DatabaseSeeder extends Seeder
                 'مشاوره پوست و زیبایی با بهترین پزشکان متخصص. درمان جوش، لک، چین و چروک و سایر مشکلات پوستی.',
             'article_content' =>
                 'در این مقاله به بررسی کامل روش‌های مراقبت از پوست، درمان‌های تخصصی و نکات مهم در مشاوره پوست می‌پردازیم...',
-            'price' => 250000,
             'duration_minutes' => 30,
             'is_active' => true,
         ]);
@@ -680,7 +684,6 @@ class DatabaseSeeder extends Seeder
                 'لیزر موهای زائد با بهترین دستگاه‌های لیزر. مناسب برای انواع پوست و مو. نتایج عالی و ماندگار.',
             'article_content' =>
                 'لیزر موهای زائد یکی از محبوب‌ترین روش‌های حذف موهای زائد است. در این مقاله به مزایا، عوارض و نحوه انجام آن می‌پردازیم...',
-            'price' => 450000,
             'duration_minutes' => 45,
             'is_active' => true,
         ]);
@@ -695,7 +698,6 @@ class DatabaseSeeder extends Seeder
                 'تزریقات زیبایی شامل فیلر، بوتاکس، ژل و سایر روش‌های جوانسازی صورت با بالاترین کیفیت.',
             'article_content' =>
                 'تزریقات زیبایی روشی سریع و موثر برای جوانسازی پوست و رفع چین و چروک‌هاست. در این مقاله به بررسی انواع تزریقات می‌پردازیم...',
-            'price' => 650000,
             'duration_minutes' => 60,
             'is_active' => true,
         ]);
@@ -1273,28 +1275,27 @@ class DatabaseSeeder extends Seeder
         $this->attachServicesToDoctor(
             $doctor1,
             [
-                $service1->id,
-                $service2->id,
-                $service3->id,
+                $service1->id => 300000,
+                $service2->id => 500000,
+                $service3->id => 750000,
             ]
         );
 
         $this->attachServicesToDoctor(
             $doctor2,
             [
-                $service1->id,
-                $service2->id,
+                $service1->id => 350000,
+                $service2->id => 550000,
             ]
         );
 
         $this->attachServicesToDoctor(
             $doctor3,
             [
-                $service2->id,
-                $service3->id,
+                $service2->id => 600000,
+                $service3->id => 800000,
             ]
         );
-
         /*
         |--------------------------------------------------------------------------
         | Dates

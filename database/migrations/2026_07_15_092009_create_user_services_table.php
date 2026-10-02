@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete(); // پرسنل
             $table->foreignId('service_id')->constrained()->cascadeOnDelete();
+            $table->integer('price');
             $table->timestamps();
 
             $table->unique(['user_id', 'service_id']);

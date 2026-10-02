@@ -15,7 +15,6 @@ return new class extends Migration
             $table->text('short_description')->nullable();
             $table->longText('seo_content')->nullable(); // متن سئو شده
             $table->longText('article_content')->nullable(); // مقاله کامل
-            $table->integer('price');
             $table->integer('duration_minutes')->default(30);
             $table->boolean('is_active')->default(true);
             $table->integer('review_count')->default(0);

@@ -136,7 +136,7 @@ class User extends Authenticatable implements LaratrustUser
 
     public function services()
     {
-        return $this->belongsToMany(Service::class, 'user_service');
+        return $this->belongsToMany(Service::class, 'user_service')->withPivot('price')->withTimestamps();
     }
 
     public function workingTimeSlots()

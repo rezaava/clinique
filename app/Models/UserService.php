@@ -14,9 +14,12 @@ class UserService extends Model
     protected $fillable = [
         'user_id',
         'service_id',
+        'price',
     ];
 
-    // ================ Relationships ================
+    protected $casts = [
+        'price' => 'integer',
+    ];
 
     public function user()
     {
