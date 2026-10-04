@@ -141,7 +141,7 @@ class User extends Authenticatable implements LaratrustUser
 
     public function workingTimeSlots()
     {
-        return $this->belongsToMany(WorkingTimeSlot::class,'doctor_working_time_slot')->withTimestamps();
+        return $this->belongsToMany(WorkingTimeSlot::class,'doctor_working_time_slot')->withPivot('id')->withTimestamps();
     }
     // ================ Supplier Relationships (Many-to-Many) ================
     
