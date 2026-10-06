@@ -5,16 +5,26 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\Service;
+use App\Models\Transaction;
 use App\Models\User;
 use App\Models\WorkingTimeSlot;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Hekmatinasser\Verta\Verta;
+use Illuminate\Support\Facades\DB;
 
 class AppointmentController extends Controller
 {
     public function index()
     {
-        $user = User::find(6);
+        $user = User::find(5);
+
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'کاربر موردنظر پیدا نشد.',
+            ], 404);
+        }
 
         $appointments = Appointment::where('user_id', $user->id)
             ->whereIn('status', [
@@ -26,7 +36,7 @@ class AppointmentController extends Controller
                 'transaction',
                 'assignedStaff',
                 'service',
-                'doctorWorkingTimeSlot.workingTimeSlot',
+                'doctorWorkingTimeSlot.workingDay',
             ])
             ->get();
 
@@ -37,25 +47,19 @@ class AppointmentController extends Controller
         foreach ($appointments as $appointment) {
 
             /*
-             * تاریخ شمسی
-             */
+            * تاریخ شمسی
+            */
             $appointment->appointment_date_fa = Verta::instance(
                 $appointment->getRawOriginal('appointment_date')
             )->format('F d, l');
 
             /*
-             * زمان از working_time_slots گرفته می‌شود
-             */
+            * زمان از WorkingTimeSlot
+            */
             $startTime = null;
 
             if ($appointment->doctorWorkingTimeSlot) {
-                $workingTimeSlot = $appointment
-                    ->doctorWorkingTimeSlot
-                    ->workingTimeSlot;
-
-                if ($workingTimeSlot) {
-                    $startTime = $workingTimeSlot->start_time;
-                }
+                $startTime = $appointment->doctorWorkingTimeSlot->start_time;
             }
 
             $appointment->appointment_time_fa = $startTime
@@ -63,10 +67,9 @@ class AppointmentController extends Controller
                 : null;
 
             /*
-             * اطلاعات تخصص پزشک برای همین سرویس
-             */
+            * اطلاعات تخصص پزشک برای همین سرویس
+            */
             if ($appointment->assignedStaff) {
-
                 $doctorService = $appointment->assignedStaff
                     ->services()
                     ->where('services.id', $appointment->service_id)
@@ -77,18 +80,16 @@ class AppointmentController extends Controller
             }
 
             /*
-             * کنسل شده
-             */
+            * کنسل شده
+            */
             if ($appointment->status === 'cancelled') {
                 $cancelled[] = $appointment;
-
                 continue;
             }
 
             /*
-             * اگر زمان نوبت مشخص باشد،
-             * تاریخ + ساعت شروع slot را با زمان فعلی مقایسه می‌کنیم.
-             */
+            * بررسی تاریخ و ساعت نوبت
+            */
             if ($startTime) {
 
                 $appointmentDateTime = Carbon::parse(
@@ -105,10 +106,6 @@ class AppointmentController extends Controller
 
             } else {
 
-                /*
-                 * اگر نوبت slot نداشته باشد،
-                 * فقط بر اساس تاریخ بررسی می‌کنیم.
-                 */
                 $appointmentDate = Carbon::parse(
                     $appointment->getRawOriginal('appointment_date')
                 );
@@ -122,8 +119,8 @@ class AppointmentController extends Controller
         }
 
         /*
-         * مرتب‌سازی upcoming بر اساس تاریخ و ساعت شروع slot
-         */
+        * مرتب‌سازی upcoming
+        */
         usort($upcoming, function ($a, $b) {
 
             $dateA = $a->getRawOriginal('appointment_date');
@@ -140,8 +137,8 @@ class AppointmentController extends Controller
         });
 
         /*
-         * مرتب‌سازی past از جدیدترین به قدیمی‌ترین
-         */
+        * مرتب‌سازی past
+        */
         usort($past, function ($a, $b) {
 
             $dateA = $a->getRawOriginal('appointment_date');
@@ -170,7 +167,14 @@ class AppointmentController extends Controller
 
     public function det($id)
     {
-        $user = User::find(6);
+        $user = User::find(5);
+
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'کاربر موردنظر پیدا نشد.',
+            ], 404);
+        }
 
         $appointment = Appointment::where('id', $id)
             ->where('user_id', $user->id)
@@ -178,15 +182,18 @@ class AppointmentController extends Controller
                 'transaction',
                 'assignedStaff',
                 'service',
-                'doctorWorkingTimeSlot.workingTimeSlot',
+                'doctorWorkingTimeSlot.workingDay',
             ])
             ->firstOrFail();
 
+        /*
+        * پزشک
+        */
         $doctor = $appointment->assignedStaff;
 
         /*
-         * تخصص پزشک برای همان سرویسی که رزرو شده
-         */
+        * تخصص پزشک برای همان سرویسی که رزرو شده
+        */
         $doctorService = $doctor
             ? $doctor->services()
                 ->where('services.id', $appointment->service_id)
@@ -199,26 +206,19 @@ class AppointmentController extends Controller
         }
 
         /*
-         * تاریخ شمسی
-         */
+        * تاریخ شمسی
+        */
         $appointment->appointment_date_fa = Verta::instance(
             $appointment->getRawOriginal('appointment_date')
         )->format('Y F d, l');
 
         /*
-         * زمان از WorkingTimeSlot
-         */
+        * زمان از WorkingTimeSlot
+        */
         $startTime = null;
 
         if ($appointment->doctorWorkingTimeSlot) {
-
-            $workingTimeSlot = $appointment
-                ->doctorWorkingTimeSlot
-                ->workingTimeSlot;
-
-            if ($workingTimeSlot) {
-                $startTime = $workingTimeSlot->start_time;
-            }
+            $startTime = $appointment->doctorWorkingTimeSlot->start_time;
         }
 
         $appointment->appointment_time_fa = $startTime
@@ -389,5 +389,337 @@ class AppointmentController extends Controller
                 'doctors' => $result,
             ],
         ]);
+    }
+
+    public function NoDepositBooking(Request $request)
+    {
+        $data = $request->validate([
+            'service_id' => ['required', 'integer', 'exists:services,id'],
+            'doctor_id' => ['required', 'integer', 'exists:users,id'],
+            'doctor_working_time_slot_id' => ['required', 'integer', 'exists:doctor_working_time_slot,id'],
+            'appointment_date' => ['required', 'date_format:Y-m-d'],
+        ]);
+
+        try {
+            $date = Carbon::createFromFormat(
+                'Y-m-d',
+                $data['appointment_date']
+            )->startOfDay();
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'تاریخ وارد شده معتبر نیست.',
+            ], 422);
+        }
+
+        if ($date->lte(Carbon::today())) {
+            return response()->json([
+                'success' => false,
+                'message' => 'تاریخ نوبت باید بعد از امروز باشد.',
+            ], 422);
+        }
+
+        try {
+            $result = DB::transaction(function () use ($data, $date, $request) {
+                $user = User::find(5);
+                $service = Service::where('is_active', true)
+                    ->find($data['service_id']);
+
+                if (! $service) {
+                    throw new \Exception(
+                        'خدمت موردنظر فعال نیست یا وجود ندارد.'
+                    );
+                }
+
+                $doctor = $service->staff()
+                    ->whereKey($data['doctor_id'])
+                    ->first();
+
+                if (! $doctor || ! $doctor->hasRole('doctor')) {
+                    throw new \Exception(
+                        'این پزشک این خدمت را ارائه نمی‌دهد.'
+                    );
+                }
+
+                if ($doctor->pivot->price === null) {
+                    throw new \Exception(
+                        'قیمت این خدمت برای پزشک مشخص نشده است.'
+                    );
+                }
+
+                $doctorSlot = DB::table('doctor_working_time_slot')
+                    ->where('id', $data['doctor_working_time_slot_id'])
+                    ->where('user_id', $doctor->id)
+                    ->lockForUpdate()
+                    ->first();
+
+                if (! $doctorSlot) {
+                    throw new \Exception(
+                        'این بازه زمانی برای پزشک انتخاب‌شده معتبر نیست.'
+                    );
+                }
+
+                $timeSlot = WorkingTimeSlot::with('workingDay')
+                    ->find($doctorSlot->working_time_slot_id);
+
+                if (! $timeSlot || ! $timeSlot->workingDay) {
+                    throw new \Exception(
+                        'بازه زمانی انتخاب‌شده معتبر نیست.'
+                    );
+                }
+
+                $projectDay = ($date->dayOfWeek + 1) % 7;
+
+                if ((int) $timeSlot->workingDay->day !== $projectDay) {
+                    throw new \Exception(
+                        'پزشک در این روز این بازه زمانی را ارائه نمی‌دهد.'
+                    );
+                }
+
+                $booked = Appointment::where(
+                    'doctor_working_time_slot_id',
+                    $doctorSlot->id
+                )
+                    ->whereDate(
+                        'appointment_date',
+                        $date->toDateString()
+                    )
+                    ->whereIn('status', [
+                        'pending',
+                        'confirmed',
+                        'in_progress',
+                    ])
+                    ->lockForUpdate()
+                    ->exists();
+
+                if ($booked) {
+                    throw new \Exception(
+                        'این زمان قبلاً رزرو شده است.'
+                    );
+                }
+
+                $price = (int) $doctor->pivot->price;
+
+                $duration = (int) (
+                    $service->duration_minutes ?: 30
+                );
+
+                $appointment = Appointment::create([
+                    'user_id' => $user->id,
+                    'service_id' => $service->id,
+                    'assigned_staff_id' => $doctor->id,
+                    'doctor_working_time_slot_id' => $doctorSlot->id,
+                    'appointment_date' => $date->toDateString(),
+                    'duration_minutes' => $duration,
+                    'status' => 'pending',
+                    'amount' => $price,
+                    'payment_status' => 'unpaid',
+                    'deposit_amount' => 0,
+                ]);
+
+                $transaction = Transaction::create([
+                    'user_id' => $user->id,
+                    'appointment_id' => $appointment->id,
+                    'type' => 'payment',
+                    'payment_method' => 'other',
+                    'amount' => $price,
+                    'discount_amount' => 0,
+                    'final_amount' => $price,
+                    'paid_amount' => 0,
+                    'remaining_amount' => $price,
+                    'status' => 'unpaid',
+                    'description' => 'رزرو نوبت بدون پرداخت بیعانه',
+                    'created_by' => $user->id,
+                ]);
+
+                return [
+                    'appointment' => $appointment,
+                    'transaction' => $transaction,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'نوبت بدون بیعانه با موفقیت ثبت شد.',
+                'data' => $result,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+    }
+
+    public function DepositBooking(Request $request)
+    {
+        $data = $request->validate([
+            'service_id' => ['required', 'integer', 'exists:services,id'],
+            'doctor_id' => ['required', 'integer', 'exists:users,id'],
+            'doctor_working_time_slot_id' => ['required', 'integer', 'exists:doctor_working_time_slot,id'],
+            'appointment_date' => ['required', 'date_format:Y-m-d'],
+            'payment_method' => ['required', 'in:sep,zarinpal,zibal'],
+        ]);
+
+        try {
+            $date = Carbon::createFromFormat(
+                'Y-m-d',
+                $data['appointment_date']
+            )->startOfDay();
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'تاریخ وارد شده معتبر نیست.',
+            ], 422);
+        }
+
+        if ($date->lte(Carbon::today())) {
+            return response()->json([
+                'success' => false,
+                'message' => 'تاریخ نوبت باید بعد از امروز باشد.',
+            ], 422);
+        }
+
+        try {
+            $result = DB::transaction(function () use ($data, $date, $request) {
+                $user = User::find(5);
+
+                $service = Service::where('is_active', true)
+                    ->find($data['service_id']);
+
+                if (! $service) {
+                    throw new \Exception(
+                        'خدمت موردنظر فعال نیست یا وجود ندارد.'
+                    );
+                }
+
+                $doctor = $service->staff()
+                    ->whereKey($data['doctor_id'])
+                    ->first();
+
+                if (! $doctor || ! $doctor->hasRole('doctor')) {
+                    throw new \Exception(
+                        'این پزشک این خدمت را ارائه نمی‌دهد.'
+                    );
+                }
+
+                if ($doctor->pivot->price === null) {
+                    throw new \Exception(
+                        'قیمت این خدمت برای پزشک مشخص نشده است.'
+                    );
+                }
+
+                $doctorSlot = DB::table('doctor_working_time_slot')
+                    ->where('id', $data['doctor_working_time_slot_id'])
+                    ->where('user_id', $doctor->id)
+                    ->lockForUpdate()
+                    ->first();
+
+                if (! $doctorSlot) {
+                    throw new \Exception(
+                        'این بازه زمانی برای پزشک انتخاب‌شده معتبر نیست.'
+                    );
+                }
+
+                $timeSlot = WorkingTimeSlot::with('workingDay')
+                    ->find($doctorSlot->working_time_slot_id);
+
+                if (! $timeSlot || ! $timeSlot->workingDay) {
+                    throw new \Exception(
+                        'بازه زمانی انتخاب‌شده معتبر نیست.'
+                    );
+                }
+
+                $projectDay = ($date->dayOfWeek + 1) % 7;
+
+                if ((int) $timeSlot->workingDay->day !== $projectDay) {
+                    throw new \Exception(
+                        'پزشک در این روز این بازه زمانی را ارائه نمی‌دهد.'
+                    );
+                }
+
+                $booked = Appointment::where(
+                    'doctor_working_time_slot_id',
+                    $doctorSlot->id
+                )
+                    ->whereDate(
+                        'appointment_date',
+                        $date->toDateString()
+                    )
+                    ->whereIn('status', [
+                        'pending',
+                        'confirmed',
+                        'in_progress',
+                    ])
+                    ->lockForUpdate()
+                    ->exists();
+
+                if ($booked) {
+                    throw new \Exception(
+                        'این زمان قبلاً رزرو شده است.'
+                    );
+                }
+
+                $price = (int) $doctor->pivot->price;
+
+                $deposit = (int) (
+                    round(($price * 0.3) / 1000) * 1000
+                );
+
+                $balance = $price - $deposit;
+
+                $duration = (int) (
+                    $service->duration_minutes ?: 30
+                );
+
+                $appointment = Appointment::create([
+                    'user_id' => $user->id,
+                    'service_id' => $service->id,
+                    'assigned_staff_id' => $doctor->id,
+                    'doctor_working_time_slot_id' => $doctorSlot->id,
+                    'appointment_date' => $date->toDateString(),
+                    'duration_minutes' => $duration,
+                    'status' => 'pending',
+                    'amount' => $price,
+                    'payment_status' => 'partial',
+                    'deposit_amount' => $deposit,
+                ]);
+
+                $transaction = Transaction::create([
+                    'user_id' => $user->id,
+                    'appointment_id' => $appointment->id,
+                    'type' => 'payment',
+                    'payment_method' => 'online',
+                    'amount' => $price,
+                    'discount_amount' => 0,
+                    'final_amount' => $price,
+                    'paid_amount' => $deposit,
+                    'remaining_amount' => $balance,
+                    'status' => 'partial',
+                    'description' => 'رزرو نوبت با پرداخت بیعانه',
+                    'meta_data' => [
+                        'gateway' => $data['payment_method'],
+                    ],
+                    'paid_at' => now(),
+                    'created_by' => $user->id,
+                ]);
+
+                return [
+                    'appointment' => $appointment,
+                    'transaction' => $transaction,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'نوبت با بیعانه با موفقیت ثبت شد.',
+                'data' => $result,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
     }
 }
