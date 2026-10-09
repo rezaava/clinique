@@ -30,6 +30,7 @@ Route::post('/booking/no-deposit', [AppointmentController::class, 'NoDepositBook
 Route::post('/booking/deposit', [AppointmentController::class, 'DepositBooking']);
 Route::get('/freetimes/{date}/{service}', [AppointmentController::class, 'freetimes']);
 Route::get('/appointment/det/{id}', [AppointmentController::class, 'det']);
+Route::post('/appointment/cancel/{id}', [AppointmentController::class, 'cancel']);
 
 Route::middleware('auth:api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);

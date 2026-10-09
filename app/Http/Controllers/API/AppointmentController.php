@@ -722,4 +722,29 @@ class AppointmentController extends Controller
             ], 422);
         }
     }
+    public function cancel($id)
+    {
+        $user = User::findOrFail(5);
+        $appointment = $user->appointments()->findOrFail($id);
+        if (in_array($appointment->status, ['cancelled', 'completed'])) {
+            return response()->json([
+                'message' => 'این نوبت قابل لغو نیست.'
+            ], 422);
+        }
+        DB::transaction(function () use ($appointment) {
+            $appointment->status = 'cancelled';
+            $appointment->cancelled_at = now();
+            $appointment->save();
+            $transaction = $appointment->transaction;
+            if ($transaction) {
+                $transaction->status = $transaction->paid_amount > 0 ? 'refunded' : 'cancelled';
+                $transaction->save();
+            }
+        });
+        return response()->json([
+            'message' => 'نوبت با موفقیت لغو شد.',
+            'appointment' => $appointment->fresh(),
+            'transaction' => $appointment->transaction()->first(),
+        ]);
+    }
 }
