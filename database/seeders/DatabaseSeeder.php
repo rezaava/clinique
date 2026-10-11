@@ -122,12 +122,12 @@ class DatabaseSeeder extends Seeder
         $service->duration_minutes = $data['duration_minutes'] ?? 30;
         $service->is_active = $data['is_active'] ?? true;
         $service->review_count = $data['review_count'] ?? 0;
+        $service->deposit_percentage = rand(0, 40);
 
         $service->save();
 
         return $service;
     }
-
     protected function attachServicesToDoctor(
         User $doctor,
         array $services

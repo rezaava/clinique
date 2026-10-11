@@ -19,6 +19,7 @@ class Service extends Model
         'price',
         'duration_minutes',
         'is_active',
+        'deposit_percentage',
         'review_count',
     ];
 

@@ -26,10 +26,10 @@ Route::get('/profile/toggle/{toggleName}/{value}', [ProfileController::class, 't
 Route::get('/doctors/{id?}', [ProfileController::class, 'doctors']);
 
 Route::get('/appointments', [AppointmentController::class, 'index']);
-Route::post('/booking/no-deposit', [AppointmentController::class, 'NoDepositBooking']);
-Route::post('/booking/deposit', [AppointmentController::class, 'DepositBooking']);
 Route::get('/freetimes/{date}/{service}', [AppointmentController::class, 'freetimes']);
 Route::get('/appointment/det/{id}', [AppointmentController::class, 'det']);
+Route::post('/booking/no-deposit', [AppointmentController::class, 'NoDepositBooking']);
+Route::post('/booking/deposit', [AppointmentController::class, 'DepositBooking']);
 Route::post('/appointment/cancel/{id}', [AppointmentController::class, 'cancel']);
 
 Route::middleware('auth:api')->group(function () {

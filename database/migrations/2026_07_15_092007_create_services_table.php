@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('duration_minutes')->default(30);
             $table->boolean('is_active')->default(true);
             $table->integer('review_count')->default(0);
+            $table->unsignedTinyInteger('deposit_percentage')->default(0);
             $table->foreignId('cat_id')->constrained('service_categories')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();

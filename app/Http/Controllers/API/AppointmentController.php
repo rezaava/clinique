@@ -584,12 +584,24 @@ class AppointmentController extends Controller
             $result = DB::transaction(function () use ($data, $date, $request) {
                 $user = User::find(5);
 
+                if (! $user) {
+                    throw new \Exception('کاربر موردنظر پیدا نشد.');
+                }
+
                 $service = Service::where('is_active', true)
                     ->find($data['service_id']);
 
                 if (! $service) {
                     throw new \Exception(
                         'خدمت موردنظر فعال نیست یا وجود ندارد.'
+                    );
+                }
+
+                $depositPercentage = (int) $service->deposit_percentage;
+
+                if ($depositPercentage <= 0 || $depositPercentage > 100) {
+                    throw new \Exception(
+                        'درصد بیعانه برای این خدمت معتبر نیست.'
                     );
                 }
 
@@ -663,7 +675,7 @@ class AppointmentController extends Controller
                 $price = (int) $doctor->pivot->price;
 
                 $deposit = (int) (
-                    round(($price * 0.3) / 1000) * 1000
+                    round(($price * $depositPercentage / 100) / 1000) * 1000
                 );
 
                 $balance = $price - $deposit;
@@ -699,6 +711,7 @@ class AppointmentController extends Controller
                     'description' => 'رزرو نوبت با پرداخت بیعانه',
                     'meta_data' => [
                         'gateway' => $data['payment_method'],
+                        'deposit_percentage' => $depositPercentage,
                     ],
                     'paid_at' => now(),
                     'created_by' => $user->id,
