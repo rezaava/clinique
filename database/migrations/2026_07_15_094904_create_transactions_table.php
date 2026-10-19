@@ -20,6 +20,11 @@ return new class extends Migration
                 ->constrained()
                 ->nullOnDelete();
 
+            $table->foreignId('consultation_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
+
             $table->foreignId('discount_id')
                 ->nullable()
                 ->constrained()
@@ -31,7 +36,7 @@ return new class extends Migration
             // نوع پرداخت
             $table->enum('type', [
                 'payment',
-                'refund'
+                'refund',
             ])->default('payment');
 
             // روش پرداخت
@@ -39,7 +44,7 @@ return new class extends Migration
                 'cash',
                 'card',
                 'online',
-                'other'
+                'other',
             ])->default('cash');
 
             // مبلغ اصلی نوبت
@@ -63,7 +68,7 @@ return new class extends Migration
                 'partial',
                 'paid',
                 'refunded',
-                'cancelled'
+                'cancelled',
             ])->default('unpaid');
 
             $table->text('description')->nullable();

@@ -8,6 +8,7 @@ use App\Http\Controllers\API\ServiesController;
 use App\Http\Controllers\API\ProfileController;
 use App\Http\Controllers\API\SpecialistController;
 use App\Http\Controllers\API\AppointmentController;
+use App\Http\Controllers\API\ConsultationController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -31,6 +32,8 @@ Route::get('/appointment/det/{id}', [AppointmentController::class, 'det']);
 Route::post('/booking/no-deposit', [AppointmentController::class, 'NoDepositBooking']);
 Route::post('/booking/deposit', [AppointmentController::class, 'DepositBooking']);
 Route::post('/appointment/cancel/{id}', [AppointmentController::class, 'cancel']);
+
+Route::post('/consultations/store', [ConsultationController::class, 'store']);
 
 Route::middleware('auth:api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);

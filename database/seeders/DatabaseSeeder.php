@@ -123,6 +123,7 @@ class DatabaseSeeder extends Seeder
         $service->is_active = $data['is_active'] ?? true;
         $service->review_count = $data['review_count'] ?? 0;
         $service->deposit_percentage = rand(0, 40);
+        $service->consultation_price = Service::count() === 0 ? 0 : rand(100000, 500000);
 
         $service->save();
 

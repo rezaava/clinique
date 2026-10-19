@@ -17,6 +17,7 @@ class Service extends Model
         'seo_content',
         'article_content',
         'price',
+        'consultation_price',
         'duration_minutes',
         'is_active',
         'deposit_percentage',
@@ -25,6 +26,7 @@ class Service extends Model
 
     protected $casts = [
         'price' => 'integer',
+        'consultation_price' => 'integer',
         'duration_minutes' => 'integer',
         'is_active' => 'boolean',
         'review_count' => 'integer',
@@ -47,23 +49,28 @@ class Service extends Model
     {
         return $this->belongsTo(ServiceCategory::class, 'cat_id');
     }
+
     public function suitabilities()
     {
         return $this->hasMany(ServiceSuitability::class);
     }
+
     public function treatmentSteps()
     {
         return $this->hasMany(ServiceTreatmentStep::class)->orderBy('sort_order');
     }
+
     public function expectations()
     {
         return $this->hasMany(ServiceExpectation::class)->orderBy('sort_order');
     }
+
     public function aftercares()
     {
         return $this->hasMany(ServiceAftercare::class)
             ->orderBy('sort_order');
     }
+
     // User Services (تخصص پرسنل)
     public function userServices()
     {

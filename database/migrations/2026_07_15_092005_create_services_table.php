@@ -17,6 +17,7 @@ return new class extends Migration
             $table->longText('article_content')->nullable(); // مقاله کامل
             $table->integer('duration_minutes')->default(30);
             $table->boolean('is_active')->default(true);
+            $table->unsignedBigInteger('consultation_price')->default(0);
             $table->integer('review_count')->default(0);
             $table->unsignedTinyInteger('deposit_percentage')->default(0);
             $table->foreignId('cat_id')->constrained('service_categories')->cascadeOnDelete();

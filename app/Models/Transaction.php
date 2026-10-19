@@ -52,6 +52,11 @@ class Transaction extends Model
         return $this->belongsTo(Appointment::class);
     }
 
+    public function consultation()
+    {
+        return $this->belongsTo(Consultation::class);
+    }
+
     public function discount()
     {
         return $this->belongsTo(Discount::class);
@@ -92,7 +97,7 @@ class Transaction extends Model
 
         static::creating(function ($transaction) {
             if (empty($transaction->transaction_number)) {
-                $transaction->transaction_number = 'TRX-' . strtoupper(uniqid());
+                $transaction->transaction_number = 'TRX-'.strtoupper(uniqid());
             }
         });
     }
