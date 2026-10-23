@@ -14,7 +14,7 @@ return new class extends Migration
             // اطلاعات هویتی کاربر
             $table->string('first_name', 50);
             $table->string('last_name', 50);
-            $table->string('phone', 20)->unique();
+            $table->string('phone', 20)->nullable()->unique();
             $table->string('email', 100)->nullable()->unique();
             $table->string('national_code', 10)->nullable()->unique();
             

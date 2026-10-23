@@ -3,16 +3,16 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Laratrust\Contracts\LaratrustUser;
-use Laratrust\Traits\HasRolesAndPermissions;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\DB;
+use Laravel\Passport\HasApiTokens;
+use Laratrust\Contracts\LaratrustUser;
+use Laratrust\Traits\HasRolesAndPermissions;
 
 class User extends Authenticatable implements LaratrustUser
 {
-    use HasRolesAndPermissions;
-    
+    use HasApiTokens, HasRolesAndPermissions;
+
     protected $fillable = [
         'first_name',
         'last_name',
@@ -141,10 +141,10 @@ class User extends Authenticatable implements LaratrustUser
 
     public function workingTimeSlots()
     {
-        return $this->belongsToMany(WorkingTimeSlot::class,'doctor_working_time_slot')->withPivot('id')->withTimestamps();
+        return $this->belongsToMany(WorkingTimeSlot::class, 'doctor_working_time_slot')->withPivot('id')->withTimestamps();
     }
     // ================ Supplier Relationships (Many-to-Many) ================
-    
+
     // Devices (دستگاه‌ها - به عنوان تأمین‌کننده چندبه‌چند)
     public function suppliedDevices()
     {
@@ -224,7 +224,7 @@ class User extends Authenticatable implements LaratrustUser
 
     public function getFullNameAttribute()
     {
-        return $this->first_name . ' ' . $this->last_name;
+        return $this->first_name.' '.$this->last_name;
     }
 
     public function isStaff(): bool
@@ -241,6 +241,7 @@ class User extends Authenticatable implements LaratrustUser
     {
         return $this->hasRole('supplier');
     }
+
     public function getNearestAvailableSlot(?Carbon $fromDate = null)
     {
         $fromDate = $fromDate ?: Carbon::today();
@@ -287,7 +288,7 @@ class User extends Authenticatable implements LaratrustUser
 
                     $currentTime = Carbon::now();
                     $slotStartTime = Carbon::parse(
-                        $date->toDateString() . ' ' . $slot->start_time
+                        $date->toDateString().' '.$slot->start_time
                     );
 
                     if ($slotStartTime->lt($currentTime)) {
@@ -303,7 +304,7 @@ class User extends Authenticatable implements LaratrustUser
                     ->where('working_time_slot_id', $slot->id)
                     ->value('id');
 
-                if (!$doctorWorkingTimeSlotId) {
+                if (! $doctorWorkingTimeSlotId) {
                     continue;
                 }
 
@@ -311,9 +312,9 @@ class User extends Authenticatable implements LaratrustUser
                 * بررسی اینکه این نوبت در این تاریخ قبلاً رزرو نشده باشد.
                 */
                 $isBooked = Appointment::where(
-                        'doctor_working_time_slot_id',
-                        $doctorWorkingTimeSlotId
-                    )
+                    'doctor_working_time_slot_id',
+                    $doctorWorkingTimeSlotId
+                )
                     ->whereDate('appointment_date', $date->toDateString())
                     ->whereIn('status', $activeStatuses)
                     ->exists();
