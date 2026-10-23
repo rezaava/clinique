@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\Appointment;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
-    public function profile() {
-        $user = User::findOrFail(1);
+    public function profile(Request $request)
+    {
+        $user = $request->user();
 
         $data = $user->toArray();
 
@@ -26,6 +27,7 @@ class ProfileController extends Controller
             ],
         ]);
     }
+
     public function doctors($id = null)
     {
         $query = User::whereHas('roles', function ($query) {
@@ -49,7 +51,7 @@ class ProfileController extends Controller
 
             $doctor->ability = $service?->name;
 
-            $appointments = Appointment::where('assigned_staff_id',$doctor->id)->whereNotNull('staff_rating')->get();
+            $appointments = Appointment::where('assigned_staff_id', $doctor->id)->whereNotNull('staff_rating')->get();
 
             $doctor->rating = $appointments->avg('staff_rating')
                 ? round($appointments->avg('staff_rating'), 1)
@@ -66,9 +68,10 @@ class ProfileController extends Controller
             ],
         ]);
     }
-    public function toggle($toggleName, $value)
+
+    public function toggle(Request $request, $toggleName, $value)
     {
-        $user = User::findOrFail(1);
+        $user = $request->user();
 
         $fields = [
             'appointment' => 'appointment_reminders',
@@ -77,7 +80,7 @@ class ProfileController extends Controller
             'marketing' => 'marketing_messages',
         ];
 
-        if (!isset($fields[$toggleName])) {
+        if (! isset($fields[$toggleName])) {
             return response()->json([
                 'success' => false,
                 'message' => 'تنظیم مورد نظر معتبر نیست.',
@@ -86,7 +89,7 @@ class ProfileController extends Controller
 
         $value = (int) $value;
 
-        if (!in_array($value, [0, 1], true)) {
+        if (! in_array($value, [0, 1], true)) {
             return response()->json([
                 'success' => false,
                 'message' => 'مقدار باید 0 یا 1 باشد.',

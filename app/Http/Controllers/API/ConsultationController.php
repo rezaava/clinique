@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\Consultation;
 use App\Models\Service;
-use App\Models\User;
 use App\Models\WorkingTimeSlot;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -69,11 +68,10 @@ class ConsultationController extends Controller
             ],
         ]);
 
-        $user = User::find(5);
-
-        $hasDoctor = !empty($data['doctor_id']);
-        $hasSlot = !empty($data['doctor_working_time_slot_id']);
-        $hasDate = !empty($data['consultation_date']);
+        $user = $request->user();
+        $hasDoctor = ! empty($data['doctor_id']);
+        $hasSlot = ! empty($data['doctor_working_time_slot_id']);
+        $hasDate = ! empty($data['consultation_date']);
         $hasExplicitTime = $hasSlot && $hasDate;
 
         if ($hasSlot !== $hasDate) {
@@ -83,14 +81,14 @@ class ConsultationController extends Controller
             ], 422);
         }
 
-        if ($hasExplicitTime && !$hasDoctor) {
+        if ($hasExplicitTime && ! $hasDoctor) {
             return response()->json([
                 'success' => false,
                 'message' => 'برای انتخاب تایم مشخص، ابتدا متخصص را انتخاب کنید.',
             ], 422);
         }
 
-        $anyTime = (bool) ($data['any_time'] ?? !$hasExplicitTime);
+        $anyTime = (bool) ($data['any_time'] ?? ! $hasExplicitTime);
 
         if ($hasExplicitTime && $anyTime) {
             return response()->json([
@@ -105,7 +103,7 @@ class ConsultationController extends Controller
             $service = Service::where('is_active', true)
                 ->find($data['service_id']);
 
-            if (!$service) {
+            if (! $service) {
                 return response()->json([
                     'success' => false,
                     'message' => 'خدمت موردنظر فعال نیست یا وجود ندارد.',
@@ -130,7 +128,7 @@ class ConsultationController extends Controller
             if ($request->hasFile('photo')) {
                 $directory = public_path('consultations');
 
-                if (!is_dir($directory)) {
+                if (! is_dir($directory)) {
                     mkdir($directory, 0755, true);
                 }
 
@@ -139,7 +137,7 @@ class ConsultationController extends Controller
 
                 $file->move($directory, $filename);
 
-                $photoPath = 'consultations/' . $filename;
+                $photoPath = 'consultations/'.$filename;
             }
 
             /*
@@ -211,7 +209,7 @@ class ConsultationController extends Controller
                         (int) $data['doctor_id']
                     );
 
-                    if (!$doctor) {
+                    if (! $doctor) {
                         throw new \RuntimeException(
                             'این پزشک خدمت موردنظر را ارائه نمی‌دهد.'
                         );
@@ -226,7 +224,7 @@ class ConsultationController extends Controller
                         ->lockForUpdate()
                         ->first();
 
-                    if (!$doctorSlot) {
+                    if (! $doctorSlot) {
                         throw new \RuntimeException(
                             'تایم انتخاب‌شده برای این پزشک معتبر نیست.'
                         );
@@ -235,7 +233,7 @@ class ConsultationController extends Controller
                     $timeSlot = WorkingTimeSlot::with('workingDay')
                         ->find($doctorSlot->working_time_slot_id);
 
-                    if (!$timeSlot || !$timeSlot->workingDay) {
+                    if (! $timeSlot || ! $timeSlot->workingDay) {
                         throw new \RuntimeException(
                             'بازه زمانی انتخاب‌شده معتبر نیست.'
                         );
@@ -303,7 +301,7 @@ class ConsultationController extends Controller
                 |--------------------------------------------------------------------------
                 */
 
-                if (!$hasExplicitTime) {
+                if (! $hasExplicitTime) {
                     $found = false;
                     $candidateDate = Carbon::tomorrow()->startOfDay();
 
@@ -332,7 +330,7 @@ class ConsultationController extends Controller
                                     ->lockForUpdate()
                                     ->first();
 
-                                if (!$lockedSlot) {
+                                if (! $lockedSlot) {
                                     continue;
                                 }
 
@@ -353,7 +351,7 @@ class ConsultationController extends Controller
                         $candidateDate->addDay();
                     }
 
-                    if (!$found) {
+                    if (! $found) {
                         throw new \RuntimeException(
                             'در ۹۰ روز آینده تایم آزادی برای مشاوره پیدا نشد.'
                         );
@@ -381,7 +379,7 @@ class ConsultationController extends Controller
                 |--------------------------------------------------------------------------
                 */
 
-                $consultation = new Consultation();
+                $consultation = new Consultation;
 
                 $consultation->user_id = $user?->id;
                 $consultation->service_id = $service->id;

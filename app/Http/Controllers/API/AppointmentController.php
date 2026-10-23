@@ -6,18 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\Service;
 use App\Models\Transaction;
-use App\Models\User;
 use App\Models\WorkingTimeSlot;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Hekmatinasser\Verta\Verta;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class AppointmentController extends Controller
 {
-    public function index()
+    public function index(Request $req)
     {
-        $user = User::find(5);
+        $user = $req->user();
 
         if (! $user) {
             return response()->json([
@@ -84,6 +83,7 @@ class AppointmentController extends Controller
             */
             if ($appointment->status === 'cancelled') {
                 $cancelled[] = $appointment;
+
                 continue;
             }
 
@@ -165,9 +165,9 @@ class AppointmentController extends Controller
         ]);
     }
 
-    public function det($id)
+    public function det(Request $request, $id)
     {
-        $user = User::find(5);
+        $user = $request->user();
 
         if (! $user) {
             return response()->json([
@@ -421,7 +421,14 @@ class AppointmentController extends Controller
 
         try {
             $result = DB::transaction(function () use ($data, $date, $request) {
-                $user = User::find(5);
+                $user = $request->user();
+
+                if (! $user) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'کاربر احراز هویت نشده است.',
+                    ], 401);
+                }
                 $service = Service::where('is_active', true)
                     ->find($data['service_id']);
 
@@ -511,7 +518,7 @@ class AppointmentController extends Controller
                     'doctor_working_time_slot_id' => $doctorSlot->id,
                     'appointment_date' => $date->toDateString(),
                     'duration_minutes' => $duration,
-                    'status' => 'pending',
+                    'status' => 'confirmed',
                     'amount' => $price,
                     'payment_status' => 'unpaid',
                     'deposit_amount' => 0,
@@ -582,8 +589,14 @@ class AppointmentController extends Controller
 
         try {
             $result = DB::transaction(function () use ($data, $date, $request) {
-                $user = User::find(5);
+                $user = $request->user();
 
+                if (! $user) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'کاربر احراز هویت نشده است.',
+                    ], 401);
+                }
                 if (! $user) {
                     throw new \Exception('کاربر موردنظر پیدا نشد.');
                 }
@@ -691,7 +704,7 @@ class AppointmentController extends Controller
                     'doctor_working_time_slot_id' => $doctorSlot->id,
                     'appointment_date' => $date->toDateString(),
                     'duration_minutes' => $duration,
-                    'status' => 'pending',
+                    'status' => 'confirmed',
                     'amount' => $price,
                     'payment_status' => 'partial',
                     'deposit_amount' => $deposit,
@@ -735,13 +748,14 @@ class AppointmentController extends Controller
             ], 422);
         }
     }
-    public function cancel($id)
+
+    public function cancel(Request $request, $id)
     {
-        $user = User::findOrFail(5);
+        $user = $request->user();
         $appointment = $user->appointments()->findOrFail($id);
         if (in_array($appointment->status, ['cancelled', 'completed'])) {
             return response()->json([
-                'message' => 'این نوبت قابل لغو نیست.'
+                'message' => 'این نوبت قابل لغو نیست.',
             ], 422);
         }
         DB::transaction(function () use ($appointment) {
@@ -754,6 +768,7 @@ class AppointmentController extends Controller
                 $transaction->save();
             }
         });
+
         return response()->json([
             'message' => 'نوبت با موفقیت لغو شد.',
             'appointment' => $appointment->fresh(),
