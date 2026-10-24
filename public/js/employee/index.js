@@ -78,5 +78,3 @@ document.getElementById("taskList").addEventListener("click", (e) => {
     const check = e.target.closest(".task-check");
     if (check) check.closest(".task").classList.toggle("done");
 });
-
-
