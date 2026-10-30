@@ -126,7 +126,7 @@ class ConsultationController extends Controller
             */
 
             if ($request->hasFile('photo')) {
-                $directory = public_path('consultations');
+                $directory = ('consultations');
 
                 if (! is_dir($directory)) {
                     mkdir($directory, 0755, true);
@@ -430,8 +430,8 @@ class ConsultationController extends Controller
             |--------------------------------------------------------------------------
             */
 
-            if ($photoPath && file_exists(public_path($photoPath))) {
-                @unlink(public_path($photoPath));
+            if ($photoPath && file_exists(($photoPath))) {
+                @unlink(($photoPath));
             }
 
             return response()->json([
