@@ -1,19 +1,19 @@
 <?php
 
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\AdCampaignController;
 use App\Http\Controllers\Admin\AdDashboardController;
 use App\Http\Controllers\Admin\AdDevicesController;
 use App\Http\Controllers\Admin\AdFinancialController;
-use App\Http\Controllers\Admin\AdFollowupController;
 use App\Http\Controllers\Admin\AdPatientController;
 use App\Http\Controllers\Admin\AdReportController;
 use App\Http\Controllers\Admin\AdSettingController;
 use App\Http\Controllers\Admin\AdTasksController;
 use App\Http\Controllers\Admin\AdTurnController;
 use App\Http\Controllers\Admin\AdWarehouseController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Employee\CalendarController;
 use App\Http\Controllers\Employee\CampaignController;
+use App\Http\Controllers\Employee\ConsultationController;
 use App\Http\Controllers\Employee\DashboardController;
 use App\Http\Controllers\Employee\DevicesController;
 use App\Http\Controllers\Employee\FinancialController;
@@ -25,7 +25,6 @@ use App\Http\Controllers\Employee\TasksController;
 use App\Http\Controllers\Employee\TreatmentController;
 use App\Http\Controllers\Employee\TurnController;
 use App\Http\Controllers\Employee\WarehouseController;
-use App\Http\Controllers\ShiftReportController;
 use Illuminate\Support\Facades\Route;
 
 // ================ Auth Routes ================
@@ -41,65 +40,71 @@ Route::middleware('auth')->group(function () {
     Route::prefix('employee')->name('employee.')->middleware('role:employee')->group(function () {
         Route::get('/', [DashboardController::class, 'dashboardIndex'])->name('dashboard.index');
 
-        //روت های  بخش بیماران
+        // روت های  بخش بیماران
         Route::prefix('patients')->group(function () {
             Route::get('/', [PatientController::class, 'patientIndex'])->name('patient.index');
         });
 
-        //روت های  بخش نوبت ها
+        // روت های  بخش نوبت ها
         Route::prefix('turn')->group(function () {
             Route::get('/', [TurnController::class, 'turnIndex'])->name('turn.index');
         });
 
-        //روت های  بخش تقویم ها
+        // روت های  بخش تقویم ها
         Route::prefix('calendar')->group(function () {
             Route::get('/', [CalendarController::class, 'calendarIndex'])->name('calendar.index');
             Route::get('/appointment/{id}', [CalendarController::class, 'appointmentDetails'])->name('calendar.appointment.det');
         });
 
-        //روت های  بخش مرکز وظایف
+        // روت‌های درخواست‌های مشاوره
+        Route::prefix('consultation')->group(function () {
+            Route::get('/', [ConsultationController::class, 'consultationIndex'])->name('consultation.index');
+            Route::get('/{id}', [ConsultationController::class, 'consultationDetails'])->name('consultation.details');
+        });
+        
+        // روت های  بخش مرکز وظایف
         Route::prefix('task')->group(function () {
             Route::get('/', [TasksController::class, 'taskIndex'])->name('task.index');
             Route::post('/add', [TasksController::class, 'taskAdd']);
             Route::get('/done/{id}', [TasksController::class, 'updateTask']);
         });
 
-        //روت های  بخش درمان ها
+        // روت های  بخش درمان ها
         Route::prefix('treatment')->group(function () {
             Route::get('/', [TreatmentController::class, 'treatmentIndex'])->name('treatment.index');
         });
 
-        //روت های  بخش پیگیری ها
+        // روت های  بخش پیگیری ها
         Route::prefix('followup')->group(function () {
             Route::get('/', [FollowupController::class, 'followupIndex'])->name('followup.index');
         });
 
-        //روت های  بخش کمپین ها
+        // روت های  بخش کمپین ها
         Route::prefix('campaign')->group(function () {
             Route::get('/', [CampaignController::class, 'campaignIndex'])->name('campaign.index');
         });
 
-        //روت های  بخش انبار
+        // روت های  بخش انبار
         Route::prefix('warehouse')->group(function () {
             Route::get('/', [WarehouseController::class, 'warehouseIndex'])->name('warehouse.index');
         });
 
-        //روت های  بخش دستگاه ها
+        // روت های  بخش دستگاه ها
         Route::prefix('device')->group(function () {
             Route::get('/', [DevicesController::class, 'deviceIndex'])->name('device.index');
         });
 
-        //روت های  بخش مالی
+        // روت های  بخش مالی
         Route::prefix('financial')->group(function () {
             Route::get('/', [FinancialController::class, 'financialIndex'])->name('financial.index');
         });
 
-        //روت های  بخش گزارش ها
+        // روت های  بخش گزارش ها
         Route::prefix('report')->group(function () {
             Route::get('/', [ReportController::class, 'reportIndex'])->name('report.index');
         });
 
-        //روت های  بخش تنظیمات
+        // روت های  بخش تنظیمات
         Route::prefix('setting')->group(function () {
             Route::get('/', [SettingController::class, 'settingIndex'])->name('setting.index');
         });
@@ -109,54 +114,54 @@ Route::middleware('auth')->group(function () {
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
         Route::get('/', [AdDashboardController::class, 'dashboardIndex'])->name('dashboardAd.index');
 
-        //روت های  بخش بیماران
+        // روت های  بخش بیماران
         Route::prefix('patients')->group(function () {
             Route::get('/', [AdPatientController::class, 'patientIndex'])->name('patientAd.index');
         });
 
-        //روت های  بخش نوبت ها
+        // روت های  بخش نوبت ها
         Route::prefix('turn')->group(function () {
             Route::get('/', [AdTurnController::class, 'turnIndex'])->name('turnAd.index');
         });
 
-        //روت های  بخش تقویم ها
+        // روت های  بخش تقویم ها
         Route::prefix('calendar')->group(function () {
             Route::get('/', [CalendarController::class, 'calendarIndex'])->name('calendarAd.index');
         });
 
-        //روت های  بخش مرکز وظایف
+        // روت های  بخش مرکز وظایف
         Route::prefix('task')->group(function () {
             Route::get('/', [AdTasksController::class, 'taskIndex'])->name('taskAd.index');
             Route::post('/add', [AdTasksController::class, 'taskAdAdd']);
             Route::get('/done/{id}', [AdTasksController::class, 'updateAdTask']);
         });
 
-        //روت های  بخش کمپین ها
+        // روت های  بخش کمپین ها
         Route::prefix('campaign')->group(function () {
             Route::get('/', [AdCampaignController::class, 'campaignIndex'])->name('campaignAd.index');
         });
 
-        //روت های  بخش انبار
+        // روت های  بخش انبار
         Route::prefix('warehouse')->group(function () {
             Route::get('/', [AdWarehouseController::class, 'warehouseIndex'])->name('warehouseAd.index');
         });
 
-        //روت های  بخش دستگاه ها
+        // روت های  بخش دستگاه ها
         Route::prefix('device')->group(function () {
             Route::get('/', [AdDevicesController::class, 'deviceIndex'])->name('deviceAd.index');
         });
 
-        //روت های  بخش مالی
+        // روت های  بخش مالی
         Route::prefix('financial')->group(function () {
             Route::get('/', [AdFinancialController::class, 'financialIndex'])->name('financialAd.index');
         });
 
-        //روت های  بخش گزارش ها
+        // روت های  بخش گزارش ها
         Route::prefix('report')->group(function () {
             Route::get('/', [AdReportController::class, 'reportIndex'])->name('reportAd.index');
         });
 
-        //روت های  بخش تنظیمات
+        // روت های  بخش تنظیمات
         Route::prefix('setting')->group(function () {
             Route::get('/', [AdSettingController::class, 'settingIndex'])->name('settingAd.index');
         });
