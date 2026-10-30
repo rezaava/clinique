@@ -23,7 +23,7 @@ class CalendarController extends Controller
             ->get();
 
         $stats = $this->buildStats($allAppointments);
-        $doctors = $this->buildDoctorHeaders($this->getDoctors());
+        $doctors = $this->buildDoctorHeaders($this->getDoctors($date));
         $appointments = $this->buildAppointments($allAppointments, $doctors, $request);
         $waitList = $this->getWaitList($dateStr);
 
@@ -66,11 +66,20 @@ class CalendarController extends Controller
 
     // ======================== متدهای کمکی ========================
 
-    private function getDoctors()
+    private function getDoctors(Carbon $date)
     {
+        $workingDay = ($date->dayOfWeek + 1) % 7;
+
         return User::whereHas('roles', function ($q) {
             $q->where('name', 'doctor');
-        })->get();
+        })
+            ->whereHas('workingTimeSlots', function ($q) use ($workingDay) {
+                $q->whereHas('workingDay', function ($q) use ($workingDay) {
+                    $q->where('day', $workingDay);
+                });
+            })
+            ->with('workingTimeSlots.workingDay')
+            ->get();
     }
 
     private function buildDoctorHeaders($doctors)
