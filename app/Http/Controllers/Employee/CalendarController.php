@@ -6,10 +6,27 @@ use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\User;
 use Carbon\Carbon;
+use Hekmatinasser\Verta\Verta;
 use Illuminate\Http\Request;
 
 class CalendarController extends Controller
 {
+    public function appointmentDetails($id)
+    {
+        $appointment = Appointment::with([
+            'user',
+            'service',
+            'assignedStaff',
+        ])->findOrFail($id);
+
+        return [
+            ...$appointment->toArray(),
+            'appointment_date' => $appointment->appointment_date
+                ? Verta::instance($appointment->getRawOriginal('appointment_date'))->format('Y/m/d')
+                : null,
+        ];
+    }
+
     public function calendarIndex(Request $request)
     {
         $date = $request->get('date')
@@ -115,6 +132,7 @@ class CalendarController extends Controller
             $durHours = ($appt->service->duration_minutes ?? 30) / 60;
 
             $items->push((object) [
+                'id' => $appt->id,
                 'col' => $colIndex,
                 'start' => $startHour,
                 'id' => $appt->id,

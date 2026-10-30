@@ -217,6 +217,7 @@
                                         @endphp
 
                                         <div class="appt {{ $a->c }} {{ $a->selected ? 'selected' : '' }}"
+                                            data-id="{{ $a->id ?? '' }}"
                                             style="top:{{ $top }}px;height:{{ $height }}px">
                                             <div class="appt-top">
                                                 <span class="appt-dot"
@@ -259,7 +260,7 @@
             <div class="rail-card">
                 <div class="rail-head">
                     <span class="rail-eyebrow">نوبت انتخاب‌شده</span>
-                    <button class="rail-close" type="button" aria-label="بستن">
+                    <button class="rail-close" id="closeSelectedAppointment" type="button" aria-label="بستن">
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round">
                             <path d="M18 6 6 18M6 6l12 12" />
@@ -267,66 +268,19 @@
                     </button>
                 </div>
 
-                <div class="sel-pt">
-                    <div class="sel-avatar">ا‌د</div>
-                    <div class="sel-info">
-                        <div class="sel-name-row">
-                            <span class="sel-name">اِما دیویس</span>
-                            <span class="vip-chip">★ VIP</span>
+                <div id="selectedAppointmentContent">
+                    <div class="selected-empty">
+                        <div class="selected-empty-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="17" rx="2" />
+                                <path d="M16 2v4M8 2v4M3 10h18" />
+                                <path d="M12 14v4M10 16h4" />
+                            </svg>
                         </div>
-                        <div class="sel-meta">۴۸ سال · آخرین: ۸ آبان ۱۴۰۳</div>
-                        <div class="sel-meta">۰۹۱۲ ۷۷۴ ۲۲۰۱</div>
+                        <div class="selected-empty-title">نوبتی انتخاب نشده است</div>
+                        <div class="selected-empty-text">برای مشاهده جزئیات، روی یکی از نوبت‌های تقویم کلیک کنید.</div>
                     </div>
-                </div>
-
-                <div class="det-row"><span class="dl">پزشک</span><span class="dv">دکتر سارا چن</span></div>
-                <div class="det-row"><span class="dl">درمان</span><span class="dv">لیزر روسرفیسینگ فرکسل</span>
-                </div>
-                <div class="det-row"><span class="dl">اتاق</span><span class="dv">سوئیت لیزر</span></div>
-                <div class="det-row"><span class="dl">دستگاه</span><span class="dv">فرکسل ۱۵۵۰</span></div>
-                <div class="det-row"><span class="dl">زمان</span><span class="dv">۱۰:۳۰ — ۱۲:۰۰</span></div>
-                <div class="det-row"><span class="dl">مدت</span><span class="dv">۹۰ دقیقه</span></div>
-                <div class="det-row"><span class="dl">مبلغ</span><span class="dv">۱۲۰٬۰۰۰٬۰۰۰ ت</span></div>
-                <div class="det-row"><span class="dl">وضعیت</span><span class="dv"><span
-                            class="vip-chip">VIP</span></span></div>
-
-                <div class="staff-note">
-                    <div class="sn-label">یادداشت پرسنل</div>
-                    <div class="sn-text">VIP طلایی — پاس کامل لیزر، کرم بی‌حسی ۴۵ دقیقه قبل از شروع جلسه اعمال شود</div>
-                </div>
-
-                <div class="act-row">
-                    <button class="act-btn act-green" type="button">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20 6 9 17l-5-5" />
-                        </svg>
-                        پذیرش
-                    </button>
-
-                    <button class="act-btn act-blue" type="button">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round">
-                            <path
-                                d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.4a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z" />
-                        </svg>
-                        تماس
-                    </button>
-
-                    <button class="act-btn act-dark" type="button">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                        </svg>
-                        پیام
-                    </button>
-                </div>
-
-                <div class="act-row2">
-                    <button class="act-sm" type="button">زمان‌بندی</button>
-                    <button class="act-sm" type="button">لغو</button>
-                    <button class="act-sm" type="button">تکمیل</button>
-                    <button class="act-sm" type="button">چاپ</button>
                 </div>
             </div>
 
@@ -434,6 +388,10 @@
 
             let currentDate = dateNav.dataset.date;
             let loading = false;
+            let selectedRequest = null;
+            const selectedContent = document.getElementById('selectedAppointmentContent');
+            const closeSelectedButton = document.getElementById('closeSelectedAppointment');
+            const appointmentUrl = window.location.pathname.replace(/\/$/, '') + '/appointment';
 
             function addDays(dateString, days) {
                 const date = new Date(dateString + 'T12:00:00');
@@ -603,6 +561,7 @@
 
                             html += `
                                 <div class="appt ${escapeHtml(appt.c || '')} ${appt.selected ? 'selected' : ''}"
+                                    data-id="${escapeHtml(appt.id || '')}"
                                     style="top:${top}px;height:${height}px">
                                     <div class="appt-top">
                                         <span class="appt-dot" style="background:${escapeHtml(appt.dot || '')}">${escapeHtml(appt.init || '')}</span>
@@ -669,6 +628,50 @@
                 loadCalendar(todayButton.dataset.date);
             });
 
+            function loadAppointmentDetails(id) {
+                selectedContent.innerHTML = '<div class="selected-loading">در حال دریافت اطلاعات نوبت...</div>';
+
+                selectedRequest?.abort();
+                selectedRequest = new AbortController();
+
+                fetch(`${appointmentUrl}/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    },
+                    signal: selectedRequest.signal
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('خطا در دریافت اطلاعات نوبت');
+                    return response.json();
+                })
+                .then(appt => {
+                    selectedContent.innerHTML = `
+                        <div class="sel-pt">
+                            <div class="sel-avatar">${escapeHtml((appt.user?.first_name || '؟').trim().charAt(0))} ${escapeHtml((appt.user?.last_name || '؟').trim().charAt(0))}</div>
+                            <div class="sel-info">
+                                <div class="sel-name-row">
+                                    <span class="sel-name">${escapeHtml(appt.user?.first_name  || 'نامشخص')} ${escapeHtml(appt.user?.last_name  || 'نامشخص')}</span>
+                                </div>
+                                <div class="sel-meta">${escapeHtml(appt.user?.phone || 'شماره تماس ثبت نشده')}</div>
+                            </div>
+                        </div>
+                        <div class="det-row"><span class="dl">پزشک</span><span class="dv">${escapeHtml(appt.assigned_staff?.first_name || 'نامشخص')} ${escapeHtml(appt.assigned_staff?.last_name || 'نامشخص')}</span></div>
+                        <div class="det-row"><span class="dl">درمان</span><span class="dv">${escapeHtml(appt.service?.name || 'نامشخص')}</span></div>
+                        <div class="det-row"><span class="dl">تاریخ</span><span class="dv">${escapeHtml(appt.appointment_date || '-')}</span></div>
+                        <div class="det-row"><span class="dl">مدت</span><span class="dv">${escapeHtml(appt.duration_minutes || 0)} دقیقه</span></div>
+                        <div class="det-row"><span class="dl">مبلغ</span><span class="dv">${escapeHtml(Number(appt.amount || 0).toLocaleString('en-US'))} تومان</span></div>
+                        ${appt.client_notes ? `<div class="staff-note"><div class="sn-label">یادداشت بیمار</div><div class="sn-text">${escapeHtml(appt.client_notes)}</div></div>` : ''}
+                    `;
+                })
+                .catch(error => {
+                    if (error.name === 'AbortError') return;
+                    console.error(error);
+                    selectedContent.innerHTML = '<div class="selected-empty"><div class="selected-empty-title">خطا در دریافت اطلاعات</div><div class="selected-empty-text">دریافت اطلاعات این نوبت با مشکل مواجه شد.</div></div>';
+                });
+            }
+
             document.addEventListener('click', function(event) {
                 const appointment = event.target.closest('.appt');
                 if (!appointment) return;
@@ -678,6 +681,29 @@
                 });
 
                 appointment.classList.add('selected');
+
+                if (appointment.dataset.id) {
+                    loadAppointmentDetails(appointment.dataset.id);
+                }
+            });
+
+            closeSelectedButton.addEventListener('click', function() {
+                selectedRequest?.abort();
+                document.querySelectorAll('.appt.selected').forEach(element => {
+                    element.classList.remove('selected');
+                });
+                selectedContent.innerHTML = `
+                    <div class="selected-empty">
+                        <div class="selected-empty-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="4" width="18" height="17" rx="2" />
+                                <path d="M16 2v4M8 2v4M3 10h18" />
+                            </svg>
+                        </div>
+                        <div class="selected-empty-title">نوبتی انتخاب نشده است</div>
+                        <div class="selected-empty-text">برای مشاهده جزئیات، روی یکی از نوبت‌های تقویم کلیک کنید.</div>
+                    </div>
+                `;
             });
         });
     </script>

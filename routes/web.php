@@ -54,6 +54,7 @@ Route::middleware('auth')->group(function () {
         //روت های  بخش تقویم ها
         Route::prefix('calendar')->group(function () {
             Route::get('/', [CalendarController::class, 'calendarIndex'])->name('calendar.index');
+            Route::get('/appointment/{id}', [CalendarController::class, 'appointmentDetails'])->name('calendar.appointment.det');
         });
 
         //روت های  بخش مرکز وظایف
